@@ -1062,8 +1062,46 @@ async function submitToAirtable(data) {
             return targetField; // 못 찾으면 원래 이름 반환
         }
 
-        // 에어테이블용 데이터 준비 (동적 필드명 매칭)
-        const baseFields = {
+        // 🔥 먼저 에어테이블의 실제 컬럼명을 조회해서 정확한 매핑 🔥
+        let realColumnMapping = {};
+        try {
+            console.log('🔍 에어테이블 컬럼 구조 조회 중...');
+            const schemaResponse = await fetch(`https://dimj-form-proxy.vercel.app/api/airtable`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            if (schemaResponse.ok) {
+                const schemaData = await schemaResponse.json();
+                if (schemaData.records && schemaData.records.length > 0) {
+                    const realColumns = Object.keys(schemaData.records[0].fields || {});
+                    console.log('🎯 에어테이블 실제 컬럼명들:', realColumns);
+
+                    // 실제 컬럼명을 키워드로 매핑
+                    for (const realCol of realColumns) {
+                        const cleanCol = realCol.replace(/[^\w가-힣ㄱ-ㅎㅏ-ㅣ0-9]/g, '').trim();
+
+                        if (cleanCol.includes('접수') || cleanCol.includes('일시')) realColumnMapping['접수일시'] = realCol;
+                        else if (cleanCol.includes('이름')) realColumnMapping['이름'] = realCol;
+                        else if (cleanCol.includes('연락')) realColumnMapping['연락처'] = realCol;
+                        else if (cleanCol.includes('통신사')) realColumnMapping['통신사'] = realCol;
+                        else if (cleanCol.includes('주요') && cleanCol.includes('서비스')) realColumnMapping['주요서비스'] = realCol;
+                        else if (cleanCol.includes('기타')) realColumnMapping['기타서비스'] = realCol;
+                        else if (cleanCol.includes('상담')) realColumnMapping['상담희망시간'] = realCol;
+                        else if (cleanCol.includes('개인정보')) realColumnMapping['개인정보동의'] = realCol;
+                        else if (cleanCol.includes('상태')) realColumnMapping['상태'] = realCol;
+                        else if (cleanCol.includes('사은품') || cleanCol.includes('금액')) realColumnMapping['사은품금액'] = realCol;
+                        else if (cleanCol.includes('IP')) realColumnMapping['IP주소'] = realCol;
+                    }
+                    console.log('✅ 컬럼 매핑 완료:', realColumnMapping);
+                }
+            }
+        } catch (schemaError) {
+            console.warn('컬럼 구조 조회 실패, 기본 필드명 사용:', schemaError);
+        }
+
+        // 매핑된 실제 컬럼명으로 데이터 준비
+        const baseData = {
             '접수일시': new Date().toISOString(),
             '이름': data.name,
             '연락처': data.phone,
@@ -1073,18 +1111,17 @@ async function submitToAirtable(data) {
             '상담희망시간': data.preference || '빠른 시간에 연락드립니다',
             '개인정보동의': 'Y',
             '상태': '상담 대기',
-            '사은품금액': 70, // 기본 사은품 70만원
-            'IP주소': antiSpam.userIP || 'Unknown',
-            'IP': antiSpam.userIP || 'Unknown'
+            '사은품금액': 70,
+            'IP주소': antiSpam.userIP || 'Unknown'
         };
 
-        // 실제 에어테이블 필드명으로 변환 (이모지 포함된 필드명 찾기)
-        const airtableData = {
-            fields: {}
-        };
-
-        // 일단 기본 필드명으로 보내고, 나중에 동적으로 매칭하도록 함
-        Object.assign(airtableData.fields, baseFields);
+        // 실제 에어테이블 컬럼명으로 변환
+        const airtableData = { fields: {} };
+        for (const [cleanKey, value] of Object.entries(baseData)) {
+            const realColumnName = realColumnMapping[cleanKey] || cleanKey;
+            airtableData.fields[realColumnName] = value;
+            console.log(`📋 필드 매핑: "${cleanKey}" → "${realColumnName}" = "${value}"`);
+        }
 
         // 디버깅: 전송할 데이터 로그
         console.log('🔍 에어테이블 전송 데이터:', JSON.stringify(airtableData, null, 2));
