@@ -222,6 +222,29 @@ module.exports = async function handler(req, res) {
         });
       }
 
+      // POST 시에도 필드명을 역변환 (프론트엔드에서 깨끗한 필드명으로 온 것을 원본 이모지 필드명으로 복원)
+      const reverseMapping = {
+        '접수일시': '📅 접수일시',
+        '이름': '👤 이름',
+        '연락처': '📞 연락처',
+        '통신사': '📡 통신사',
+        '주요서비스': '⭐ 주요서비스',
+        '기타서비스': '➕ 기타서비스',
+        '상담희망시간': '⏰ 상담희망시간',
+        '개인정보동의': '✅ 개인정보동의',
+        '상태': '📊 상태',
+        '사은품금액': '💰 사은품금액',
+        'IP주소': '🌐 IP주소'
+      };
+
+      const originalFields = {};
+      for (const [cleanKey, value] of Object.entries(fields)) {
+        const originalKey = reverseMapping[cleanKey] || cleanKey;
+        originalFields[originalKey] = value;
+      }
+
+      console.log(`[PROXY] POST 필드 역변환:`, originalFields);
+
       const createUrl = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(tableName)}`;
       const createResp = await fetch(createUrl, {
         method: 'POST',
@@ -229,7 +252,7 @@ module.exports = async function handler(req, res) {
           Authorization: `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ fields })
+        body: JSON.stringify({ fields: originalFields })
       });
 
       if (!createResp.ok) {
