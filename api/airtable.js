@@ -24,48 +24,63 @@ function cleanFieldNames(fields = {}) {
   for (const rawKey in fields) {
     if (!Object.prototype.hasOwnProperty.call(fields, rawKey)) continue;
 
-    // 1단계: 모든 이모지 및 특수문자 완전 제거 (초강력 패턴)
+    // 🔥 ULTRA 강력 이모지 완전 제거 - 모든 특수문자 삭제 🔥
     let cleanKey = rawKey
-      // 모든 이모지 유니코드 범위 제거
-      .replace(/[\u{1F000}-\u{1F9FF}]|[\u{2600}-\u{27BF}]|[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{1F900}-\u{1F9FF}]|[\u{1F018}-\u{1F270}]|[\u{E000}-\u{F8FF}]|[\u{FE00}-\u{FE0F}]|[\u{1F200}-\u{1F2FF}]/gu, '')
-      // 모든 심볼 및 특수문자 제거
-      .replace(/[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~]/g, '')
-      // 추가 특수문자 제거
-      .replace(/[^\w가-힣0-9\s]/g, '')
-      // 앞뒤 공백 제거
-      .trim()
-      // 내부 공백도 제거
-      .replace(/\s+/g, '');
+      // 1차: 모든 이모지 유니코드 범위 완전 삭제
+      .replace(/[\u{1F000}-\u{1FAFF}]/gu, '')
+      .replace(/[\u{2600}-\u{27BF}]/gu, '')
+      .replace(/[\u{1F600}-\u{1F64F}]/gu, '')
+      .replace(/[\u{1F300}-\u{1F5FF}]/gu, '')
+      .replace(/[\u{1F680}-\u{1F6FF}]/gu, '')
+      .replace(/[\u{1F1E0}-\u{1F1FF}]/gu, '')
+      .replace(/[\u{1F900}-\u{1F9FF}]/gu, '')
+      .replace(/[\u{E000}-\u{F8FF}]/gu, '')
+      .replace(/[\u{FE00}-\u{FE0F}]/gu, '')
+      .replace(/[\u{1F200}-\u{1F2FF}]/gu, '')
+      // 2차: 모든 심볼 및 특수문자 완전 삭제
+      .replace(/[^\w가-힣ㄱ-ㅎㅏ-ㅣ0-9]/g, '')
+      // 3차: 남은 공백들 완전 제거
+      .replace(/\s+/g, '')
+      .trim();
 
-    console.log(`🔄 변환: "${rawKey}" → "${cleanKey}"`);
+    console.log(`🔄 ULTRA 변환: "${rawKey}" → "${cleanKey}"`);
 
-    // 2단계: 표준 필드명 강제 매핑 (완전 일치)
-    const standardMapping = {
-      '접수일시': '접수일시',
-      '이름': '이름',
-      '연락처': '연락처',
-      '통신사': '통신사',
-      '주요서비스': '주요서비스',
-      '기타서비스': '기타서비스',
-      '상담희망시간': '상담희망시간',
-      '개인정보동의': '개인정보동의',
-      '상태': '상태',
-      '사은품금액': '사은품금액',
-      'IP주소': 'IP주소',
-      'IP': 'IP'
-    };
+    // 강력한 키워드 매칭 시스템 - 부분 문자열도 인식
+    let finalKey = cleanKey;
 
-    // 정확한 매핑 찾기
-    const mappedKey = standardMapping[cleanKey] || cleanKey;
+    // 핵심 키워드만 추출하여 강제 매핑
+    if (cleanKey.includes('접수') || cleanKey.includes('일시') || cleanKey.includes('시간')) {
+      finalKey = '접수일시';
+    } else if (cleanKey.includes('이름') || cleanKey.includes('성명')) {
+      finalKey = '이름';
+    } else if (cleanKey.includes('연락') || cleanKey.includes('전화') || cleanKey.includes('휴대폰')) {
+      finalKey = '연락처';
+    } else if (cleanKey.includes('통신사') || cleanKey.includes('통신')) {
+      finalKey = '통신사';
+    } else if (cleanKey.includes('주요') || cleanKey.includes('서비스')) {
+      finalKey = '주요서비스';
+    } else if (cleanKey.includes('기타') || cleanKey.includes('추가')) {
+      finalKey = '기타서비스';
+    } else if (cleanKey.includes('상담') || cleanKey.includes('희망')) {
+      finalKey = '상담희망시간';
+    } else if (cleanKey.includes('개인정보') || cleanKey.includes('동의')) {
+      finalKey = '개인정보동의';
+    } else if (cleanKey.includes('상태') || cleanKey.includes('진행')) {
+      finalKey = '상태';
+    } else if (cleanKey.includes('사은품') || cleanKey.includes('금액') || cleanKey.includes('혜택')) {
+      finalKey = '사은품금액';
+    } else if (cleanKey.includes('IP') || cleanKey.includes('주소')) {
+      finalKey = 'IP주소';
+    }
 
     // 값이 존재할 때만 추가
     if (fields[rawKey] !== undefined && fields[rawKey] !== null && fields[rawKey] !== '') {
-      cleaned[mappedKey] = fields[rawKey];
-      console.log(`✅ 매핑 성공: "${mappedKey}" = "${fields[rawKey]}"`);
+      cleaned[finalKey] = fields[rawKey];
+      console.log(`✅ ULTRA 매핑 성공: "${finalKey}" = "${fields[rawKey]}"`);
     }
   }
 
-  console.log('🎯 최종 정리된 필드들:', Object.keys(cleaned));
+  console.log('🎯 ULTRA 최종 정리된 필드들:', Object.keys(cleaned));
   return cleaned;
 }
 
@@ -222,28 +237,64 @@ module.exports = async function handler(req, res) {
         });
       }
 
-      // POST 시에도 필드명을 역변환 (프론트엔드에서 깨끗한 필드명으로 온 것을 원본 이모지 필드명으로 복원)
-      const reverseMapping = {
-        '접수일시': '📅 접수일시',
-        '이름': '👤 이름',
-        '연락처': '📞 연락처',
-        '통신사': '📡 통신사',
-        '주요서비스': '⭐ 주요서비스',
-        '기타서비스': '➕ 기타서비스',
-        '상담희망시간': '⏰ 상담희망시간',
-        '개인정보동의': '✅ 개인정보동의',
-        '상태': '📊 상태',
-        '사은품금액': '💰 사은품금액',
-        'IP주소': '🌐 IP주소'
-      };
+      // 🔥 ULTRA 강력 필드명 자동 감지 시스템 🔥
+      // 에어테이블의 실제 컬럼명을 동적으로 찾아서 매핑
+      console.log(`[PROXY] POST 요청 필드들:`, fields);
+
+      // 먼저 에어테이블에서 실제 컬럼 구조를 가져와서 매핑 테이블 생성
+      const sampleRecords = await fetchAirtablePage({ apiKey, baseId, tableName });
+      const realColumnNames = sampleRecords.records && sampleRecords.records.length > 0
+        ? Object.keys(sampleRecords.records[0].fields || {})
+        : [];
+
+      console.log(`[PROXY] 에어테이블 실제 컬럼명들:`, realColumnNames);
+
+      // 동적 매핑 생성
+      const dynamicReverseMapping = {};
+      for (const realCol of realColumnNames) {
+        // 실제 컬럼명에서 이모지 제거하여 깨끗한 키 생성
+        const cleanCol = realCol
+          .replace(/[\u{1F000}-\u{1FAFF}]/gu, '')
+          .replace(/[\u{2600}-\u{27BF}]/gu, '')
+          .replace(/[\u{1F600}-\u{1F64F}]/gu, '')
+          .replace(/[\u{1F300}-\u{1F5FF}]/gu, '')
+          .replace(/[\u{1F680}-\u{1F6FF}]/gu, '')
+          .replace(/[\u{1F1E0}-\u{1F1FF}]/gu, '')
+          .replace(/[\u{1F900}-\u{1F9FF}]/gu, '')
+          .replace(/[\u{E000}-\u{F8FF}]/gu, '')
+          .replace(/[\u{FE00}-\u{FE0F}]/gu, '')
+          .replace(/[\u{1F200}-\u{1F2FF}]/gu, '')
+          .replace(/[^\w가-힣ㄱ-ㅎㅏ-ㅣ0-9]/g, '')
+          .replace(/\s+/g, '')
+          .trim();
+
+        // 키워드 기반 매핑
+        let mappedKey = cleanCol;
+        if (cleanCol.includes('접수') || cleanCol.includes('일시')) mappedKey = '접수일시';
+        else if (cleanCol.includes('이름')) mappedKey = '이름';
+        else if (cleanCol.includes('연락')) mappedKey = '연락처';
+        else if (cleanCol.includes('통신사')) mappedKey = '통신사';
+        else if (cleanCol.includes('주요') && cleanCol.includes('서비스')) mappedKey = '주요서비스';
+        else if (cleanCol.includes('기타')) mappedKey = '기타서비스';
+        else if (cleanCol.includes('상담')) mappedKey = '상담희망시간';
+        else if (cleanCol.includes('개인정보')) mappedKey = '개인정보동의';
+        else if (cleanCol.includes('상태')) mappedKey = '상태';
+        else if (cleanCol.includes('사은품') || cleanCol.includes('금액')) mappedKey = '사은품금액';
+        else if (cleanCol.includes('IP')) mappedKey = 'IP주소';
+
+        dynamicReverseMapping[mappedKey] = realCol;
+      }
+
+      console.log(`[PROXY] 동적 역매핑 테이블:`, dynamicReverseMapping);
 
       const originalFields = {};
       for (const [cleanKey, value] of Object.entries(fields)) {
-        const originalKey = reverseMapping[cleanKey] || cleanKey;
+        const originalKey = dynamicReverseMapping[cleanKey] || cleanKey;
         originalFields[originalKey] = value;
+        console.log(`[PROXY] 매핑: "${cleanKey}" → "${originalKey}" = "${value}"`);
       }
 
-      console.log(`[PROXY] POST 필드 역변환:`, originalFields);
+      console.log(`[PROXY] 최종 POST 필드들:`, originalFields);
 
       const createUrl = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(tableName)}`;
       const createResp = await fetch(createUrl, {
