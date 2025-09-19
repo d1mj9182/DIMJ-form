@@ -1100,28 +1100,22 @@ async function submitToAirtable(data) {
             console.warn('컬럼 구조 조회 실패, 기본 필드명 사용:', schemaError);
         }
 
-        // 매핑된 실제 컬럼명으로 데이터 준비
-        const baseData = {
-            '접수일시': new Date().toISOString(),
-            '이름': data.name,
-            '연락처': data.phone,
-            '통신사': selectedProvider || '',
-            '주요서비스': selectedServices.main || '',
-            '기타서비스': selectedServices.additional.join(', ') || '',
-            '상담희망시간': data.preference || '빠른 시간에 연락드립니다',
-            '개인정보동의': 'Y',
-            '상태': '상담 대기',
-            '사은품금액': 70,
-            'IP주소': antiSpam.userIP || 'Unknown'
+        // 🎯 실제 에어테이블 헤더 컬럼명 그대로 사용 (이모지 포함)
+        const airtableData = {
+            fields: {
+                '📅 접수일시': new Date().toISOString(),
+                '👤 이름': data.name,
+                '📞 연락처': data.phone,
+                '통신사': selectedProvider || '',
+                '주요서비스': selectedServices.main || '',
+                '기타서비스': selectedServices.additional.join(', ') || '',
+                '상담희망시간': data.preference || '빠른 시간에 연락드립니다',
+                '개인정보동의': 'Y',
+                '⏱ 상태': '상담 대기',
+                '사은품금액': 70,
+                'IP주소': antiSpam.userIP || 'Unknown'
+            }
         };
-
-        // 실제 에어테이블 컬럼명으로 변환
-        const airtableData = { fields: {} };
-        for (const [cleanKey, value] of Object.entries(baseData)) {
-            const realColumnName = realColumnMapping[cleanKey] || cleanKey;
-            airtableData.fields[realColumnName] = value;
-            console.log(`📋 필드 매핑: "${cleanKey}" → "${realColumnName}" = "${value}"`);
-        }
 
         // 디버깅: 전송할 데이터 로그
         console.log('🔍 에어테이블 전송 데이터:', JSON.stringify(airtableData, null, 2));
