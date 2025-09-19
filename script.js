@@ -1100,7 +1100,7 @@ async function submitToAirtable(data) {
             console.warn('컬럼 구조 조회 실패, 기본 필드명 사용:', schemaError);
         }
 
-        // 🎯 실제 에어테이블 헤더 컬럼명 그대로 사용 (이모지 포함)
+        // 🎯 정확한 에어테이블 헤더 컬럼명 매칭 (모든 이모지와 특수문자 포함)
         const airtableData = {
             fields: {
                 '📅 접수일시': new Date().toISOString(),
@@ -1112,7 +1112,7 @@ async function submitToAirtable(data) {
                 '상담희망시간': data.preference || '빠른 시간에 연락드립니다',
                 '개인정보동의': 'Y',
                 '⏱ 상태': '상담 대기',
-                '사은품금액': 70,
+                '# 사은품금액': 70,  // ⚠️ # 접두사 추가
                 'IP주소': antiSpam.userIP || 'Unknown'
             }
         };

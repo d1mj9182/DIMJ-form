@@ -48,8 +48,8 @@ function cleanFieldNames(fields = {}) {
     // 강력한 키워드 매칭 시스템 - 부분 문자열도 인식
     let finalKey = cleanKey;
 
-    // 핵심 키워드만 추출하여 강제 매핑
-    if (cleanKey.includes('접수') || cleanKey.includes('일시') || cleanKey.includes('시간')) {
+    // 핵심 키워드만 추출하여 강제 매핑 (GET 응답용 - 이모지 제거된 버전)
+    if (cleanKey.includes('접수') || cleanKey.includes('일시')) {
       finalKey = '접수일시';
     } else if (cleanKey.includes('이름') || cleanKey.includes('성명')) {
       finalKey = '이름';
@@ -57,19 +57,19 @@ function cleanFieldNames(fields = {}) {
       finalKey = '연락처';
     } else if (cleanKey.includes('통신사') || cleanKey.includes('통신')) {
       finalKey = '통신사';
-    } else if (cleanKey.includes('주요') || cleanKey.includes('서비스')) {
+    } else if (cleanKey.includes('주요') && cleanKey.includes('서비스')) {
       finalKey = '주요서비스';
-    } else if (cleanKey.includes('기타') || cleanKey.includes('추가')) {
+    } else if (cleanKey.includes('기타')) {
       finalKey = '기타서비스';
-    } else if (cleanKey.includes('상담') || cleanKey.includes('희망')) {
+    } else if (cleanKey.includes('상담')) {
       finalKey = '상담희망시간';
     } else if (cleanKey.includes('개인정보') || cleanKey.includes('동의')) {
       finalKey = '개인정보동의';
     } else if (cleanKey.includes('상태') || cleanKey.includes('진행')) {
       finalKey = '상태';
     } else if (cleanKey.includes('사은품') || cleanKey.includes('금액') || cleanKey.includes('혜택')) {
-      finalKey = '사은품금액';
-    } else if (cleanKey.includes('IP') || cleanKey.includes('주소')) {
+      finalKey = '사은품금액';  // GET 응답에서는 # 제거
+    } else if (cleanKey.includes('IP')) {
       finalKey = 'IP주소';
     }
 
