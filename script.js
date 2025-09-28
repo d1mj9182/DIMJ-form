@@ -768,44 +768,27 @@ async function updateConsultationList() {
                 // Supabase 실제 데이터로 모든 통계 업데이트
                 const today = new Date().toISOString().split('T')[0]; // 오늘 날짜
 
-                // 이모지를 무시하고 필드값 가져오는 헬퍼 함수
-                function getFieldValue(record, targetField) {
-                    const fields = record.fields;
-
-                    // 정확한 매칭 시도
-                    if (fields[targetField] !== undefined) {
-                        return fields[targetField];
-                    }
-
-                    // 이모지를 제거하고 매칭 시도
-                    const cleanTarget = targetField.replace(/[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, '').trim();
-
-                    for (const [fieldName, value] of Object.entries(fields)) {
-                        const cleanField = fieldName.replace(/[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, '').trim();
-                        if (cleanField === cleanTarget) {
-                            return value;
-                        }
-                    }
-
-                    return undefined;
+                // 🔥 Supabase 영문 필드명 직접 접근 (fields 래퍼 제거)
+                function getFieldValue(record, fieldName) {
+                    return record[fieldName];
                 }
 
                 // 오늘 접수 필터링 (이모지 무시)
                 const todayRecords = data.records.filter(record => {
-                    const recordDate = getFieldValue(record, '접수일시');
+                    const recordDate = getFieldValue(record, 'created_at');
                     return recordDate && recordDate.includes(today);
                 });
 
                 // 상태별 통계 계산 (이모지 무시)
-                const consultingRecords = data.records.filter(record => getFieldValue(record, '상태') === '상담 중');
-                const completedRecords = data.records.filter(record => getFieldValue(record, '상태') === '상담완료');
-                const installedRecords = data.records.filter(record => getFieldValue(record, '상태') === '설치완료');
-                const reservedRecords = data.records.filter(record => getFieldValue(record, '상태') === '설치예약');
-                const waitingRecords = data.records.filter(record => getFieldValue(record, '상태') === '상담 대기');
+                const consultingRecords = data.records.filter(record => getFieldValue(record, 'status') === '상담 중');
+                const completedRecords = data.records.filter(record => getFieldValue(record, 'status') === '상담완료');
+                const installedRecords = data.records.filter(record => getFieldValue(record, 'status') === '설치완료');
+                const reservedRecords = data.records.filter(record => getFieldValue(record, 'status') === '설치예약');
+                const waitingRecords = data.records.filter(record => getFieldValue(record, 'status') === '상담 대기');
 
                 // 실제 데이터로 업데이트
                 realTimeData.todayApplications = todayRecords.length; // 오늘 접수
-                realTimeData.cashReward = data.records.reduce((sum, record) => sum + (getFieldValue(record, '사은품금액') || 0), 0); // Supabase 값 그대로 사용
+                realTimeData.cashReward = data.records.reduce((sum, record) => sum + (getFieldValue(record, 'gift_amount') || 0), 0); // Supabase 값 그대로 사용
                 realTimeData.installationsCompleted = installedRecords.length; // 설치완료
                 realTimeData.onlineConsultants = installedRecords.length; // 설치완료를 onlineConsultants ID에 표시
                 realTimeData.waitingConsultation = waitingRecords.length; // 상담 대기
@@ -817,12 +800,12 @@ async function updateConsultationList() {
                 const consultations = data.records.map((record, index) => {
                     return {
                         id: record.id || `record_${index}`,
-                        name: getFieldValue(record, '이름') ? getFieldValue(record, '이름').replace(/(.{1})/g, '$1○').slice(0, 3) + '○' : '익명○○',
-                        service: getFieldValue(record, '주요서비스') || '상담',
-                        status: getFieldValue(record, '상태') || '접수완료',
-                        amount: getFieldValue(record, '사은품금액') || 0,
+                        name: getFieldValue(record, 'name') ? getFieldValue(record, 'name').replace(/(.{1})/g, '$1○').slice(0, 3) + '○' : '익명○○',
+                        service: getFieldValue(record, 'main_service') || '상담',
+                        status: getFieldValue(record, 'status') || '접수완료',
+                        amount: getFieldValue(record, 'gift_amount') || 0,
                         time: '실시간',
-                        date: getFieldValue(record, '접수일시') ? new Date(getFieldValue(record, '접수일시')).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+                        date: getFieldValue(record, 'created_at') ? new Date(getFieldValue(record, 'created_at')).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
                         color: ['green', 'blue', 'purple', 'orange'][index % 4]
                     };
                 }).reverse().slice(0, 7);
