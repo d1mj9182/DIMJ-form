@@ -136,9 +136,9 @@ async function loadApplications() {
     if (!adminState.isLoggedIn) return;
 
     try {
-        console.log('📋 에어테이블에서 관리자 데이터 로딩...');
+        console.log('📋 Supabase에서 관리자 데이터 로딩...');
 
-        // 에어테이블에서 데이터 가져오기
+        // Supabase에서 데이터 가져오기
         const response = await fetch('https://dimj-form-proxy.vercel.app/api/supabase', {
             method: 'GET',
             headers: {
@@ -148,7 +148,7 @@ async function loadApplications() {
         });
 
         if (!response.ok) {
-            throw new Error('에어테이블 데이터 로딩 실패');
+            throw new Error('Supabase 데이터 로딩 실패');
         }
 
         const data = await response.json();
@@ -156,21 +156,21 @@ async function loadApplications() {
             throw new Error('잘못된 응답 형식');
         }
 
-        // 🔥 이모지 제거된 필드명으로 정확한 데이터 매핑
+        // 🔥 영문 필드명으로 데이터 매핑 - Supabase 대응
         const applications = data.records.map(record => ({
             id: record.id,
-            name: record.fields['이름'] || '익명',
-            phone: record.fields['연락처'] || '-',
-            mainService: record.fields['주요서비스'] || '-',
-            provider: record.fields['통신사'] || '-',
-            additionalServices: record.fields['기타서비스'] || '-',
-            preferredTime: record.fields['상담희망시간'] || '-',
-            status: record.fields['상태'] || '상담 대기',
-            giftAmount: record.fields['사은품금액'] || 0,
-            ipAddress: record.fields['IP주소'] || record.fields['IP'] || '-',
-            personalInfoConsent: record.fields['개인정보동의'] || false,
-            timestamp: record.createdTime,
-            submissionTime: record.fields['접수일시'] || record.createdTime
+            name: record.name || '익명',
+            phone: record.phone || '-',
+            mainService: record.main_service || '-',
+            provider: record.carrier || '-',
+            additionalServices: record.other_service || '-',
+            preferredTime: record.preferred_time || '-',
+            status: record.status || '상담 대기',
+            giftAmount: record.gift_amount || 0,
+            ipAddress: record.ip_address || '-',
+            personalInfoConsent: record.privacy_agreed || false,
+            timestamp: record.created_at,
+            submissionTime: record.created_at
         }));
 
         const statusFilter = document.getElementById('statusFilter').value;
@@ -200,7 +200,7 @@ async function loadApplications() {
 
     } catch (error) {
         console.error('관리자 데이터 로딩 오류:', error);
-        alert('데이터를 불러오는데 실패했습니다. 에어테이블 연결을 확인해주세요.');
+        alert('데이터를 불러오는데 실패했습니다. Supabase 연결을 확인해주세요.');
     }
 }
 
@@ -284,7 +284,7 @@ function formatDate(timestamp) {
 async function updateStatus(recordId) {
     const newStatus = prompt('상태를 선택하세요:\n1. 상담 대기\n2. 상담 중\n3. 상담완료\n4. 설치예약\n5. 설치완료', '1');
 
-    // 🔥 에어테이블 상태값과 정확히 매칭
+    // 🔥 Supabase 상태값과 정확히 매칭
     const statusMap = {
         '1': '상담 대기',
         '2': '상담 중',
@@ -297,7 +297,7 @@ async function updateStatus(recordId) {
         try {
             console.log(`상태 변경: ${recordId} → ${statusMap[newStatus]}`);
 
-            // 에어테이블 업데이트 API 호출 (프록시 서버 통해서)
+            // Supabase 업데이트 API 호출 (프록시 서버 통해서)
             const response = await fetch('https://dimj-form-proxy.vercel.app/api/supabase', {
                 method: 'PATCH',
                 headers: {

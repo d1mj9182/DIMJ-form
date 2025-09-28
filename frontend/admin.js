@@ -135,11 +135,11 @@ function logout() {
 async function loadApplications() {
     if (!adminState.isLoggedIn) return;
 
-    // Load from both localStorage and Airtable
+    // Load from both localStorage and Supabase
     const localApplications = getAllApplications();
-    let airtableApplications = [];
+    let supabaseApplications = [];
 
-    // Try to fetch from Airtable through proxy server
+    // Try to fetch from Supabase through proxy server
     try {
         const response = await fetch(`https://dimj-form-proxy.vercel.app/api/supabase`, {
             method: 'GET',
@@ -151,30 +151,30 @@ async function loadApplications() {
         if (response.ok) {
             const data = await response.json();
             if (data.success && data.records) {
-                    airtableApplications = data.records.map(record => ({
-                        id: record.fields.ID || record.id,
-                        name: record.fields['이름'] || '',
-                        phone: record.fields['연락처'] || '',
-                        service: record.fields['주요서비스'] || '',
-                        provider: record.fields['통신사'] || '',
-                        preference: record.fields['상담희망시간'] || '',
-                        timestamp: record.fields['접수일시'] || '',
-                        ip: record.fields['IP주소'] || '',
-                        status: record.fields['상태'] || 'pending',
-                        giftAmount: record.fields['사은품금액'] || 0,
-                        additionalServices: record.fields['기타서비스'] || '',
-                        source: 'airtable'
+                    supabaseApplications = data.records.map(record => ({
+                        id: record.id,
+                        name: record.name || '',
+                        phone: record.phone || '',
+                        service: record.main_service || '',
+                        provider: record.carrier || '',
+                        preference: record.preferred_time || '',
+                        timestamp: record.created_at || '',
+                        ip: record.ip_address || '',
+                        status: record.status || 'pending',
+                        giftAmount: record.gift_amount || 0,
+                        additionalServices: record.other_service || '',
+                        source: 'supabase'
                     }));
-                    console.log(`에어테이블에서 ${airtableApplications.length}개 신청 로드됨`);
+                    console.log(`Supabase에서 ${supabaseApplications.length}개 신청 로드됨`);
                 }
             }
         }
     } catch (error) {
-        console.error('에어테이블 데이터 로드 실패:', error);
+        console.error('Supabase 데이터 로드 실패:', error);
     }
 
-    // Merge applications (Airtable takes priority over localStorage)
-    const allApplications = mergeApplications(localApplications, airtableApplications);
+    // Merge applications (Supabase takes priority over localStorage)
+    const allApplications = mergeApplications(localApplications, supabaseApplications);
 
     const statusFilter = document.getElementById('statusFilter').value;
     const dateFilter = document.getElementById('dateFilter').value;
@@ -222,8 +222,8 @@ function getAllApplications() {
     return applications;
 }
 
-function mergeApplications(localApps, airtableApps) {
-    // Create a map to avoid duplicates (Airtable takes priority)
+function mergeApplications(localApps, supabaseApps) {
+    // Create a map to avoid duplicates (Supabase takes priority)
     const mergedMap = new Map();
 
     // Add local applications first
@@ -231,8 +231,8 @@ function mergeApplications(localApps, airtableApps) {
         mergedMap.set(app.id, { ...app, source: 'local' });
     });
 
-    // Add Airtable applications (overwrite local ones with same ID)
-    airtableApps.forEach(app => {
+    // Add Supabase applications (overwrite local ones with same ID)
+    supabaseApps.forEach(app => {
         mergedMap.set(app.id, app);
     });
 
@@ -265,7 +265,7 @@ function renderApplicationsTable(applications) {
             <td>${app.ip ? app.ip.substring(0, 12) + '...' : '-'}</td>
             <td>
                 <span class="status-badge status-${app.status || 'pending'}">${getStatusText(app.status)}</span>
-                <span class="source-badge ${app.source || 'local'}">${app.source === 'airtable' ? 'AT' : 'Local'}</span>
+                <span class="source-badge ${app.source || 'local'}">${app.source === 'supabase' ? 'SB' : 'Local'}</span>
             </td>
             <td>${app.giftAmount ? app.giftAmount + '만원' : '-'}</td>
             <td>
@@ -336,7 +336,7 @@ function updateGiftAmount(id) {
             localStorage.setItem(appKey, JSON.stringify(parsedData));
         }
 
-        // TODO: Update in Airtable through proxy server
+        // TODO: Update in Supabase through proxy server
         // This would require implementing an UPDATE API endpoint in the proxy server
 
         loadApplications();
@@ -347,7 +347,7 @@ function updateGiftAmount(id) {
 function deleteApplication(id) {
     if (confirm('정말로 이 신청을 삭제하시겠습니까?')) {
         localStorage.removeItem(`application_${id}`);
-        // TODO: Delete from Airtable through proxy server
+        // TODO: Delete from Supabase through proxy server
         loadApplications();
         updateStats();
     }

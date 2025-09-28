@@ -345,7 +345,7 @@ let realTimeData = {
     cashReward: 0,
     installationsCompleted: 0,
     onlineConsultants: 0,
-    recentConsultations: [] // 빈 배열로 시작 - 에어테이블 데이터로만 채움
+    recentConsultations: [] // 빈 배열로 시작 - Supabase 데이터로만 채움
 };
 
 // 데스크톱에서만 실시간 상담현황 너비 조정 (간소화)
@@ -480,8 +480,13 @@ function setupEventListeners() {
 
     // Form submission
     const applicationForm = document.getElementById('applicationForm');
+    console.log('🔍🔍🔍 applicationForm 찾기:', applicationForm);
     if (applicationForm) {
+        console.log('✅ applicationForm 발견! 이벤트 리스너 등록');
         applicationForm.addEventListener('submit', handleFormSubmit);
+        console.log('✅ submit 이벤트 리스너 등록 완료');
+    } else {
+        console.error('❌ applicationForm을 찾을 수 없음!');
     }
 
     // 🔥 강제 버튼 활성화 + 클릭 이벤트 직접 추가 + 개인정보 자동 체크
@@ -544,8 +549,8 @@ function setupEventListeners() {
                     nextStep();
                     displaySubmittedInfo();
 
-                    // 백그라운드에서 에어테이블 전송
-                    submitToAirtable(formData).catch(err => {
+                    // 백그라운드에서 Supabase 전송
+                    submitToSupabase(formData).catch(err => {
                         console.error('백그라운드 전송 실패:', err);
                     });
                 } else {
@@ -624,7 +629,7 @@ function updateStepIndicator() {
 function startRealTimeUpdates() {
     console.log('✅ 실시간 업데이트 타이머 시작됨'); // 디버깅 로그
 
-    // ✅ 에어테이블 실제 데이터 기반 통계 업데이트 (30초마다)
+    // ✅ Supabase 실제 데이터 기반 통계 업데이트 (30초마다)
     setInterval(() => {
         updateStatistics();
     }, 30000);
@@ -642,20 +647,25 @@ function startRealTimeUpdates() {
         updateLiveTime();
     }, 1000);
 
-    // Update gift amounts from Airtable every 30 seconds (if configured)
+    // Update gift amounts from Supabase every 30 seconds
     setInterval(() => {
-        updateGiftAmountFromAirtable();
+        updateGiftAmountFromSupabase();
     }, 30000);
 
     // Initial gift amount update
-    updateGiftAmountFromAirtable();
+    updateGiftAmountFromSupabase();
 }
 
 async function updateStatistics() {
-    // 에어테이블에서 실제 데이터를 가져와서 통계 업데이트
+    // Supabase에서 실제 데이터를 가져와서 통계 업데이트
     try {
-        console.log('📊 에어테이블 데이터 가져오는 중...');
-        const response = await fetch(`https://dimj-form-proxy.vercel.app/api/supabase`, {
+        console.log('📊 Supabase 데이터 가져오는 중...');
+
+        const getUrl = 'https://dimj-form-proxy.vercel.app/api/supabase';
+        console.log('🔥🔥🔥 GET URL:', getUrl);
+        console.log('🔥🔥🔥 GET METHOD: GET');
+
+        const response = await fetch(getUrl, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -675,22 +685,22 @@ async function updateStatistics() {
                     day: '2-digit'
                 }).replace(/\./g, '-').replace(/\s/g, '').slice(0, -1); // YYYY-MM-DD 형식
 
-                // 필터링된 데이터 계산
+                // 🔥 영문 필드명으로 변경 - Supabase 대응
                 const todayRecords = data.records.filter(record => {
-                    const recordDate = record.fields['접수일시'];
+                    const recordDate = record.created_at;
                     return recordDate && recordDate.includes(today);
                 });
 
-                // 🔥 정확한 상태값 매칭 (이모지 제거된 필드에서)
-                const waitingRecords = data.records.filter(record => record.fields['상태'] === '상담 대기');
-                const consultingRecords = data.records.filter(record => record.fields['상태'] === '상담 중');
-                const completedRecords = data.records.filter(record => record.fields['상태'] === '상담완료');
-                const reservedRecords = data.records.filter(record => record.fields['상태'] === '설치예약');
-                const installedRecords = data.records.filter(record => record.fields['상태'] === '설치완료');
+                // 🔥 영문 필드명으로 상태값 매칭
+                const waitingRecords = data.records.filter(record => record.status === '상담 대기');
+                const consultingRecords = data.records.filter(record => record.status === '상담 중');
+                const completedRecords = data.records.filter(record => record.status === '상담완료');
+                const reservedRecords = data.records.filter(record => record.status === '설치예약');
+                const installedRecords = data.records.filter(record => record.status === '설치완료');
 
-                // 🔥 사은품 총액 계산 - 에어테이블 값이 이미 만원 단위
+                // 🔥 사은품 총액 계산 - 영문 필드명 사용
                 const totalGiftAmount = data.records.reduce((sum, record) => {
-                    const giftAmount = parseInt(record.fields['사은품금액'] || 0);
+                    const giftAmount = parseInt(record.gift_amount || 0);
                     return sum + giftAmount;
                 }, 0);
 
@@ -713,7 +723,7 @@ async function updateStatistics() {
                 사은품: ${realTimeData.cashReward}만원`);
             }
         } else {
-            console.error('에어테이블 API 응답 오류:', response.status);
+            console.error('Supabase API 응답 오류:', response.status);
         }
     } catch (error) {
         console.error('통계 업데이트 실패:', error);
@@ -739,9 +749,9 @@ async function updateStatistics() {
 }
 
 async function updateConsultationList() {
-    console.log('🔄 에어테이블 API 호출 시작...'); // 디버깅 로그
+    console.log('🔄 Supabase API 호출 시작...'); // 디버깅 로그
     try {
-        // 프록시 서버를 통해 실제 에어테이블 데이터 가져오기
+        // 프록시 서버를 통해 실제 Supabase 데이터 가져오기
         const response = await fetch(`https://dimj-form-proxy.vercel.app/api/supabase`, {
             method: 'GET',
             headers: {
@@ -752,10 +762,10 @@ async function updateConsultationList() {
 
         if (response.ok) {
             const data = await response.json();
-            console.log('📊 에어테이블 응답 데이터:', data);
+            console.log('📊 Supabase 응답 데이터:', data);
 
             if (data.success && data.records && data.records.length > 0) {
-                // 에어테이블 실제 데이터로 모든 통계 업데이트
+                // Supabase 실제 데이터로 모든 통계 업데이트
                 const today = new Date().toISOString().split('T')[0]; // 오늘 날짜
 
                 // 이모지를 무시하고 필드값 가져오는 헬퍼 함수
@@ -795,7 +805,7 @@ async function updateConsultationList() {
 
                 // 실제 데이터로 업데이트
                 realTimeData.todayApplications = todayRecords.length; // 오늘 접수
-                realTimeData.cashReward = data.records.reduce((sum, record) => sum + (getFieldValue(record, '사은품금액') || 0), 0); // 에어테이블 값 그대로 사용
+                realTimeData.cashReward = data.records.reduce((sum, record) => sum + (getFieldValue(record, '사은품금액') || 0), 0); // Supabase 값 그대로 사용
                 realTimeData.installationsCompleted = installedRecords.length; // 설치완료
                 realTimeData.onlineConsultants = installedRecords.length; // 설치완료를 onlineConsultants ID에 표시
                 realTimeData.waitingConsultation = waitingRecords.length; // 상담 대기
@@ -803,7 +813,7 @@ async function updateConsultationList() {
                 realTimeData.completedConsultations = completedRecords.length; // 상담 완료
                 realTimeData.installReservation = reservedRecords.length; // 설치 예약
 
-                // 에어테이블의 실제 데이터만 상담 목록으로 변환 (이모지 무시)
+                // Supabase의 실제 데이터만 상담 목록으로 변환 (이모지 무시)
                 const consultations = data.records.map((record, index) => {
                     return {
                         id: record.id || `record_${index}`,
@@ -822,8 +832,8 @@ async function updateConsultationList() {
                 updateDashboardStats(); // 대시보드 통계 업데이트
                 return;
             } else {
-                // 에어테이블에 데이터가 없으면 모든 통계를 0으로 초기화
-                console.log('📭 에어테이블에 데이터 없음 - 모든 통계 0으로 초기화');
+                // Supabase에 데이터가 없으면 모든 통계를 0으로 초기화
+                console.log('📭 Supabase에 데이터 없음 - 모든 통계 0으로 초기화');
                 realTimeData.todayApplications = 0;
                 realTimeData.cashReward = 0;
                 realTimeData.installationsCompleted = 0;
@@ -843,7 +853,7 @@ async function updateConsultationList() {
     }
 
     // API 호출 실패시 모든 통계를 0으로 초기화 (가짜 데이터 생성하지 않음)
-    console.log('⚠️ 에어테이블 연결 없음 - 모든 통계 0으로 초기화');
+    console.log('⚠️ Supabase 연결 없음 - 모든 통계 0으로 초기화');
 
     // 연결 실패시 모든 데이터를 0/빈상태로 초기화
     realTimeData.todayApplications = 0;
@@ -863,7 +873,7 @@ function renderConsultationList() {
     const consultationList = document.getElementById('consultationList');
     if (!consultationList) return;
 
-    // 에어테이블에 데이터가 없을 경우 안내 메시지
+    // Supabase에 데이터가 없을 경우 안내 메시지
     if (realTimeData.recentConsultations.length === 0) {
         consultationList.innerHTML = `
             <div class="consultation-item empty-state">
@@ -919,7 +929,7 @@ function updateLiveTime() {
 }
 
 function updateDashboardStats() {
-    // 에어테이블 실제 데이터로 모든 통계 업데이트
+    // Supabase 실제 데이터로 모든 통계 업데이트
     const todayApplicationsEl = document.getElementById('todayApplications');
     const completedConsultationsEl = document.getElementById('completedConsultations');
     const onlineConsultantsEl = document.getElementById('onlineConsultants'); // 설치완료 표시
@@ -928,7 +938,7 @@ function updateDashboardStats() {
     const installReservationEl = document.getElementById('installReservation');
     const cashRewardEl = document.getElementById('cashReward');
 
-    // 실제 에어테이블 데이터 표시
+    // 실제 Supabase 데이터 표시
     if (todayApplicationsEl) todayApplicationsEl.textContent = realTimeData.todayApplications || 0;
     if (completedConsultationsEl) completedConsultationsEl.textContent = realTimeData.completedConsultations || 0;
     if (onlineConsultantsEl) onlineConsultantsEl.textContent = realTimeData.installationsCompleted || 0; // 설치완료
@@ -1018,8 +1028,8 @@ function handleFormSubmit(e) {
     if (phoneInput) formData.phone = phoneInput.value.trim();
     if (preferenceSelect) formData.preference = preferenceSelect.value;
     
-    // Submit to Airtable (simulation)
-    submitToAirtable(formData);
+    // Submit to Supabase (simulation)
+    submitToSupabase(formData);
     
     // Move to completion step
     nextStep();
@@ -1028,12 +1038,12 @@ function handleFormSubmit(e) {
     displaySubmittedInfo();
 }
 
-// 에어테이블 설정은 airtable-config.js에서 불러옴
+// Supabase 설정은 프록시 서버를 통해 처리
 
-// Data Storage (localStorage + Airtable)
-async function submitToAirtable(data) {
+// Data Storage (localStorage + Supabase)
+async function submitToSupabase(data) {
     try {
-        console.log('🔥 에어테이블 전송 시작:', data);
+        console.log('🔥 Supabase 전송 시작:', data);
 
         // Generate unique ID for application
         const applicationId = Date.now().toString() + Math.random().toString(36).substr(2, 9);
@@ -1062,62 +1072,70 @@ async function submitToAirtable(data) {
             return targetField; // 못 찾으면 원래 이름 반환
         }
 
-        // 에어테이블용 데이터 준비 (동적 필드명 매칭)
+        // 🔥 영문 필드명으로 변경 - Supabase 한글 컬럼 문제 해결
         const baseFields = {
-            '접수일시': new Date().toISOString(),
-            '이름': data.name,
-            '연락처': data.phone,
-            '통신사': selectedProvider || '',
-            '주요서비스': selectedServices.main || '',
-            '기타서비스': selectedServices.additional.join(', ') || '',
-            '상담희망시간': data.preference || '빠른 시간에 연락드립니다',
-            '개인정보동의': 'Y',
-            '상태': '상담 대기',
-            '사은품금액': 70, // 기본 사은품 70만원
-            'IP주소': antiSpam.userIP || 'Unknown',
-            'IP': antiSpam.userIP || 'Unknown'
+            created_at: new Date().toISOString(),
+            name: data.name,
+            phone: data.phone,
+            carrier: selectedProvider || '',
+            main_service: selectedServices.main || '',
+            other_service: selectedServices.additional.join(', ') || '',
+            preferred_time: data.preference || '빠른 시간에 연락드립니다',
+            privacy_agreed: true,
+            status: '상담 대기',
+            gift_amount: 70, // 기본 사은품 70만원
+            ip_address: antiSpam.userIP || 'Unknown'
         };
 
-        // 실제 에어테이블 필드명으로 변환 (이모지 포함된 필드명 찾기)
-        const airtableData = {
-            fields: {}
-        };
-
-        // 일단 기본 필드명으로 보내고, 나중에 동적으로 매칭하도록 함
-        Object.assign(airtableData.fields, baseFields);
+        // 🔥 Supabase용 데이터 구조 (fields 래퍼 없이 직접 전송)
+        const supabaseData = baseFields;
 
         // 디버깅: 전송할 데이터 로그
-        console.log('🔍 에어테이블 전송 데이터:', JSON.stringify(airtableData, null, 2));
+        console.log('🔍 Supabase 전송 데이터:', JSON.stringify(supabaseData, null, 2));
 
         // 로컬 스토리지에 백업 저장
         const localData = {
-            ...airtableData.fields,
+            ...supabaseData,
             timestamp: new Date().toISOString()
         };
         localStorage.setItem(`application_${applicationId}`, JSON.stringify(localData));
 
-        // 에어테이블 API 호출 (프록시 서버 환경변수 사용)
+        // Supabase API 호출 (프록시 서버를 통해)
         try {
             console.log('📡 POST 요청 시작...');
-            const response = await fetch(`https://dimj-form-proxy.vercel.app/api/supabase`, {
+            console.log('🔍 전송할 데이터:', supabaseData);
+
+            const postUrl = 'https://dimj-form-proxy.vercel.app/api/supabase';
+            console.log('🔥🔥🔥 POST URL:', postUrl);
+            console.log('🔥🔥🔥 POST METHOD: POST');
+
+            const response = await fetch(postUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(airtableData)
+                body: JSON.stringify(supabaseData)
             });
+
+            console.log('🔍 응답 상태:', response.status, response.statusText);
+            console.log('🔍 응답 헤더:', response.headers);
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
-                throw new Error(`에어테이블 API 오류: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
+                throw new Error(`API 오류: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
             }
 
             const result = await response.json();
-            console.log('에어테이블 전송 성공:', result);
+            console.log('✅ Supabase 전송 성공:', result);
         } catch (apiError) {
-            console.error('에어테이블 API 오류:', apiError);
+            console.error('❌ API 오류:', apiError);
+            console.error('❌ 오류 세부사항:', {
+                message: apiError.message,
+                stack: apiError.stack,
+                cause: apiError.cause
+            });
             // API 오류가 발생해도 로컬 저장소에는 저장되므로 계속 진행
-            console.log('로컬 저장소에만 저장됨');
+            console.log('💾 로컬 저장소에만 저장됨');
         }
 
         console.log('Application submitted successfully:', applicationId);
@@ -1152,10 +1170,10 @@ function getSelectedProvider() {
     return providerBtn ? providerBtn.textContent.trim() : '';
 }
 
-// 에어테이블에서 사은품 금액 총합 가져오기
-async function updateGiftAmountFromAirtable() {
+// Supabase에서 사은품 금액 총합 가져오기
+async function updateGiftAmountFromSupabase() {
     try {
-        // 프록시 서버를 통해 에어테이블 데이터 조회 (환경변수 사용)
+        // 프록시 서버를 통해 Supabase 데이터 조회
         const response = await fetch(`https://dimj-form-proxy.vercel.app/api/supabase`, {
             method: 'GET',
             headers: {
@@ -1164,17 +1182,19 @@ async function updateGiftAmountFromAirtable() {
         });
 
         if (!response.ok) {
-            throw new Error(`에어테이블 API 오류: ${response.status}`);
+            throw new Error(`API 오류: ${response.status}`);
         }
 
         const data = await response.json();
 
-        // 사은품 금액 총합 계산
+        // 🔥 영문 필드명으로 사은품 금액 총합 계산 (Array 체크 추가)
         let totalGiftAmount = 0;
-        data.records.forEach(record => {
-            const giftAmount = record.fields['사은품금액'] || 0;
-            totalGiftAmount += Number(giftAmount);
-        });
+        if (data.records && Array.isArray(data.records)) {
+            data.records.forEach(record => {
+                const giftAmount = record.gift_amount || 0;
+                totalGiftAmount += Number(giftAmount);
+            });
+        }
 
         // 실시간 현황판 업데이트
         realTimeData.cashReward = totalGiftAmount;
@@ -1343,7 +1363,9 @@ function hideLoadingState() {
 
 // Enhanced form submission with loading state and anti-fraud protection
 async function handleFormSubmit(e) {
-    console.log('🚀 폼 제출 시작!', e);
+    console.log('🚀🚀🚀 폼 제출 시작! EVENT:', e);
+    console.log('🚀🚀🚀 이벤트 타입:', e.type);
+    console.log('🚀🚀🚀 이벤트 타겟:', e.target);
     e.preventDefault();
 
     // 🔥 임시 우회: 모든 검증 비활성화 (디버깅용)
@@ -1375,10 +1397,10 @@ async function handleFormSubmit(e) {
     displaySubmittedInfo();
 
     try {
-        // Submit to Airtable (백그라운드)
-        console.log('🔥🔥🔥 submitToAirtable 호출 직전!', formData);
-        await submitToAirtable(formData);
-        console.log('🔥🔥🔥 submitToAirtable 호출 완료!');
+        // Submit to Supabase (백그라운드)
+        console.log('🔥🔥🔥 submitToSupabase 호출 직전!', formData);
+        await submitToSupabase(formData);
+        console.log('🔥🔥🔥 submitToSupabase 호출 완료!');
 
         // 백그라운드 처리
         hideLoadingState();
@@ -1431,7 +1453,7 @@ function safeElementUpdate(elementId, updateFunction) {
 // Enhanced error handling for all functions
 function updateStatistics() {
     try {
-        // ✅ 임의 숫자 생성 완전 제거 - 에어테이블 데이터만 사용
+        // ✅ 임의 숫자 생성 완전 제거 - Supabase 데이터만 사용
         // Math.random() 코드 모두 제거됨
         
         // Update main status board

@@ -246,7 +246,7 @@ function renderConsultationList(records) {
 /* =========================
    4) 단일 fetch → 숫자/리스트 동시 업데이트
    ========================= */
-const AIRTABLE_PROXY_ENDPOINT = 'https://dimj-form-proxy.vercel.app/api/airtable'; // 실제 프록시 URL
+const SUPABASE_PROXY_ENDPOINT = 'https://dimj-form-proxy.vercel.app/api/supabase'; // 실제 프록시 URL
 
 let DIMJ_FETCH_LOCK = false; // 중복 호출 방지
 
@@ -279,7 +279,7 @@ async function refreshAll() {
   try {
     console.log('🔄 단일 API 호출 시작...');
 
-    const resp = await fetch(AIRTABLE_PROXY_ENDPOINT, {
+    const resp = await fetch(SUPABASE_PROXY_ENDPOINT, {
       method: 'GET',
       headers: {
         'Cache-Control': 'no-store',

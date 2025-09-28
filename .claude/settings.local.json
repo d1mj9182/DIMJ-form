@@ -210,7 +210,9 @@
       "Bash(cat:*)",
       "Bash(sed:*)",
       "Bash(find:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(supabase:*)",
+      "Bash(npx supabase:*)"
     ],
     "deny": [],
     "ask": []
