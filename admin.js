@@ -139,7 +139,7 @@ async function loadApplications() {
         console.log('📋 에어테이블에서 관리자 데이터 로딩...');
 
         // 에어테이블에서 데이터 가져오기
-        const response = await fetch('https://dimj-form-proxy.vercel.app/api/airtable', {
+        const response = await fetch('https://dimj-form-proxy.vercel.app/api/supabase', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -298,7 +298,7 @@ async function updateStatus(recordId) {
             console.log(`상태 변경: ${recordId} → ${statusMap[newStatus]}`);
 
             // 에어테이블 업데이트 API 호출 (프록시 서버 통해서)
-            const response = await fetch('https://dimj-form-proxy.vercel.app/api/airtable', {
+            const response = await fetch('https://dimj-form-proxy.vercel.app/api/supabase', {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json'

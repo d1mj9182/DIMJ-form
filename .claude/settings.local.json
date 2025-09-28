@@ -209,7 +209,8 @@
       "Bash(git merge:*)",
       "Bash(cat:*)",
       "Bash(sed:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(rm:*)"
     ],
     "deny": [],
     "ask": []

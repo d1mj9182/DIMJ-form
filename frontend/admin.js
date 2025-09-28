@@ -141,7 +141,7 @@ async function loadApplications() {
 
     // Try to fetch from Airtable through proxy server
     try {
-        const response = await fetch(`https://dimj-form-proxy.vercel.app/api/airtable`, {
+        const response = await fetch(`https://dimj-form-proxy.vercel.app/api/supabase`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'

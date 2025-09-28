@@ -655,7 +655,7 @@ async function updateStatistics() {
     // 에어테이블에서 실제 데이터를 가져와서 통계 업데이트
     try {
         console.log('📊 에어테이블 데이터 가져오는 중...');
-        const response = await fetch(`https://dimj-form-proxy.vercel.app/api/airtable`, {
+        const response = await fetch(`https://dimj-form-proxy.vercel.app/api/supabase`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -742,7 +742,7 @@ async function updateConsultationList() {
     console.log('🔄 에어테이블 API 호출 시작...'); // 디버깅 로그
     try {
         // 프록시 서버를 통해 실제 에어테이블 데이터 가져오기
-        const response = await fetch(`https://dimj-form-proxy.vercel.app/api/airtable`, {
+        const response = await fetch(`https://dimj-form-proxy.vercel.app/api/supabase`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -1099,7 +1099,7 @@ async function submitToAirtable(data) {
         // 에어테이블 API 호출 (프록시 서버 환경변수 사용)
         try {
             console.log('📡 POST 요청 시작...');
-            const response = await fetch(`https://dimj-form-proxy.vercel.app/api/airtable`, {
+            const response = await fetch(`https://dimj-form-proxy.vercel.app/api/supabase`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -1156,7 +1156,7 @@ function getSelectedProvider() {
 async function updateGiftAmountFromAirtable() {
     try {
         // 프록시 서버를 통해 에어테이블 데이터 조회 (환경변수 사용)
-        const response = await fetch(`https://dimj-form-proxy.vercel.app/api/airtable`, {
+        const response = await fetch(`https://dimj-form-proxy.vercel.app/api/supabase`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
