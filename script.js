@@ -1043,7 +1043,9 @@ function handleFormSubmit(e) {
 // Data Storage (localStorage + Supabase)
 async function submitToSupabase(data) {
     try {
-        console.log('🔥 Supabase 전송 시작:', data);
+        console.log('🔥🔥🔥 submitToSupabase 함수 시작!');
+        console.log('🔥 전달받은 formData:', data);
+        console.log('🔥 formData 타입:', typeof data);
 
         // Generate unique ID for application
         const applicationId = Date.now().toString() + Math.random().toString(36).substr(2, 9);
@@ -1121,19 +1123,32 @@ async function submitToSupabase(data) {
             console.log('🔍 응답 헤더:', response.headers);
 
             if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(`API 오류: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
+                console.error('🚨 HTTP 에러 발생:', response.status, response.statusText);
+
+                // 응답 본문을 텍스트로 먼저 읽기
+                const errorText = await response.text();
+                console.error('🚨 에러 응답 텍스트:', errorText);
+
+                // JSON 파싱 시도
+                let errorData = {};
+                try {
+                    errorData = JSON.parse(errorText);
+                    console.error('🚨 에러 데이터 JSON:', errorData);
+                } catch (parseError) {
+                    console.error('🚨 JSON 파싱 실패:', parseError);
+                }
+
+                throw new Error(`API 오류: ${response.status} - ${errorData.error?.message || errorText || 'Unknown error'}`);
             }
 
             const result = await response.json();
             console.log('✅ Supabase 전송 성공:', result);
         } catch (apiError) {
-            console.error('❌ API 오류:', apiError);
-            console.error('❌ 오류 세부사항:', {
-                message: apiError.message,
-                stack: apiError.stack,
-                cause: apiError.cause
-            });
+            console.error('❌❌❌ API 오류 발생:', apiError);
+            console.error('❌ 오류 타입:', typeof apiError);
+            console.error('❌ 오류 메시지:', apiError.message);
+            console.error('❌ 오류 스택:', apiError.stack);
+            console.error('❌ 전체 오류 객체:', JSON.stringify(apiError, Object.getOwnPropertyNames(apiError)));
             // API 오류가 발생해도 로컬 저장소에는 저장되므로 계속 진행
             console.log('💾 로컬 저장소에만 저장됨');
         }
