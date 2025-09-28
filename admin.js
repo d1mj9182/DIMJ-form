@@ -6,6 +6,10 @@ const ADMIN_CONFIG = {
     lockoutTime: 15 * 60 * 1000 // 15 minutes
 };
 
+// API Configuration
+const PROXY_URL = 'https://dimj-form-proxy.vercel.app/api/supabase';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXd6dnlyb2RwZG1mZ2xzcXF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIzMjUzMzEsImV4cCI6MjA0NzkwMTMzMX0.MkFZj8gNdkZT7xE9ysD1fkzN3bfOh5CtpOEtQGUCqY4';
+
 // Admin state
 let adminState = {
     isLoggedIn: false,
@@ -138,45 +142,32 @@ async function loadApplications() {
     try {
         console.log('📋 Supabase에서 관리자 데이터 로딩...');
 
-        // Supabase에서 데이터 가져오기
-        const response = await fetch('https://dimj-form-proxy.vercel.app/api/supabase', {
+        const response = await fetch(`${PROXY_URL}?table=consultations`, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json',
-                'Cache-Control': 'no-cache'
+                'x-api-key': SUPABASE_ANON_KEY,
+                'Content-Type': 'application/json'
             }
         });
 
-        console.log('🔍 응답 상태:', response.status);
-        console.log('🔍 응답 헤더:', response.headers);
+        const result = await response.json();
+        console.log('🔍 프록시 응답:', result);
 
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('❌ 응답 실패 내용:', errorText);
-            throw new Error(`Supabase 데이터 로딩 실패: ${response.status} - ${errorText}`);
-        }
-
-        const data = await response.json();
-        console.log('📦 받은 데이터:', data);
-        console.log('📦 데이터 구조:', {
-            hasSuccess: 'success' in data,
-            successValue: data.success,
-            hasRecords: 'records' in data,
-            recordsLength: data.records ? data.records.length : 'undefined',
-            dataKeys: Object.keys(data)
-        });
-
-        if (!data.success || !data.records) {
-            console.error('❌ 잘못된 응답 형식 상세:', {
-                success: data.success,
-                records: data.records,
-                fullData: data
-            });
-            throw new Error('잘못된 응답 형식');
+        // 응답 형식에 따른 처리
+        let data;
+        if (result.success && result.data) {
+            data = result.data;  // 프록시가 {success: true, data: [...]} 형식
+        } else if (Array.isArray(result)) {
+            data = result;  // 직접 배열
+        } else if (result.fullData) {
+            data = result.fullData;  // fullData가 있는 경우
+        } else {
+            console.error('❌ 예상치 못한 응답 형식:', result);
+            throw new Error('데이터 형식 오류');
         }
 
         // 🔥 영문 필드명으로 데이터 매핑 - Supabase 대응
-        const applications = data.records.map(record => ({
+        const applications = data.map(record => ({
             id: record.id,
             name: record.name || '익명',
             phone: record.phone || '-',
@@ -218,10 +209,8 @@ async function loadApplications() {
         console.log(`✅ ${filteredApps.length}개 신청서 로딩 완료`);
 
     } catch (error) {
-        console.error('❌ 관리자 데이터 로딩 오류 상세:', error);
-        console.error('❌ 에러 스택:', error.stack);
-        console.error('❌ 에러 메시지:', error.message);
-        alert(`데이터를 불러오는데 실패했습니다.\n\n에러: ${error.message}\n\nSupabase 연결을 확인해주세요.`);
+        console.error('❌ 데이터 로딩 실패:', error);
+        alert(`데이터를 불러오는데 실패했습니다.\n\n에러: ${error.message}`);
     }
 }
 
