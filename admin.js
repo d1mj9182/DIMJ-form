@@ -147,12 +147,31 @@ async function loadApplications() {
             }
         });
 
+        console.log('🔍 응답 상태:', response.status);
+        console.log('🔍 응답 헤더:', response.headers);
+
         if (!response.ok) {
-            throw new Error('Supabase 데이터 로딩 실패');
+            const errorText = await response.text();
+            console.error('❌ 응답 실패 내용:', errorText);
+            throw new Error(`Supabase 데이터 로딩 실패: ${response.status} - ${errorText}`);
         }
 
         const data = await response.json();
+        console.log('📦 받은 데이터:', data);
+        console.log('📦 데이터 구조:', {
+            hasSuccess: 'success' in data,
+            successValue: data.success,
+            hasRecords: 'records' in data,
+            recordsLength: data.records ? data.records.length : 'undefined',
+            dataKeys: Object.keys(data)
+        });
+
         if (!data.success || !data.records) {
+            console.error('❌ 잘못된 응답 형식 상세:', {
+                success: data.success,
+                records: data.records,
+                fullData: data
+            });
             throw new Error('잘못된 응답 형식');
         }
 
@@ -199,8 +218,10 @@ async function loadApplications() {
         console.log(`✅ ${filteredApps.length}개 신청서 로딩 완료`);
 
     } catch (error) {
-        console.error('관리자 데이터 로딩 오류:', error);
-        alert('데이터를 불러오는데 실패했습니다. Supabase 연결을 확인해주세요.');
+        console.error('❌ 관리자 데이터 로딩 오류 상세:', error);
+        console.error('❌ 에러 스택:', error.stack);
+        console.error('❌ 에러 메시지:', error.message);
+        alert(`데이터를 불러오는데 실패했습니다.\n\n에러: ${error.message}\n\nSupabase 연결을 확인해주세요.`);
     }
 }
 
