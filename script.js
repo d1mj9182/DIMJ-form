@@ -1154,15 +1154,22 @@ async function submitToSupabase(data) {
             console.log('🔍 전송할 데이터:', supabaseData);
 
             const postUrl = 'https://dimj-form-proxy.vercel.app/api/supabase';
+            const requestBody = {
+                table: 'consultations',
+                data: supabaseData
+            };
+
             console.log('🔥🔥🔥 POST URL:', postUrl);
             console.log('🔥🔥🔥 POST METHOD: POST');
+            console.log('🔥🔥🔥 POST BODY:', JSON.stringify(requestBody, null, 2));
 
             const response = await fetch(postUrl, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'x-api-key': SUPABASE_ANON_KEY
                 },
-                body: JSON.stringify(supabaseData)
+                body: JSON.stringify(requestBody)
             });
 
             console.log('🔍 응답 상태:', response.status, response.statusText);
