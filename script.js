@@ -760,117 +760,124 @@ async function loadRealtimeData() {
             }
         });
 
-        const data = await response.json();
-        console.log('📊 실시간 데이터:', data);
+        const result = await response.json();
+        console.log('📊 받은 원본 데이터:', result);
 
-        // 데이터가 배열인지 확인
-        const applications = Array.isArray(data) ? data : data.data || [];
+        // 🔍 응답 형식 상세 분석
+        console.log('📊 데이터 타입:', typeof result);
+        console.log('📊 배열 여부:', Array.isArray(result));
+        if (result && typeof result === 'object') {
+            console.log('📊 객체 키:', Object.keys(result));
+            console.log('📊 success 필드:', result.success);
+            console.log('📊 data 필드:', result.data);
+            console.log('📊 records 필드:', result.records);
+        }
+
+        // 🔧 개선된 데이터 추출 로직
+        let applications = [];
+
+        if (Array.isArray(result)) {
+            applications = result;
+            console.log('✅ 직접 배열 형태:', applications.length, '개');
+        } else if (result && result.success && Array.isArray(result.data)) {
+            applications = result.data;
+            console.log('✅ {success: true, data: [...]} 형태:', applications.length, '개');
+        } else if (result && Array.isArray(result.records)) {
+            applications = result.records;
+            console.log('✅ {records: [...]} 형태:', applications.length, '개');
+        } else if (result && result.fullData && Array.isArray(result.fullData)) {
+            applications = result.fullData;
+            console.log('✅ {fullData: [...]} 형태:', applications.length, '개');
+        } else {
+            console.log('❌ 알 수 없는 응답 형식 - 빈 배열 사용');
+            applications = [];
+        }
+
+        console.log('🎯 최종 처리할 데이터:', applications.length, '개', applications);
 
         updateConsultationList(applications);
         updateStatistics(applications);
 
     } catch (error) {
         console.error('❌ 실시간 데이터 로딩 실패:', error);
+        // 에러 시에도 빈 배열로 처리하여 일관성 유지
+        updateConsultationList([]);
+        updateStatistics([]);
     }
 }
 
-async function updateConsultationList(applications = null) {
-    console.log('🔄 상담 목록 업데이트 시작...', applications ? '매개변수 데이터 사용' : 'API 호출');
+function updateConsultationList(applications) {
+    console.log('🔄 상담 목록 업데이트 시작...', applications ? applications.length + '개 데이터' : '데이터 없음');
 
-    let data;
+    // 🎯 핵심: 명확한 데이터 존재 여부 판단
+    const hasData = applications && Array.isArray(applications) && applications.length > 0;
+    console.log('📊 데이터 존재 여부:', hasData, 'applications:', applications);
 
-    if (applications) {
-        // loadRealtimeData에서 전달된 데이터 사용
-        data = { success: true, records: applications };
-    } else {
-        // 기존 API 호출 방식 유지 (호환성)
-        try {
-            const response = await fetch(`https://dimj-form-proxy.vercel.app/api/supabase`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            data = await response.json();
-            console.log('📊 API 응답 데이터:', data);
-        } catch (error) {
-            console.error('❌ API 호출 실패:', error);
-            return;
-        }
-    }
-
-    try {
-        if (data && data.success && data.records && data.records.length > 0) {
-            // Supabase 실제 데이터로 모든 통계 업데이트
-            const today = new Date().toISOString().split('T')[0];
-
-            // 🔥 Supabase 영문 필드명 직접 접근
-            function getFieldValue(record, fieldName) {
-                return record[fieldName];
-            }
-
-            // 오늘 접수 필터링
-            const todayRecords = data.records.filter(record => {
-                const recordDate = getFieldValue(record, 'created_at');
-                return recordDate && recordDate.includes(today);
-            });
-
-            // 상태별 통계 계산
-            const consultingRecords = data.records.filter(record => getFieldValue(record, 'status') === '상담 중');
-            const completedRecords = data.records.filter(record => getFieldValue(record, 'status') === '상담완료');
-            const installedRecords = data.records.filter(record => getFieldValue(record, 'status') === '설치완료');
-            const reservedRecords = data.records.filter(record => getFieldValue(record, 'status') === '설치예약');
-            const waitingRecords = data.records.filter(record => getFieldValue(record, 'status') === '상담 대기');
-
-            // 실제 데이터로 업데이트
-            realTimeData.todayApplications = todayRecords.length;
-            realTimeData.cashReward = data.records.reduce((sum, record) => sum + (getFieldValue(record, 'gift_amount') || 0), 0);
-            realTimeData.installationsCompleted = installedRecords.length;
-            realTimeData.onlineConsultants = installedRecords.length;
-            realTimeData.waitingConsultation = waitingRecords.length;
-            realTimeData.consultingNow = consultingRecords.length;
-            realTimeData.completedConsultations = completedRecords.length;
-            realTimeData.installReservation = reservedRecords.length;
-
-            // 상담 목록 변환
-            const consultations = data.records.map((record, index) => {
-                return {
-                    id: record.id || `record_${index}`,
-                    name: getFieldValue(record, 'name') ? getFieldValue(record, 'name').replace(/(.{1})/g, '$1○').slice(0, 3) + '○' : '익명○○',
-                    service: getFieldValue(record, 'main_service') || '상담',
-                    status: getFieldValue(record, 'status') || '접수완료',
-                    amount: getFieldValue(record, 'gift_amount') || 0,
-                    time: '실시간',
-                    date: getFieldValue(record, 'created_at') ? new Date(getFieldValue(record, 'created_at')).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-                    color: ['green', 'blue', 'purple', 'orange'][index % 4]
-                };
-            }).reverse().slice(0, 7);
-
-            realTimeData.recentConsultations = consultations;
-        } else {
-            // 데이터가 없으면 모든 통계를 0으로 초기화
-            console.log('📭 데이터 없음 - 모든 통계 0으로 초기화');
-            realTimeData.todayApplications = 0;
-            realTimeData.cashReward = 0;
-            realTimeData.installationsCompleted = 0;
-            realTimeData.waitingConsultation = 0;
-            realTimeData.consultingNow = 0;
-            realTimeData.completedConsultations = 0;
-            realTimeData.installReservation = 0;
-            realTimeData.recentConsultations = [];
-        }
-
+    if (!hasData) {
+        console.log('📭 데이터 없음 - 기본 상태 유지');
+        // 데이터가 없을 때는 현재 상태를 유지하거나 최소한의 업데이트만
+        realTimeData.recentConsultations = [];
         renderConsultationList();
-        updateDashboardStats();
-    } catch (error) {
-        console.error('❌ 데이터 처리 실패:', error);
+        return;
     }
+
+    // ✅ 데이터가 있을 때만 상담 목록 처리
+    console.log('📊 데이터 처리 시작:', applications.length, '개 항목');
+
+    // 🔥 영문 필드명 직접 접근
+    function getFieldValue(record, fieldName) {
+        return record[fieldName];
+    }
+
+    // 상담 목록 변환 (최대 7개)
+    const consultations = applications.map((record, index) => {
+        return {
+            id: record.id || `record_${index}`,
+            name: getFieldValue(record, 'name') ? getFieldValue(record, 'name').replace(/(.{1})/g, '$1○').slice(0, 3) + '○' : '익명○○',
+            service: getFieldValue(record, 'main_service') || '상담',
+            status: getFieldValue(record, 'status') || '접수완료',
+            amount: getFieldValue(record, 'gift_amount') || 0,
+            time: '실시간',
+            date: getFieldValue(record, 'created_at') ? new Date(getFieldValue(record, 'created_at')).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+            color: ['green', 'blue', 'purple', 'orange'][index % 4]
+        };
+    }).reverse().slice(0, 7);
+
+    console.log('📋 변환된 상담목록:', consultations.length, '개');
+
+    // realTimeData 업데이트
+    realTimeData.recentConsultations = consultations;
+
+    // 화면 렌더링
+    renderConsultationList();
+
+    console.log('✅ 상담 목록 업데이트 완료');
 }
 
 // 통계 업데이트 함수
 function updateStatistics(applications) {
-    if (!applications || !Array.isArray(applications)) return;
+    console.log('📊 통계 업데이트 시작...', applications ? applications.length + '개 데이터' : '데이터 없음');
 
+    // 🎯 핵심: 명확한 데이터 존재 여부 판단
+    const hasData = applications && Array.isArray(applications) && applications.length > 0;
+
+    if (!hasData) {
+        console.log('📭 통계 데이터 없음 - 0으로 초기화');
+        // 데이터가 없을 때만 0으로 초기화
+        realTimeData.todayApplications = 0;
+        realTimeData.cashReward = 0;
+        realTimeData.installationsCompleted = 0;
+        realTimeData.waitingConsultation = 0;
+        realTimeData.consultingNow = 0;
+        realTimeData.completedConsultations = 0;
+        realTimeData.installReservation = 0;
+        realTimeData.onlineConsultants = 0;
+
+        updateDashboardStats();
+        return;
+    }
+
+    // ✅ 데이터가 있을 때만 통계 계산
     const today = new Date().toISOString().split('T')[0];
 
     // 오늘 접수 필터링
@@ -896,23 +903,18 @@ function updateStatistics(applications) {
     realTimeData.completedConsultations = completedRecords.length;
     realTimeData.installReservation = reservedRecords.length;
 
-    // 상담 목록 변환
-    const consultations = applications.map((record, index) => {
-        return {
-            id: record.id || `record_${index}`,
-            name: record.name ? record.name.replace(/(.{1})/g, '$1○').slice(0, 3) + '○' : '익명○○',
-            service: record.main_service || '상담',
-            status: record.status || '접수완료',
-            amount: record.gift_amount || 0,
-            time: '실시간',
-            date: record.created_at ? new Date(record.created_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-            color: ['green', 'blue', 'purple', 'orange'][index % 4]
-        };
-    }).reverse().slice(0, 7);
+    console.log('📊 계산된 통계:', {
+        today: todayRecords.length,
+        consulting: consultingRecords.length,
+        completed: completedRecords.length,
+        installed: installedRecords.length,
+        waiting: waitingRecords.length
+    });
 
-    realTimeData.recentConsultations = consultations;
-    renderConsultationList();
+    // 대시보드 업데이트
     updateDashboardStats();
+
+    console.log('✅ 통계 업데이트 완료');
 }
 
 function renderConsultationList() {
