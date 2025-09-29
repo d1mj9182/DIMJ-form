@@ -340,11 +340,35 @@ async function updateStatus(recordId) {
     }
 }
 
-function deleteApplication(id) {
-    if (confirm('정말로 이 신청을 삭제하시겠습니까?')) {
-        localStorage.removeItem(`application_${id}`);
-        loadApplications();
-        updateStats();
+async function deleteApplication(id) {
+    if (!confirm('정말로 이 신청을 삭제하시겠습니까?')) {
+        return;
+    }
+
+    try {
+        const response = await fetch(PROXY_URL, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': SUPABASE_ANON_KEY
+            },
+            body: JSON.stringify({
+                id: id,
+                table: 'consultations'  // 테이블명 추가
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert('삭제되었습니다.');
+            loadApplications(); // 목록 새로고침
+        } else {
+            alert('삭제 실패: ' + result.error);
+        }
+    } catch (error) {
+        console.error('삭제 오류:', error);
+        alert('삭제 중 오류가 발생했습니다.');
     }
 }
 
