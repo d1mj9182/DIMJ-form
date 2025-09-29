@@ -188,7 +188,7 @@ function renderConsultationList(records) {
     const f = r.fields;
     const name = safe(f['이름'], '익명');
     const service = safe(f['주요서비스'], '상담');
-    const status = safe(f['상태'], '접수완료');
+    const status = safe(f['상태'], '상담대기');
     const amount = parseInt(safe(f['사은품금액'], '0')) || 0;
 
     // 이름 마스킹

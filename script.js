@@ -684,7 +684,7 @@ async function updateStatistics_DEPRECATED() {
                 });
 
                 // 🔥 영문 필드명으로 상태값 매칭
-                const waitingRecords = data.records.filter(record => record.status === '접수완료' || record.status === '상담 대기');
+                const waitingRecords = data.records.filter(record => record.status === '상담대기' || record.status === '상담 대기');
                 const consultingRecords = data.records.filter(record => record.status === '상담 중');
                 const completedRecords = data.records.filter(record => record.status === '상담완료');
                 const reservedRecords = data.records.filter(record => record.status === '설치예약');
@@ -832,7 +832,7 @@ function updateConsultationList(applications) {
             id: record.id || `record_${index}`,
             name: getFieldValue(record, 'name') ? getFieldValue(record, 'name').replace(/(.{1})/g, '$1○').slice(0, 3) + '○' : '익명○○',
             service: getFieldValue(record, 'main_service') || '상담',
-            status: getFieldValue(record, 'status') || '접수완료',
+            status: getFieldValue(record, 'status') || '상담대기',
             amount: getFieldValue(record, 'gift_amount') || 0,
             time: '실시간',
             date: getFieldValue(record, 'created_at') ? new Date(getFieldValue(record, 'created_at')).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
@@ -886,9 +886,8 @@ function updateStatistics(applications) {
     // 🔍 실제 데이터 기반 상태별 통계 계산
     console.log('📊 전체 상태값들:', [...new Set(applications.map(r => r.status))]);
 
-    // ✅ 실제 DB의 상태값에 맞게 수정 - '상담대기' 추가
+    // ✅ 실제 DB의 상태값에 맞게 수정 - '상담대기' 통일
     const waitingRecords = applications.filter(record =>
-        record.status === '접수완료' ||
         record.status === '상담대기' ||
         record.status === '상담 대기'
     );
@@ -920,7 +919,7 @@ function updateStatistics(applications) {
 
     // 🔍 상태별 분류 결과 디버깅
     console.log('📊 상태별 분류 결과:', {
-        waiting: `${waitingRecords.length}개 (접수완료/상담대기)`,
+        waiting: `${waitingRecords.length}개 (상담대기)`,
         consulting: `${consultingRecords.length}개 (상담중)`,
         completed: `${completedRecords.length}개 (상담완료)`,
         reserved: `${reservedRecords.length}개 (설치예약)`,
@@ -1157,7 +1156,7 @@ async function submitToSupabase(data) {
             other_service: selectedServices.additional.join(', ') || '',
             preferred_time: data.preference || '빠른 시간에 연락드립니다',
             privacy_agreed: true,
-            status: data.status || '접수완료',
+            status: data.status || '상담대기',
             gift_amount: 70, // 기본 사은품 70만원
             ip_address: antiSpam.userIP || 'Unknown'
         };
@@ -1490,8 +1489,8 @@ async function handleFormSubmit(e) {
     if (phoneInput) formData.phone = phoneInput.value.trim();
     if (preferenceSelect) formData.preference = preferenceSelect.value;
 
-    // ✅ 상태 필드 추가 - 모든 신청은 '접수완료' 상태로 시작
-    formData.status = '접수완료';
+    // ✅ 상태 필드 추가 - 모든 신청은 '상담대기' 상태로 시작
+    formData.status = '상담대기';
 
     // 🔥 즉시 다음 페이지로 이동 (에러와 관계없이)
     console.log('🚀 즉시 다음 페이지로 이동!');

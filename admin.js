@@ -263,7 +263,6 @@ function renderApplicationsTable(applications) {
             <td>
                 <select class="status-select" onchange="updateStatus('${app.id}', this.value)" data-current="${app.status}" style="padding: 4px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; background-color: white;">
                     <option value="">상태 변경</option>
-                    <option value="접수완료" ${app.status === '접수완료' ? 'selected' : ''}>접수완료</option>
                     <option value="상담대기" ${app.status === '상담대기' ? 'selected' : ''}>상담대기</option>
                     <option value="상담중" ${app.status === '상담중' ? 'selected' : ''}>상담중</option>
                     <option value="상담완료" ${app.status === '상담완료' ? 'selected' : ''}>상담완료</option>
