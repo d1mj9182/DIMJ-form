@@ -819,9 +819,13 @@ function updateConsultationList(data) {
     }
 
     tbody.innerHTML = data.map(item => {
+        // 이름 암호화 (첫글자 + * + 마지막글자)
+        const maskedName = item.name && item.name.length > 1 ?
+            item.name[0] + '*' + item.name[item.name.length - 1] :
+            item.name || '-';
+
         // 전화번호 뒤 4자리만
-        const phoneLastFour = item.phone ?
-            item.phone.slice(-4) : '-';
+        const phoneLastFour = item.phone ? item.phone.slice(-4) : '-';
 
         // 서비스 정보 조합
         const serviceInfo = [
@@ -830,27 +834,29 @@ function updateConsultationList(data) {
             item.other_service
         ].filter(Boolean).join(' · ');
 
-        // 상태별 색상 수정
+        // 상태별 색상
         const statusColors = {
-            '상담대기': '#17a2b8',  // 청록색
-            '상담중': '#dc3545',     // 빨간색
-            '상담완료': '#007bff',   // 파란색 ← 수정됨
-            '설치예약': '#6f42c1',   // 보라색
-            '설치완료': '#fd7e14'    // 주황색
+            '상담대기': '#17a2b8',
+            '상담중': '#dc3545',
+            '상담완료': '#007bff',
+            '설치예약': '#6f42c1',
+            '설치완료': '#fd7e14'
         };
 
-        const statusColor = statusColors[item.status] || '#6c757d';
+        const statusColor = statusColors[item.status] || '#17a2b8';
 
         return `
             <tr>
-                <td>${item.name || '-'}</td>
+                <td>${maskedName}</td>
                 <td>${phoneLastFour}</td>
                 <td>${serviceInfo}</td>
                 <td>${item.preferred_time || '-'}</td>
                 <td style="color: ${statusColor}; font-weight: bold;">
                     ${item.status || '상담대기'}
                 </td>
-                <td>${item.gift_amount ? item.gift_amount + '만원' : '-'}</td>
+                <td style="font-size: 18px; font-weight: bold; color: #ffc107;">
+                    ${item.gift_amount ? item.gift_amount + '만원' : '-'}
+                </td>
             </tr>
         `;
     }).join('');

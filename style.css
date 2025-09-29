@@ -4823,3 +4823,14 @@ button.fraud-prevention-btn {
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     color: #e0e6ed;
 }
+
+/* 실시간 현황 테이블 추가 스타일 */
+#consultationTable td:last-child {
+    font-size: 18px !important;
+    font-weight: bold !important;
+    color: #ffc107 !important;
+}
+
+#consultationTable td:nth-child(5) {
+    font-weight: 600;
+}
