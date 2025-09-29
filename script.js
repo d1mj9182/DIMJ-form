@@ -898,6 +898,19 @@ function updateStatistics(data) {
 
     console.log('📊 집계 결과:', stats);
 
+    // 🔍 중복 ID 확인 디버깅
+    const idChecks = [
+        'todayApplications', 'waitingConsultation', 'consultingNow',
+        'completedConsultations', 'installReservation', 'installationsCompleted', 'cashReward'
+    ];
+
+    idChecks.forEach(id => {
+        const elements = document.querySelectorAll(`#${id}`);
+        if (elements.length > 1) {
+            console.warn(`⚠️ 중복 ID 발견: #${id} (${elements.length}개)`);
+        }
+    });
+
     // realTimeData 업데이트
     realTimeData.todayApplications = stats.today;
     realTimeData.waitingConsultation = stats.waiting;
@@ -908,10 +921,16 @@ function updateStatistics(data) {
     realTimeData.onlineConsultants = stats.installed;
     realTimeData.cashReward = stats.totalGift;
 
-    // 대시보드 업데이트
+    // 대시보드 업데이트 (이미 ID 기반으로 정확히 구현됨)
     updateDashboardStats();
 
-    console.log('✅ 통계 업데이트 완료');
+    console.log('✅ 통계 업데이트 완료:', {
+        todayApplications: realTimeData.todayApplications,
+        waitingConsultation: realTimeData.waitingConsultation,
+        consultingNow: realTimeData.consultingNow,
+        installationsCompleted: realTimeData.installationsCompleted,
+        cashReward: realTimeData.cashReward
+    });
 }
 
 function renderConsultationList() {
@@ -1514,45 +1533,9 @@ function addEntranceAnimations() {
 
 // Entrance animations will be added to main DOMContentLoaded listener
 
-// Error handling for missing elements
-function safeElementUpdate(elementId, updateFunction) {
-    const element = document.getElementById(elementId);
-    if (element) {
-        updateFunction(element);
-    } else {
-        console.warn(`Element with ID '${elementId}' not found`);
-    }
-}
+// 🚫 safeElementUpdate 함수 제거됨 - 더 이상 사용되지 않음
 
-// Enhanced error handling for all functions
-function updateStatistics() {
-    try {
-        // ✅ 임의 숫자 생성 완전 제거 - Supabase 데이터만 사용
-        // Math.random() 코드 모두 제거됨
-        
-        // Update main status board
-        safeElementUpdate('todayApplications', (el) => el.textContent = realTimeData.todayApplications);
-        safeElementUpdate('completedConsultations', (el) => el.textContent = realTimeData.installationsCompleted);
-        safeElementUpdate('cashReward', (el) => el.textContent = realTimeData.cashReward);
-        safeElementUpdate('onlineConsultants', (el) => el.textContent = realTimeData.onlineConsultants);
-        
-        // Update banner statistics
-        updateBannerStats();
-        
-    } catch (error) {
-        console.error('Error updating statistics:', error);
-    }
-}
-
-function updateBannerStats() {
-    // Update banner stats with current data
-    const bannerStats = document.querySelectorAll('.banner-stat .stat-number');
-    if (bannerStats.length >= 3) {
-        bannerStats[0].textContent = realTimeData.todayApplications; // 오늘 신청
-        bannerStats[1].textContent = realTimeData.cashReward + '만원'; // 누적 사은품
-        bannerStats[2].textContent = realTimeData.onlineConsultants + '명'; // 상담사 대기
-    }
-}
+// 🚫 중복 함수 제거됨 - updateStatistics(data)와 updateBannerStats는 loadRealtimeData에서 처리
 
 // Top Button Functionality
 function scrollToTop() {
