@@ -420,8 +420,8 @@ document.addEventListener('DOMContentLoaded', function() {
     updateLiveTime();
     renderConsultationList();
     setupEventListeners();
-    console.log('🚀 페이지 로드 완료, 즉시 API 호출 실행'); // 디버깅 로그
-    updateConsultationList(); // 즉시 API 호출
+    console.log('🚀 페이지 로드 완료, loadRealtimeData로 통합 관리'); // 디버깅 로그
+    // 🚫 updateConsultationList() 제거 - loadRealtimeData에서 처리
     startRealTimeUpdates();
     addInteractionTracking();
     cleanOldSubmitCounts();
@@ -632,34 +632,23 @@ function updateStepIndicator() {
 function startRealTimeUpdates() {
     console.log('✅ 실시간 업데이트 타이머 시작됨'); // 디버깅 로그
 
-    // ✅ Supabase 실제 데이터 기반 통계 업데이트 (30초마다)
-    setInterval(() => {
-        updateStatistics();
-    }, 30000);
+    // 🚫 중복 제거: loadRealtimeData가 이미 5초마다 실행하므로 개별 업데이트는 제거
+    console.log('⚠️ 기존 개별 업데이트 타이머들 제거됨 - loadRealtimeData로 통합');
 
-    // 즉시 한 번 실행
-    updateStatistics();
-
-    // Update consultation list every 8 seconds
-    setInterval(() => {
-        updateConsultationList();
-    }, 8000);
-
-    // Update live time every second
+    // Update live time every second (시간 표시만 유지)
     setInterval(() => {
         updateLiveTime();
     }, 1000);
 
-    // Update gift amounts from Supabase every 30 seconds
-    setInterval(() => {
-        updateGiftAmountFromSupabase();
-    }, 30000);
-
-    // Initial gift amount update
-    updateGiftAmountFromSupabase();
+    // 🚫 updateConsultationList, updateStatistics는 loadRealtimeData에서 처리
+    // 🚫 updateGiftAmountFromSupabase도 Supabase 데이터에서 처리
 }
 
-async function updateStatistics() {
+async function updateStatistics_DEPRECATED() {
+    // 🚫 DEPRECATED: loadRealtimeData로 통합됨
+    console.log('⚠️ 비활성화된 함수 - loadRealtimeData 사용');
+    return;
+
     // Supabase에서 실제 데이터를 가져와서 통계 업데이트
     try {
         console.log('📊 Supabase 데이터 가져오는 중...');
@@ -1241,7 +1230,11 @@ function getSelectedProvider() {
 }
 
 // Supabase에서 사은품 금액 총합 가져오기
-async function updateGiftAmountFromSupabase() {
+async function updateGiftAmountFromSupabase_DEPRECATED() {
+    // 🚫 DEPRECATED: loadRealtimeData에서 gift_amount 필드로 처리됨
+    console.log('⚠️ 비활성화된 함수 - loadRealtimeData 사용');
+    return;
+
     try {
         // 프록시 서버를 통해 Supabase 데이터 조회
         const response = await fetch(`https://dimj-form-proxy.vercel.app/api/supabase`, {
