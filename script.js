@@ -860,9 +860,9 @@ function updateConsultationList(data) {
                         </span>
                     </div>
                     <div style="
-                        background: ${statusColor};
-                        color: #fff;
+                        color: ${statusColor};
                         padding: 5px 12px;
+                        border: 2px solid ${statusColor};
                         border-radius: 15px;
                         font-weight: bold;
                     ">
