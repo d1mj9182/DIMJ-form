@@ -830,17 +830,13 @@ function updateConsultationList(data) {
         // 📞 연락처 마스킹 적용
         const maskedPhone = maskPhone(item.phone);
 
-        // 🎨 상태별 색상 클래스
-        const statusClass = getStatusClass(item.status);
-        const displayStatus = item.status || '상담대기';
-
         return `
             <tr>
                 <td>${item.name || '-'}</td>
                 <td>${maskedPhone}</td>
                 <td>${serviceInfo}</td>
                 <td>${item.preferred_time || '-'}</td>
-                <td><span class="badge ${statusClass}">${displayStatus}</span></td>
+                <td>${renderStatus(item.status)}</td>
                 <td>${item.gift_amount ? item.gift_amount + '만원' : '-'}</td>
             </tr>
         `;
@@ -925,25 +921,45 @@ function updateStatistics(data) {
     });
 }
 
-// 📞 연락처 마스킹 함수 ("010-1234-5678" → "010-****-5678")
+// 📞 연락처 마스킹 함수 ("010-7171-6361" → "010-****-6361")
 function maskPhone(phone) {
     if (!phone) return '-';
-    return String(phone).replace(
-        /(\d{3})[-.\s]?(\d{3,4})[-.\s]?(\d{4})/,
-        (_, a, _b, c) => `${a}-****-${c}`
-    );
+    return String(phone).replace(/(\d{3})-(\d{4})-(\d{4})/, "$1-****-$3");
 }
 
-// 상태별 색상 클래스 함수
+// 🎨 상태에 따라 뱃지 출력 (상단 박스 색상과 동일)
+function renderStatus(status) {
+    switch(status) {
+        case "상담대기":
+        case "상담 대기":
+            return `<span class="status-badge status-waiting">상담 대기</span>`;
+        case "상담중":
+        case "상담 중":
+            return `<span class="status-badge status-progress">상담 중</span>`;
+        case "상담완료":
+        case "상담 완료":
+            return `<span class="status-badge status-done">상담 완료</span>`;
+        case "설치예약":
+        case "설치 예약":
+            return `<span class="status-badge status-reserve">설치 예약</span>`;
+        case "설치완료":
+        case "설치 완료":
+            return `<span class="status-badge status-finish">설치 완료</span>`;
+        default:
+            return `<span class="status-badge status-waiting">${status || '상담 대기'}</span>`;
+    }
+}
+
+// 상태별 색상 클래스 함수 (하위 호환용)
 function getStatusClass(status) {
     const statusMap = {
-        '상담대기': 'status-wait',
-        '상담중': 'status-live',
+        '상담대기': 'status-waiting',
+        '상담중': 'status-progress',
         '상담완료': 'status-done',
-        '설치예약': 'status-resv',
-        '설치완료': 'status-fin'
+        '설치예약': 'status-reserve',
+        '설치완료': 'status-finish'
     };
-    return statusMap[status] || 'status-wait';
+    return statusMap[status] || 'status-waiting';
 }
 
 // 🚫 renderConsultationList 함수 제거됨 - 테이블 형태의 updateConsultationList 사용

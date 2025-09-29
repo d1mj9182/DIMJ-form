@@ -4765,48 +4765,37 @@ button.fraud-prevention-btn {
     gap: 0 !important;
 }
 
-/* 📱 상태 배지 스타일 */
-.badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.125rem 0.5rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    border: 1px solid transparent;
+/* 🎨 상태 배지 스타일 (상단 박스 색상과 동일) */
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #fff;
     white-space: nowrap;
+    display: inline-block;
 }
 
-/* 🎨 상태별 색상 - 대시보드 카드와 톤 맞춤 */
-.status-wait {
-    background: rgba(13,148,136,.15);
-    color: #5eead4;
-    border-color: rgba(13,148,136,.4);
-}  /* teal - 상담대기 */
+/* 상태별 색상 - 상단 대시보드 박스와 정확히 동일 */
+.status-waiting {
+    background-color: #0891b2;
+}   /* 상담 대기 (청록) */
 
-.status-live {
-    background: rgba(239,68,68,.15);
-    color: #fca5a5;
-    border-color: rgba(239,68,68,.4);
-}  /* red - 상담중 */
+.status-progress {
+    background-color: #dc2626;
+} /* 상담 중 (빨강) */
 
 .status-done {
-    background: rgba(37,99,235,.15);
-    color: #93c5fd;
-    border-color: rgba(37,99,235,.4);
-}  /* blue - 상담완료 */
+    background-color: #2563eb;
+}     /* 상담 완료 (파랑) */
 
-.status-resv {
-    background: rgba(124,58,237,.15);
-    color: #c4b5fd;
-    border-color: rgba(124,58,237,.4);
-} /* violet - 설치예약 */
+.status-reserve {
+    background-color: #9333ea;
+}  /* 설치 예약 (보라) */
 
-.status-fin  {
-    background: rgba(245,158,11,.20);
-    color: #fde68a;
-    border-color: rgba(245,158,11,.4);
-}  /* amber - 설치완료 */
+.status-finish {
+    background-color: #f59e0b;
+}   /* 설치 완료 (주황) */
 
 /* 📊 테이블 스타일 개선 */
 #consultationTable {
