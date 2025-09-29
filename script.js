@@ -812,15 +812,22 @@ async function loadRealtimeData() {
 
 // script.js에서 updateConsultationList 함수 찾아서 교체
 function updateConsultationList(data) {
-    // consultationList ID로 찾기 (consultation-list-container가 아님)
-    const container = document.getElementById('consultationList');
+    // 여러 선택자를 시도하여 안전하게 요소 찾기
+    const container = document.getElementById('consultationList') ||
+                     document.querySelector('.consultation-list') ||
+                     document.querySelector('.consultation-list-container');
+
     if (!container) {
-        console.error('consultationList 요소를 찾을 수 없습니다');
+        console.error('상담 목록 컨테이너를 찾을 수 없습니다. 사용 가능한 선택자:', {
+            byId: !!document.getElementById('consultationList'),
+            byClass: !!document.querySelector('.consultation-list'),
+            byContainer: !!document.querySelector('.consultation-list-container')
+        });
         return;
     }
 
     if (!data || data.length === 0) {
-        container.innerHTML = '';
+        container.innerHTML = '<div style="text-align: center; padding: 20px; color: #8fb6c4;">접수 대기 중</div>';
         return;
     }
 
