@@ -810,75 +810,67 @@ async function loadRealtimeData() {
     }
 }
 
-// updateConsultationList 함수 - 테이블 형태 유지
+// updateConsultationList 함수 - 카드 형태
 function updateConsultationList(data) {
     const container = document.querySelector('.consultation-list-container');
 
-    // 테이블 전체 HTML 생성
-    let tableHTML = `
-        <table id="consultationTable" style="width: 100%; margin-top: 20px;">
-            <thead>
-                <tr style="background: rgba(52, 73, 94, 0.5);">
-                    <th style="padding: 12px; color: #8fb6c4;">고객명</th>
-                    <th style="padding: 12px; color: #8fb6c4;">연락처</th>
-                    <th style="padding: 12px; color: #8fb6c4;">서비스 정보</th>
-                    <th style="padding: 12px; color: #8fb6c4;">선호시간</th>
-                    <th style="padding: 12px; color: #8fb6c4;">상태</th>
-                    <th style="padding: 12px; color: #8fb6c4;">사은품</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
-
     if (!data || data.length === 0) {
-        tableHTML += '<tr><td colspan="6" style="text-align: center; padding: 20px;">접수 대기 중</td></tr>';
-    } else {
-        data.forEach(item => {
-            // 이름 마스킹
-            const maskedName = item.name && item.name.length > 1 ?
-                item.name[0] + '*' + item.name[item.name.length - 1] :
-                item.name || '-';
-
-            // 전화번호 뒤 4자리
-            const phoneLastFour = item.phone ? item.phone.slice(-4) : '-';
-
-            // 서비스 정보
-            const serviceInfo = [
-                item.carrier,
-                item.main_service,
-                item.other_service
-            ].filter(Boolean).join(' · ');
-
-            // 상태 색상
-            const statusColors = {
-                '상담대기': '#17a2b8',
-                '상담중': '#dc3545',
-                '상담완료': '#007bff',
-                '설치예약': '#6f42c1',
-                '설치완료': '#fd7e14'
-            };
-
-            const statusColor = statusColors[item.status] || '#17a2b8';
-
-            tableHTML += `
-                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                    <td style="padding: 10px; text-align: center; color: #e0e6ed;">${maskedName}</td>
-                    <td style="padding: 10px; text-align: center; color: #e0e6ed;">${phoneLastFour}</td>
-                    <td style="padding: 10px; text-align: center; color: #e0e6ed;">${serviceInfo}</td>
-                    <td style="padding: 10px; text-align: center; color: #e0e6ed;">${item.preferred_time || '-'}</td>
-                    <td style="padding: 10px; text-align: center; color: ${statusColor}; font-weight: bold;">
-                        ${item.status || '상담대기'}
-                    </td>
-                    <td style="padding: 10px; text-align: center; font-size: 18px; font-weight: bold; color: #ffc107;">
-                        ${item.gift_amount ? item.gift_amount + '만원' : '-'}
-                    </td>
-                </tr>
-            `;
-        });
+        container.innerHTML = '<div style="text-align: center; padding: 20px; color: #8fb6c4;">접수 대기 중</div>';
+        return;
     }
 
-    tableHTML += '</tbody></table>';
-    container.innerHTML = tableHTML;
+    container.innerHTML = data.map(item => {
+        // 이름 마스킹 (첫글자○○)
+        const maskedName = item.name ? item.name[0] + '○○' : '○○○';
+
+        // 전화번호 뒤 4자리
+        const phoneLastFour = item.phone ? item.phone.slice(-4) : '0000';
+
+        // 서비스 정보 조합
+        const serviceInfo = [
+            item.carrier,
+            item.main_service,
+            item.other_service
+        ].filter(Boolean).join(' · ');
+
+        // 상태 색상
+        const statusColors = {
+            '상담대기': '#17a2b8',
+            '상담중': '#dc3545',
+            '상담완료': '#007bff',
+            '설치예약': '#6f42c1',
+            '설치완료': '#fd7e14'
+        };
+
+        const statusColor = statusColors[item.status] || '#17a2b8';
+
+        return `
+            <div style="
+                background: rgba(30, 40, 50, 0.8);
+                border: 1px solid rgba(255,255,255,0.1);
+                border-radius: 10px;
+                padding: 15px 20px;
+                margin-bottom: 10px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            ">
+                <div style="flex: 1;">
+                    <span style="color: #fff; font-weight: bold;">${maskedName} 고객님</span>
+                </div>
+                <div style="flex: 2; text-align: center;">
+                    <span style="color: #8fb6c4;">연락처: ${phoneLastFour} | ${serviceInfo} | ${item.preferred_time || '빠른 시간'} 연락드립니다</span>
+                </div>
+                <div style="flex: 1; text-align: right;">
+                    <span style="color: ${statusColor}; font-weight: bold; margin-right: 15px;">${item.status}</span>
+                    <span style="color: #ffc107; font-weight: bold; font-size: 16px;">${item.gift_amount ? item.gift_amount + '만원' : ''}</span>
+                </div>
+                <div style="color: #6c757d; font-size: 12px;">
+                    신청일: ${new Date(item.created_at).toLocaleDateString('ko-KR').slice(5)}
+                </div>
+            </div>
+        `;
+    }).join('');
 }
 
 // 🚫 중복 함수 제거됨 - 단일 updateConsultationList 함수 사용
