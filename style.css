@@ -4764,3 +4764,79 @@ button.fraud-prevention-btn {
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5) !important;
     gap: 0 !important;
 }
+
+/* 📱 상태 배지 스타일 */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.125rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+
+/* 🎨 상태별 색상 - 대시보드 카드와 톤 맞춤 */
+.status-wait {
+    background: rgba(13,148,136,.15);
+    color: #5eead4;
+    border-color: rgba(13,148,136,.4);
+}  /* teal - 상담대기 */
+
+.status-live {
+    background: rgba(239,68,68,.15);
+    color: #fca5a5;
+    border-color: rgba(239,68,68,.4);
+}  /* red - 상담중 */
+
+.status-done {
+    background: rgba(37,99,235,.15);
+    color: #93c5fd;
+    border-color: rgba(37,99,235,.4);
+}  /* blue - 상담완료 */
+
+.status-resv {
+    background: rgba(124,58,237,.15);
+    color: #c4b5fd;
+    border-color: rgba(124,58,237,.4);
+} /* violet - 설치예약 */
+
+.status-fin  {
+    background: rgba(245,158,11,.20);
+    color: #fde68a;
+    border-color: rgba(245,158,11,.4);
+}  /* amber - 설치완료 */
+
+/* 📊 테이블 스타일 개선 */
+#consultationTable {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+#consultationTable th {
+    background: linear-gradient(135deg, #1e293b, #475569);
+    color: white;
+    padding: 1rem 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+#consultationTable td {
+    padding: 0.875rem 0.75rem;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    font-size: 0.875rem;
+}
+
+#consultationTable tr:hover {
+    background: rgba(59, 130, 246, 0.05);
+}
+
+#consultationTable tr:last-child td {
+    border-bottom: none;
+}

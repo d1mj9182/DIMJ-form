@@ -418,7 +418,8 @@ document.addEventListener('DOMContentLoaded', function() {
     updateProgressBar();
     updateStepIndicator();
     updateLiveTime();
-    renderConsultationList();
+    // 테이블 초기화 (빈 상태)
+    updateConsultationList([]);
     setupEventListeners();
     console.log('🚀 페이지 로드 완료, loadRealtimeData로 통합 관리'); // 디버깅 로그
     // 🚫 updateConsultationList() 제거 - loadRealtimeData에서 처리
@@ -809,85 +810,9 @@ async function loadRealtimeData() {
     }
 }
 
-function updateConsultationList(applications) {
-    console.log('🔄 상담 목록 업데이트 시작...', applications ? applications.length + '개 데이터' : '데이터 없음');
-
-    // 🎯 핵심: 명확한 데이터 존재 여부 판단
-    const hasData = applications && Array.isArray(applications) && applications.length > 0;
-    console.log('📊 데이터 존재 여부:', hasData, 'applications:', applications);
-
-    if (!hasData) {
-        console.log('📭 데이터 없음 - 기본 상태 유지');
-        // 데이터가 없을 때는 현재 상태를 유지하거나 최소한의 업데이트만
-        realTimeData.recentConsultations = [];
-        renderConsultationList();
-        return;
-    }
-
-    // ✅ 데이터가 있을 때만 상담 목록 처리
-    console.log('📊 데이터 처리 시작:', applications.length, '개 항목');
-
-    // 🔥 영문 필드명 직접 접근
-    function getFieldValue(record, fieldName) {
-        return record[fieldName];
-    }
-
-    // 상담 목록 변환 (최대 7개) - 모든 정보 포함
-    const consultations = applications.map((record, index) => {
-        // 📝 모든 서비스 정보 조합
-        const serviceInfo = [
-            getFieldValue(record, 'carrier'),
-            getFieldValue(record, 'main_service'),
-            getFieldValue(record, 'other_service')
-        ].filter(Boolean).join(' / ');
-
-        console.log(`📊 고객 ${index + 1} 데이터:`, {
-            name: getFieldValue(record, 'name'),
-            phone: getFieldValue(record, 'phone'),
-            carrier: getFieldValue(record, 'carrier'),
-            main_service: getFieldValue(record, 'main_service'),
-            other_service: getFieldValue(record, 'other_service'),
-            preferred_time: getFieldValue(record, 'preferred_time'),
-            status: getFieldValue(record, 'status'),
-            gift_amount: getFieldValue(record, 'gift_amount')
-        });
-
-        return {
-            id: record.id || `record_${index}`,
-            name: getFieldValue(record, 'name') ? getFieldValue(record, 'name').replace(/(.{1})/g, '$1○').slice(0, 3) + '○' : '익명○○',
-            phone: getFieldValue(record, 'phone') || '-',
-            carrier: getFieldValue(record, 'carrier') || '-',
-            service: serviceInfo || '상담',
-            main_service: getFieldValue(record, 'main_service') || '-',
-            other_service: getFieldValue(record, 'other_service') || '',
-            preferred_time: getFieldValue(record, 'preferred_time') || '-',
-            status: getFieldValue(record, 'status') || '상담대기',
-            amount: getFieldValue(record, 'gift_amount') || 0,
-            time: getFieldValue(record, 'preferred_time') || '실시간',
-            date: getFieldValue(record, 'created_at') ? new Date(getFieldValue(record, 'created_at')).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-            color: ['green', 'blue', 'purple', 'orange'][index % 4]
-        };
-    }).reverse().slice(0, 7);
-
-    console.log('📋 변환된 상담목록:', consultations.length, '개');
-
-    // realTimeData 업데이트
-    realTimeData.recentConsultations = consultations;
-
-    // 화면 렌더링
-    renderConsultationList();
-
-    console.log('✅ 상담 목록 업데이트 완료');
-}
-
-// 📝 테이블 형태로 표시하는 대안 함수 (사용자 요청시)
-function updateConsultationListTable(data) {
+// updateConsultationList 함수 - 중간점 사용
+function updateConsultationList(data) {
     const tbody = document.querySelector('#consultationTable tbody');
-
-    if (!tbody) {
-        console.log('⚠️ 테이블 구조가 없습니다. 카드 형태를 유지합니다.');
-        return updateConsultationList(data);
-    }
 
     if (!data || data.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6">접수 대기 중</td></tr>';
@@ -895,30 +820,34 @@ function updateConsultationListTable(data) {
     }
 
     tbody.innerHTML = data.map(item => {
-        // 상태별 색상 클래스
-        const statusClass = getStatusClass(item.status);
-
-        // 전체 서비스 정보 조합 (SK / 인터넷+IPTV / 유심)
+        // 중간점으로 구분
         const serviceInfo = [
             item.carrier,
             item.main_service,
             item.other_service
-        ].filter(Boolean).join(' / ');
+        ].filter(Boolean).join(' · ');  // ← 중간점 사용
 
-        console.log('📊 실제 상태 값:', item.status); // 상태 확인용
+        // 📞 연락처 마스킹 적용
+        const maskedPhone = maskPhone(item.phone);
+
+        // 🎨 상태별 색상 클래스
+        const statusClass = getStatusClass(item.status);
+        const displayStatus = item.status || '상담대기';
 
         return `
-            <tr class="${statusClass}">
+            <tr>
                 <td>${item.name || '-'}</td>
-                <td>${item.phone || '-'}</td>
-                <td>${serviceInfo || '-'}</td>
+                <td>${maskedPhone}</td>
+                <td>${serviceInfo}</td>
                 <td>${item.preferred_time || '-'}</td>
-                <td>${item.status || '상담대기'}</td>
+                <td><span class="badge ${statusClass}">${displayStatus}</span></td>
                 <td>${item.gift_amount ? item.gift_amount + '만원' : '-'}</td>
             </tr>
         `;
     }).join('');
 }
+
+// 🚫 중복 함수 제거됨 - 단일 updateConsultationList 함수 사용
 
 // 통계 업데이트 함수 - 완전 재작성
 function updateStatistics(data) {
@@ -996,62 +925,28 @@ function updateStatistics(data) {
     });
 }
 
+// 📞 연락처 마스킹 함수 ("010-1234-5678" → "010-****-5678")
+function maskPhone(phone) {
+    if (!phone) return '-';
+    return String(phone).replace(
+        /(\d{3})[-.\s]?(\d{3,4})[-.\s]?(\d{4})/,
+        (_, a, _b, c) => `${a}-****-${c}`
+    );
+}
+
 // 상태별 색상 클래스 함수
 function getStatusClass(status) {
     const statusMap = {
-        '상담대기': 'waiting',
-        '상담중': 'consulting',
-        '상담완료': 'completed',
-        '설치예약': 'scheduled',
-        '설치완료': 'installed'
+        '상담대기': 'status-wait',
+        '상담중': 'status-live',
+        '상담완료': 'status-done',
+        '설치예약': 'status-resv',
+        '설치완료': 'status-fin'
     };
-    return statusMap[status] || 'waiting';
+    return statusMap[status] || 'status-wait';
 }
 
-function renderConsultationList() {
-    const consultationList = document.getElementById('consultationList');
-    if (!consultationList) return;
-
-    // Supabase에 데이터가 없을 경우 안내 메시지
-    if (realTimeData.recentConsultations.length === 0) {
-        consultationList.innerHTML = `
-            <div class="consultation-item empty-state">
-                <div class="consultation-left">
-                    <div class="consultation-info">
-                        <h4 class="consultation-name">접수 대기 중</h4>
-                        <p class="consultation-service">신규 접수를 기다리고 있습니다</p>
-                        <p class="consultation-date">실시간 연동 중</p>
-                    </div>
-                </div>
-                <div class="consultation-right">
-                    <p class="consultation-amount">-</p>
-                    <p class="consultation-time">대기</p>
-                </div>
-            </div>
-        `;
-        return;
-    }
-
-    consultationList.innerHTML = realTimeData.recentConsultations.map((consultation, index) => `
-        <div class="consultation-item ${consultation.color} ${index === 0 ? 'new' : ''}">
-            <div class="consultation-left">
-                <div class="consultation-dot ${consultation.color}"></div>
-                <div class="consultation-info">
-                    <h4 class="consultation-name ${consultation.color}">${consultation.name} 고객님</h4>
-                    <p class="consultation-service">${consultation.service} | ${consultation.status}</p>
-                    <p class="consultation-details">
-                        연락처: ${consultation.phone} | 선호시간: ${consultation.preferred_time}
-                    </p>
-                    <p class="consultation-date">신청일: ${formatDate(consultation.date)}</p>
-                </div>
-            </div>
-            <div class="consultation-right">
-                <p class="consultation-amount ${consultation.color}">현금 ${consultation.amount}만원</p>
-                <p class="consultation-time">${consultation.time}</p>
-            </div>
-        </div>
-    `).join('');
-}
+// 🚫 renderConsultationList 함수 제거됨 - 테이블 형태의 updateConsultationList 사용
 
 
 function formatDate(dateString) {
