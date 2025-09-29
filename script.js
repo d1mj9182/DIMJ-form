@@ -832,15 +832,38 @@ function updateConsultationList(applications) {
         return record[fieldName];
     }
 
-    // 상담 목록 변환 (최대 7개)
+    // 상담 목록 변환 (최대 7개) - 모든 정보 포함
     const consultations = applications.map((record, index) => {
+        // 📝 모든 서비스 정보 조합
+        const serviceInfo = [
+            getFieldValue(record, 'carrier'),
+            getFieldValue(record, 'main_service'),
+            getFieldValue(record, 'other_service')
+        ].filter(Boolean).join(' / ');
+
+        console.log(`📊 고객 ${index + 1} 데이터:`, {
+            name: getFieldValue(record, 'name'),
+            phone: getFieldValue(record, 'phone'),
+            carrier: getFieldValue(record, 'carrier'),
+            main_service: getFieldValue(record, 'main_service'),
+            other_service: getFieldValue(record, 'other_service'),
+            preferred_time: getFieldValue(record, 'preferred_time'),
+            status: getFieldValue(record, 'status'),
+            gift_amount: getFieldValue(record, 'gift_amount')
+        });
+
         return {
             id: record.id || `record_${index}`,
             name: getFieldValue(record, 'name') ? getFieldValue(record, 'name').replace(/(.{1})/g, '$1○').slice(0, 3) + '○' : '익명○○',
-            service: getFieldValue(record, 'main_service') || '상담',
+            phone: getFieldValue(record, 'phone') || '-',
+            carrier: getFieldValue(record, 'carrier') || '-',
+            service: serviceInfo || '상담',
+            main_service: getFieldValue(record, 'main_service') || '-',
+            other_service: getFieldValue(record, 'other_service') || '',
+            preferred_time: getFieldValue(record, 'preferred_time') || '-',
             status: getFieldValue(record, 'status') || '상담대기',
             amount: getFieldValue(record, 'gift_amount') || 0,
-            time: '실시간',
+            time: getFieldValue(record, 'preferred_time') || '실시간',
             date: getFieldValue(record, 'created_at') ? new Date(getFieldValue(record, 'created_at')).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
             color: ['green', 'blue', 'purple', 'orange'][index % 4]
         };
@@ -855,6 +878,46 @@ function updateConsultationList(applications) {
     renderConsultationList();
 
     console.log('✅ 상담 목록 업데이트 완료');
+}
+
+// 📝 테이블 형태로 표시하는 대안 함수 (사용자 요청시)
+function updateConsultationListTable(data) {
+    const tbody = document.querySelector('#consultationTable tbody');
+
+    if (!tbody) {
+        console.log('⚠️ 테이블 구조가 없습니다. 카드 형태를 유지합니다.');
+        return updateConsultationList(data);
+    }
+
+    if (!data || data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6">접수 대기 중</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = data.map(item => {
+        // 상태별 색상 클래스
+        const statusClass = getStatusClass(item.status);
+
+        // 전체 서비스 정보 조합 (SK / 인터넷+IPTV / 유심)
+        const serviceInfo = [
+            item.carrier,
+            item.main_service,
+            item.other_service
+        ].filter(Boolean).join(' / ');
+
+        console.log('📊 실제 상태 값:', item.status); // 상태 확인용
+
+        return `
+            <tr class="${statusClass}">
+                <td>${item.name || '-'}</td>
+                <td>${item.phone || '-'}</td>
+                <td>${serviceInfo || '-'}</td>
+                <td>${item.preferred_time || '-'}</td>
+                <td>${item.status || '상담대기'}</td>
+                <td>${item.gift_amount ? item.gift_amount + '만원' : '-'}</td>
+            </tr>
+        `;
+    }).join('');
 }
 
 // 통계 업데이트 함수 - 완전 재작성
@@ -933,6 +996,18 @@ function updateStatistics(data) {
     });
 }
 
+// 상태별 색상 클래스 함수
+function getStatusClass(status) {
+    const statusMap = {
+        '상담대기': 'waiting',
+        '상담중': 'consulting',
+        '상담완료': 'completed',
+        '설치예약': 'scheduled',
+        '설치완료': 'installed'
+    };
+    return statusMap[status] || 'waiting';
+}
+
 function renderConsultationList() {
     const consultationList = document.getElementById('consultationList');
     if (!consultationList) return;
@@ -963,7 +1038,10 @@ function renderConsultationList() {
                 <div class="consultation-dot ${consultation.color}"></div>
                 <div class="consultation-info">
                     <h4 class="consultation-name ${consultation.color}">${consultation.name} 고객님</h4>
-                    <p class="consultation-service">${consultation.service} ${consultation.status}</p>
+                    <p class="consultation-service">${consultation.service} | ${consultation.status}</p>
+                    <p class="consultation-details">
+                        연락처: ${consultation.phone} | 선호시간: ${consultation.preferred_time}
+                    </p>
                     <p class="consultation-date">신청일: ${formatDate(consultation.date)}</p>
                 </div>
             </div>
