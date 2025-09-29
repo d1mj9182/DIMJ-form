@@ -392,9 +392,9 @@ async function updateStatus(id, newStatus) {
         return;
     }
 
-    try {
-        console.log('📝 상태 변경 시작:', { id, newStatus });
+    console.log('📝 상태 변경:', { id, newStatus });
 
+    try {
         const response = await fetch(PROXY_URL, {
             method: 'PATCH',
             headers: {
@@ -409,18 +409,17 @@ async function updateStatus(id, newStatus) {
         });
 
         const result = await response.json();
-        console.log('📝 상태 변경 응답:', result);
+        console.log('📝 응답:', result);
 
         if (result.success) {
             console.log('✅ 상태 변경 성공');
-            alert(`상태가 "${newStatus}"로 변경되었습니다.`);
             loadApplications(); // 목록 새로고침
         } else {
             console.error('❌ 상태 변경 실패:', result.error);
-            alert('상태 변경 실패: ' + result.error);
+            alert('상태 변경 실패: ' + (result.error || '알 수 없는 오류'));
         }
     } catch (error) {
-        console.error('❌ 상태 변경 오류:', error);
+        console.error('❌ 상태 변경 실패:', error);
         alert('상태 변경 중 오류가 발생했습니다.');
     }
 }
@@ -439,9 +438,9 @@ async function updateGiftAmount(id, amount) {
         return;
     }
 
-    try {
-        console.log('💰 사은품 금액 변경 시작:', { id, amount: numericAmount });
+    console.log('💰 사은품 금액 변경:', { id, amount: numericAmount });
 
+    try {
         const response = await fetch(PROXY_URL, {
             method: 'PATCH',
             headers: {
@@ -456,18 +455,17 @@ async function updateGiftAmount(id, amount) {
         });
 
         const result = await response.json();
-        console.log('💰 사은품 금액 변경 응답:', result);
+        console.log('💰 응답:', result);
 
         if (result.success) {
             console.log('✅ 사은품 금액 변경 성공');
-            alert(`사은품 금액이 ${numericAmount}만원으로 변경되었습니다.`);
             loadApplications(); // 목록 새로고침
         } else {
             console.error('❌ 사은품 금액 변경 실패:', result.error);
-            alert('사은품 금액 변경 실패: ' + result.error);
+            alert('사은품 금액 변경 실패: ' + (result.error || '알 수 없는 오류'));
         }
     } catch (error) {
-        console.error('❌ 사은품 금액 변경 오류:', error);
+        console.error('❌ 사은품 금액 변경 실패:', error);
         alert('사은품 금액 변경 중 오류가 발생했습니다.');
     }
 }
