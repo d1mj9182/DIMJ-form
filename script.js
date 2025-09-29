@@ -810,33 +810,46 @@ async function loadRealtimeData() {
     }
 }
 
-// updateConsultationList 함수 - 중간점 사용
 function updateConsultationList(data) {
     const tbody = document.querySelector('#consultationTable tbody');
 
     if (!data || data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6">접수 대기 중</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">접수 대기 중</td></tr>';
         return;
     }
 
     tbody.innerHTML = data.map(item => {
-        // 중간점으로 구분
+        // 전화번호 뒤 4자리만
+        const phoneLastFour = item.phone ?
+            item.phone.slice(-4) : '-';
+
+        // 서비스 정보 조합
         const serviceInfo = [
             item.carrier,
             item.main_service,
             item.other_service
-        ].filter(Boolean).join(' · ');  // ← 중간점 사용
+        ].filter(Boolean).join(' · ');
 
-        // 📞 연락처 마스킹 적용
-        const maskedPhone = maskPhone(item.phone);
+        // 상태별 색상 수정
+        const statusColors = {
+            '상담대기': '#17a2b8',  // 청록색
+            '상담중': '#dc3545',     // 빨간색
+            '상담완료': '#007bff',   // 파란색 ← 수정됨
+            '설치예약': '#6f42c1',   // 보라색
+            '설치완료': '#fd7e14'    // 주황색
+        };
+
+        const statusColor = statusColors[item.status] || '#6c757d';
 
         return `
             <tr>
                 <td>${item.name || '-'}</td>
-                <td>${maskedPhone}</td>
+                <td>${phoneLastFour}</td>
                 <td>${serviceInfo}</td>
                 <td>${item.preferred_time || '-'}</td>
-                <td>${renderStatus(item.status)}</td>
+                <td style="color: ${statusColor}; font-weight: bold;">
+                    ${item.status || '상담대기'}
+                </td>
                 <td>${item.gift_amount ? item.gift_amount + '만원' : '-'}</td>
             </tr>
         `;

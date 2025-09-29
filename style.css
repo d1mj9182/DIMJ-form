@@ -4797,35 +4797,29 @@ button.fraud-prevention-btn {
     background-color: #f59e0b;
 }   /* 설치 완료 (주황) */
 
-/* 📊 테이블 스타일 개선 */
+/* 실시간 현황 테이블 스타일 */
 #consultationTable {
     width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
     border-collapse: collapse;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+#consultationTable thead {
+    background: rgba(52, 73, 94, 0.5);
 }
 
 #consultationTable th {
-    background: linear-gradient(135deg, #1e293b, #475569);
-    color: white;
-    padding: 1rem 0.75rem;
-    text-align: left;
-    font-weight: 600;
-    font-size: 0.875rem;
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: #8fb6c4;
+    font-weight: 500;
 }
 
 #consultationTable td {
-    padding: 0.875rem 0.75rem;
-    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
-    font-size: 0.875rem;
-}
-
-#consultationTable tr:hover {
-    background: rgba(59, 130, 246, 0.05);
-}
-
-#consultationTable tr:last-child td {
-    border-bottom: none;
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: #e0e6ed;
 }
