@@ -264,11 +264,17 @@ function renderApplicationsTable(applications) {
                 <select class="status-select" onchange="updateStatus('${app.id}', this.value)" data-current="${app.status}" style="padding: 4px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; background-color: white;">
                     <option value="">상태 변경</option>
                     <option value="접수완료" ${app.status === '접수완료' ? 'selected' : ''}>접수완료</option>
+                    <option value="상담대기" ${app.status === '상담대기' ? 'selected' : ''}>상담대기</option>
                     <option value="상담중" ${app.status === '상담중' ? 'selected' : ''}>상담중</option>
                     <option value="상담완료" ${app.status === '상담완료' ? 'selected' : ''}>상담완료</option>
                     <option value="설치예약" ${app.status === '설치예약' ? 'selected' : ''}>설치예약</option>
                     <option value="설치완료" ${app.status === '설치완료' ? 'selected' : ''}>설치완료</option>
                 </select>
+            </td>
+            <td>
+                <input type="number" value="${app.giftAmount || ''}" placeholder="사은품(만원)"
+                       onchange="updateGiftAmount('${app.id}', this.value)"
+                       style="width: 80px; padding: 4px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;">
             </td>
             <td>
                 <button class="action-btn delete" onclick="deleteApplication('${app.id}')">
@@ -416,6 +422,53 @@ async function updateStatus(id, newStatus) {
     } catch (error) {
         console.error('❌ 상태 변경 오류:', error);
         alert('상태 변경 중 오류가 발생했습니다.');
+    }
+}
+
+// 사은품 금액 업데이트 함수
+async function updateGiftAmount(id, amount) {
+    // 빈 값이나 유효하지 않은 숫자인 경우 처리
+    if (!amount || amount === '') {
+        console.log('⚠️ 빈 사은품 금액 - 업데이트 취소');
+        return;
+    }
+
+    const numericAmount = parseInt(amount);
+    if (isNaN(numericAmount)) {
+        alert('올바른 숫자를 입력해주세요.');
+        return;
+    }
+
+    try {
+        console.log('💰 사은품 금액 변경 시작:', { id, amount: numericAmount });
+
+        const response = await fetch(PROXY_URL, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': SUPABASE_ANON_KEY
+            },
+            body: JSON.stringify({
+                id: id,
+                gift_amount: numericAmount,
+                table: 'consultations'
+            })
+        });
+
+        const result = await response.json();
+        console.log('💰 사은품 금액 변경 응답:', result);
+
+        if (result.success) {
+            console.log('✅ 사은품 금액 변경 성공');
+            alert(`사은품 금액이 ${numericAmount}만원으로 변경되었습니다.`);
+            loadApplications(); // 목록 새로고침
+        } else {
+            console.error('❌ 사은품 금액 변경 실패:', result.error);
+            alert('사은품 금액 변경 실패: ' + result.error);
+        }
+    } catch (error) {
+        console.error('❌ 사은품 금액 변경 오류:', error);
+        alert('사은품 금액 변경 중 오류가 발생했습니다.');
     }
 }
 

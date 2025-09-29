@@ -886,7 +886,7 @@ function updateStatistics(applications) {
     // 🔍 실제 데이터 기반 상태별 통계 계산
     console.log('📊 전체 상태값들:', [...new Set(applications.map(r => r.status))]);
 
-    // ✅ 실제 DB의 상태값에 맞게 수정
+    // ✅ 실제 DB의 상태값에 맞게 수정 - '상담대기' 추가
     const waitingRecords = applications.filter(record =>
         record.status === '접수완료' ||
         record.status === '상담대기' ||
