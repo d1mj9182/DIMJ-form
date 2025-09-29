@@ -784,13 +784,19 @@ async function loadRealtimeData() {
 
         console.log('🎯 최종 처리할 데이터:', applications.length, '개', applications);
 
-        // 🔍 디버깅: 받은 데이터 상세 분석
-        console.log('📊 받은 데이터 상세:', applications.map(item => ({
-            id: item.id,
-            status: item.status,
-            created_at: item.created_at,
-            name: item.name
-        })));
+        // 🔍 상세한 디버깅: 각 데이터 항목 분석
+        console.log('🔍 받은 데이터 개수:', applications.length);
+        console.log('🔍 실제 데이터:', applications);
+
+        // 통계 확인을 위한 상세 로그
+        applications.forEach((item, index) => {
+            console.log(`데이터 ${index}:`, {
+                status: item.status,
+                gift_amount: item.gift_amount,
+                created_at: item.created_at,
+                name: item.name
+            });
+        });
 
         updateConsultationList(applications);
         updateStatistics(applications);
@@ -851,89 +857,56 @@ function updateConsultationList(applications) {
     console.log('✅ 상담 목록 업데이트 완료');
 }
 
-// 통계 업데이트 함수
-function updateStatistics(applications) {
-    console.log('📊 통계 업데이트 시작...', applications ? applications.length + '개 데이터' : '데이터 없음');
+// 통계 업데이트 함수 - 완전 재작성
+function updateStatistics(data) {
+    console.log('📊 통계 업데이트 시작...', data ? data.length + '개 데이터' : '데이터 없음');
 
-    // 🎯 핵심: 명확한 데이터 존재 여부 판단
-    const hasData = applications && Array.isArray(applications) && applications.length > 0;
+    // 초기화
+    const stats = {
+        today: 0,
+        waiting: 0,
+        consulting: 0,
+        completed: 0,
+        scheduled: 0,
+        installed: 0,
+        totalGift: 0
+    };
 
-    if (!hasData) {
-        console.log('📭 통계 데이터 없음 - 0으로 초기화');
-        // 데이터가 없을 때만 0으로 초기화
-        realTimeData.todayApplications = 0;
-        realTimeData.cashReward = 0;
-        realTimeData.installationsCompleted = 0;
-        realTimeData.waitingConsultation = 0;
-        realTimeData.consultingNow = 0;
-        realTimeData.completedConsultations = 0;
-        realTimeData.installReservation = 0;
-        realTimeData.onlineConsultants = 0;
+    const today = new Date().toDateString();
 
-        updateDashboardStats();
-        return;
+    // 실제 데이터만 집계
+    if (Array.isArray(data) && data.length > 0) {
+        data.forEach(item => {
+            // 오늘 날짜 체크
+            if (item.created_at && new Date(item.created_at).toDateString() === today) {
+                stats.today++;
+            }
+
+            // 상태별 집계 (정확한 매칭)
+            if (item.status === '상담대기') stats.waiting++;
+            else if (item.status === '상담중') stats.consulting++;
+            else if (item.status === '상담완료') stats.completed++;
+            else if (item.status === '설치예약') stats.scheduled++;
+            else if (item.status === '설치완료') stats.installed++;
+
+            // 사은품 합계
+            if (item.gift_amount) {
+                stats.totalGift += parseInt(item.gift_amount) || 0;
+            }
+        });
     }
 
-    // ✅ 데이터가 있을 때만 통계 계산
-    const today = new Date().toISOString().split('T')[0];
+    console.log('📊 집계 결과:', stats);
 
-    // 오늘 접수 필터링
-    const todayRecords = applications.filter(record => {
-        const recordDate = record.created_at;
-        return recordDate && recordDate.includes(today);
-    });
-
-    // 🔍 실제 데이터 기반 상태별 통계 계산
-    console.log('📊 전체 상태값들:', [...new Set(applications.map(r => r.status))]);
-
-    // ✅ 실제 DB의 상태값에 맞게 수정 - '상담대기' 통일
-    const waitingRecords = applications.filter(record =>
-        record.status === '상담대기' ||
-        record.status === '상담 대기'
-    );
-    const consultingRecords = applications.filter(record =>
-        record.status === '상담중' ||
-        record.status === '상담 중'
-    );
-    const completedRecords = applications.filter(record =>
-        record.status === '상담완료'
-    );
-    const reservedRecords = applications.filter(record =>
-        record.status === '설치예약' ||
-        record.status === '설치 예약'
-    );
-    const installedRecords = applications.filter(record =>
-        record.status === '설치완료' ||
-        record.status === '설치 완료'
-    );
-
-    // 실시간 데이터 업데이트
-    realTimeData.todayApplications = todayRecords.length;
-    realTimeData.cashReward = applications.reduce((sum, record) => sum + (record.gift_amount || 0), 0);
-    realTimeData.installationsCompleted = installedRecords.length;
-    realTimeData.onlineConsultants = installedRecords.length;
-    realTimeData.waitingConsultation = waitingRecords.length;
-    realTimeData.consultingNow = consultingRecords.length;
-    realTimeData.completedConsultations = completedRecords.length;
-    realTimeData.installReservation = reservedRecords.length;
-
-    // 🔍 상태별 분류 결과 디버깅
-    console.log('📊 상태별 분류 결과:', {
-        waiting: `${waitingRecords.length}개 (상담대기)`,
-        consulting: `${consultingRecords.length}개 (상담중)`,
-        completed: `${completedRecords.length}개 (상담완료)`,
-        reserved: `${reservedRecords.length}개 (설치예약)`,
-        installed: `${installedRecords.length}개 (설치완료)`,
-        today: `${todayRecords.length}개 (오늘 접수)`
-    });
-
-    console.log('📊 계산된 통계:', {
-        today: todayRecords.length,
-        consulting: consultingRecords.length,
-        completed: completedRecords.length,
-        installed: installedRecords.length,
-        waiting: waitingRecords.length
-    });
+    // realTimeData 업데이트
+    realTimeData.todayApplications = stats.today;
+    realTimeData.waitingConsultation = stats.waiting;
+    realTimeData.consultingNow = stats.consulting;
+    realTimeData.completedConsultations = stats.completed;
+    realTimeData.installReservation = stats.scheduled;
+    realTimeData.installationsCompleted = stats.installed;
+    realTimeData.onlineConsultants = stats.installed;
+    realTimeData.cashReward = stats.totalGift;
 
     // 대시보드 업데이트
     updateDashboardStats();
@@ -2378,8 +2351,12 @@ document.addEventListener('click', function(e) {
     }
 });
 
-// 주기적으로 업데이트 (5초마다)
-setInterval(loadRealtimeData, 5000);
+// ⚠️ 중복 실행 방지
+if (window.dataInterval) clearInterval(window.dataInterval);
+
+// 하나만 실행
+window.dataInterval = setInterval(loadRealtimeData, 5000);
+
 // 초기 로딩
 document.addEventListener('DOMContentLoaded', function() {
     // 페이지 로드 후 1초 뒤에 실시간 데이터 로딩 시작
