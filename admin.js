@@ -260,11 +260,17 @@ function renderApplicationsTable(applications) {
             <td>${app.preference || '빠른 시간'}</td>
             <td>${formatDate(app.timestamp)}</td>
             <td>${app.ip ? app.ip.substring(0, 12) + '...' : '-'}</td>
-            <td><span class="status-badge status-${app.status || 'pending'}">${getStatusText(app.status)}</span></td>
             <td>
-                <button class="action-btn" onclick="updateStatus('${app.id}')">
-                    <i class="fas fa-edit"></i>
-                </button>
+                <select class="status-select" onchange="updateStatus('${app.id}', this.value)" data-current="${app.status}" style="padding: 4px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; background-color: white;">
+                    <option value="">상태 변경</option>
+                    <option value="접수완료" ${app.status === '접수완료' ? 'selected' : ''}>접수완료</option>
+                    <option value="상담중" ${app.status === '상담중' ? 'selected' : ''}>상담중</option>
+                    <option value="상담완료" ${app.status === '상담완료' ? 'selected' : ''}>상담완료</option>
+                    <option value="설치예약" ${app.status === '설치예약' ? 'selected' : ''}>설치예약</option>
+                    <option value="설치완료" ${app.status === '설치완료' ? 'selected' : ''}>설치완료</option>
+                </select>
+            </td>
+            <td>
                 <button class="action-btn delete" onclick="deleteApplication('${app.id}')">
                     <i class="fas fa-trash"></i>
                 </button>
@@ -369,6 +375,47 @@ async function deleteApplication(id) {
     } catch (error) {
         console.error('삭제 오류:', error);
         alert('삭제 중 오류가 발생했습니다.');
+    }
+}
+
+// 상태 변경 함수
+async function updateStatus(id, newStatus) {
+    // 빈 값이 선택된 경우 무시
+    if (!newStatus || newStatus === '') {
+        console.log('⚠️ 빈 상태값 - 상태 변경 취소');
+        return;
+    }
+
+    try {
+        console.log('📝 상태 변경 시작:', { id, newStatus });
+
+        const response = await fetch(PROXY_URL, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': SUPABASE_ANON_KEY
+            },
+            body: JSON.stringify({
+                id: id,
+                status: newStatus,
+                table: 'consultations'
+            })
+        });
+
+        const result = await response.json();
+        console.log('📝 상태 변경 응답:', result);
+
+        if (result.success) {
+            console.log('✅ 상태 변경 성공');
+            alert(`상태가 "${newStatus}"로 변경되었습니다.`);
+            loadApplications(); // 목록 새로고침
+        } else {
+            console.error('❌ 상태 변경 실패:', result.error);
+            alert('상태 변경 실패: ' + result.error);
+        }
+    } catch (error) {
+        console.error('❌ 상태 변경 오류:', error);
+        alert('상태 변경 중 오류가 발생했습니다.');
     }
 }
 

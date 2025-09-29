@@ -684,7 +684,7 @@ async function updateStatistics_DEPRECATED() {
                 });
 
                 // 🔥 영문 필드명으로 상태값 매칭
-                const waitingRecords = data.records.filter(record => record.status === '상담 대기');
+                const waitingRecords = data.records.filter(record => record.status === '접수완료' || record.status === '상담 대기');
                 const consultingRecords = data.records.filter(record => record.status === '상담 중');
                 const completedRecords = data.records.filter(record => record.status === '상담완료');
                 const reservedRecords = data.records.filter(record => record.status === '설치예약');
@@ -784,6 +784,14 @@ async function loadRealtimeData() {
 
         console.log('🎯 최종 처리할 데이터:', applications.length, '개', applications);
 
+        // 🔍 디버깅: 받은 데이터 상세 분석
+        console.log('📊 받은 데이터 상세:', applications.map(item => ({
+            id: item.id,
+            status: item.status,
+            created_at: item.created_at,
+            name: item.name
+        })));
+
         updateConsultationList(applications);
         updateStatistics(applications);
 
@@ -875,12 +883,30 @@ function updateStatistics(applications) {
         return recordDate && recordDate.includes(today);
     });
 
-    // 상태별 통계 계산
-    const consultingRecords = applications.filter(record => record.status === '상담 중');
-    const completedRecords = applications.filter(record => record.status === '상담완료');
-    const installedRecords = applications.filter(record => record.status === '설치완료');
-    const reservedRecords = applications.filter(record => record.status === '설치예약');
-    const waitingRecords = applications.filter(record => record.status === '상담 대기');
+    // 🔍 실제 데이터 기반 상태별 통계 계산
+    console.log('📊 전체 상태값들:', [...new Set(applications.map(r => r.status))]);
+
+    // ✅ 실제 DB의 상태값에 맞게 수정
+    const waitingRecords = applications.filter(record =>
+        record.status === '접수완료' ||
+        record.status === '상담대기' ||
+        record.status === '상담 대기'
+    );
+    const consultingRecords = applications.filter(record =>
+        record.status === '상담중' ||
+        record.status === '상담 중'
+    );
+    const completedRecords = applications.filter(record =>
+        record.status === '상담완료'
+    );
+    const reservedRecords = applications.filter(record =>
+        record.status === '설치예약' ||
+        record.status === '설치 예약'
+    );
+    const installedRecords = applications.filter(record =>
+        record.status === '설치완료' ||
+        record.status === '설치 완료'
+    );
 
     // 실시간 데이터 업데이트
     realTimeData.todayApplications = todayRecords.length;
@@ -891,6 +917,16 @@ function updateStatistics(applications) {
     realTimeData.consultingNow = consultingRecords.length;
     realTimeData.completedConsultations = completedRecords.length;
     realTimeData.installReservation = reservedRecords.length;
+
+    // 🔍 상태별 분류 결과 디버깅
+    console.log('📊 상태별 분류 결과:', {
+        waiting: `${waitingRecords.length}개 (접수완료/상담대기)`,
+        consulting: `${consultingRecords.length}개 (상담중)`,
+        completed: `${completedRecords.length}개 (상담완료)`,
+        reserved: `${reservedRecords.length}개 (설치예약)`,
+        installed: `${installedRecords.length}개 (설치완료)`,
+        today: `${todayRecords.length}개 (오늘 접수)`
+    });
 
     console.log('📊 계산된 통계:', {
         today: todayRecords.length,
@@ -1121,7 +1157,7 @@ async function submitToSupabase(data) {
             other_service: selectedServices.additional.join(', ') || '',
             preferred_time: data.preference || '빠른 시간에 연락드립니다',
             privacy_agreed: true,
-            status: '상담 대기',
+            status: data.status || '접수완료',
             gift_amount: 70, // 기본 사은품 70만원
             ip_address: antiSpam.userIP || 'Unknown'
         };
@@ -1453,7 +1489,10 @@ async function handleFormSubmit(e) {
     if (nameInput) formData.name = nameInput.value.trim();
     if (phoneInput) formData.phone = phoneInput.value.trim();
     if (preferenceSelect) formData.preference = preferenceSelect.value;
-    
+
+    // ✅ 상태 필드 추가 - 모든 신청은 '접수완료' 상태로 시작
+    formData.status = '접수완료';
+
     // 🔥 즉시 다음 페이지로 이동 (에러와 관계없이)
     console.log('🚀 즉시 다음 페이지로 이동!');
     nextStep();
