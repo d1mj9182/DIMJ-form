@@ -4834,3 +4834,21 @@ button.fraud-prevention-btn {
 #consultationTable td:nth-child(5) {
     font-weight: 600;
 }
+
+/* 🎨 스크롤바 스타일 - consultationList */
+#consultationList::-webkit-scrollbar {
+    width: 6px;
+}
+
+#consultationList::-webkit-scrollbar-track {
+    background: #2d3748;
+}
+
+#consultationList::-webkit-scrollbar-thumb {
+    background: #4a5568;
+    border-radius: 3px;
+}
+
+#consultationList::-webkit-scrollbar-thumb:hover {
+    background: #718096;
+}
