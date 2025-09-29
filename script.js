@@ -883,7 +883,7 @@ function updateConsultationList(data) {
                     </span>
                 </div>
 
-                <div class="contact-info" style="color: #8fb6c4; margin-left: 28px; margin-bottom: 5px; background: none;">
+                <div style="color: #8fb6c4; margin-left: 28px; margin-bottom: 5px;">
                     ${maskedPhone}
                 </div>
 
