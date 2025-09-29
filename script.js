@@ -810,63 +810,54 @@ async function loadRealtimeData() {
     }
 }
 
-// updateConsultationList 함수 - 카드 형태
 function updateConsultationList(data) {
     const container = document.querySelector('.consultation-list-container');
 
     if (!data || data.length === 0) {
-        container.innerHTML = '<div style="text-align: center; padding: 20px; color: #8fb6c4;">접수 대기 중</div>';
+        container.innerHTML = '';
         return;
     }
 
     container.innerHTML = data.map(item => {
-        // 이름 마스킹 (첫글자○○)
+        // 이름 마스킹 (이○○ 형태)
         const maskedName = item.name ? item.name[0] + '○○' : '○○○';
 
-        // 전화번호 뒤 4자리
-        const phoneLastFour = item.phone ? item.phone.slice(-4) : '0000';
+        // 서비스 정보
+        const serviceInfo = [item.carrier, item.main_service, item.other_service].filter(Boolean).join(' / ');
 
-        // 서비스 정보 조합
-        const serviceInfo = [
-            item.carrier,
-            item.main_service,
-            item.other_service
-        ].filter(Boolean).join(' · ');
-
-        // 상태 색상
+        // 상태별 색상
         const statusColors = {
             '상담대기': '#17a2b8',
             '상담중': '#dc3545',
-            '상담완료': '#007bff',
+            '상담완료': '#28a745',
             '설치예약': '#6f42c1',
             '설치완료': '#fd7e14'
         };
 
-        const statusColor = statusColors[item.status] || '#17a2b8';
-
         return `
             <div style="
-                background: rgba(30, 40, 50, 0.8);
-                border: 1px solid rgba(255,255,255,0.1);
+                background: rgba(30, 40, 50, 0.9);
+                border: 1px solid rgba(40, 167, 69, 0.5);
                 border-radius: 10px;
                 padding: 15px 20px;
                 margin-bottom: 10px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
             ">
-                <div style="flex: 1;">
-                    <span style="color: #fff; font-weight: bold;">${maskedName} 고객님</span>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="color: #fff; font-weight: bold;">
+                        ${maskedName} 고객님
+                    </div>
+                    <div style="color: ${statusColors[item.status] || '#17a2b8'}; font-weight: bold;">
+                        ${serviceInfo} | ${item.status || '상담대기'}
+                    </div>
                 </div>
-                <div style="flex: 2; text-align: center;">
-                    <span style="color: #8fb6c4;">연락처: ${phoneLastFour} | ${serviceInfo} | ${item.preferred_time || '빠른 시간'} 연락드립니다</span>
+                <div style="margin-top: 8px; color: #8fb6c4; font-size: 14px;">
+                    연락처: ${item.phone || '-'} | 신호시간: ${item.preferred_time || '빠른 시간에 연락드립니다'}
                 </div>
-                <div style="flex: 1; text-align: right;">
-                    <span style="color: ${statusColor}; font-weight: bold; margin-right: 15px;">${item.status}</span>
-                    <span style="color: #ffc107; font-weight: bold; font-size: 16px;">${item.gift_amount ? item.gift_amount + '만원' : ''}</span>
-                </div>
-                <div style="color: #6c757d; font-size: 12px;">
-                    신청일: ${new Date(item.created_at).toLocaleDateString('ko-KR').slice(5)}
+                <div style="margin-top: 5px; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: #6c757d; font-size: 12px;">
+                        신청일: ${new Date(item.created_at).toLocaleDateString('ko-KR').slice(5)}
+                    </span>
+                    ${item.gift_amount ? `<span style="color: #ffc107; font-weight: bold; font-size: 16px;">${item.gift_amount}만원</span>` : ''}
                 </div>
             </div>
         `;
