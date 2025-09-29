@@ -883,12 +883,8 @@ function updateConsultationList(data) {
                     </span>
                 </div>
 
-                <div style="color: #8fb6c4; margin-left: 28px; margin-bottom: 5px; font-size: 15px;">
+                <div style="color: #8fb6c4; margin-left: 28px; margin-bottom: 10px; font-size: 15px;">
                     ${maskedPhone}
-                </div>
-
-                <div class="contact-time" style="color: #8fb6c4; margin-left: 28px; font-size: 15px;">
-                    빠른 시간에 연락드립니다
                 </div>
 
                 ${item.gift_amount ?
