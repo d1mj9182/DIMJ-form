@@ -852,10 +852,10 @@ function updateConsultationList(data) {
             ">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                     <div>
-                        <span class="customer-name" style="color: #fff; font-weight: bold;">
+                        <span class="customer-name" style="color: #fff; font-weight: bold; font-size: 20px;">
                             ${maskedName} 고객님
                         </span>
-                        <span class="apply-date" style="color: #8fb6c4; margin-left: 10px;">
+                        <span class="apply-date" style="color: #8fb6c4; margin-left: 10px; font-size: 16px;">
                             신청일: 09/29
                         </span>
                     </div>
@@ -878,16 +878,16 @@ function updateConsultationList(data) {
                         align-items: center;
                         margin-right: 8px;
                     ">●</span>
-                    <span class="service-info" style="color: #e0e6ed;">
+                    <span class="service-info" style="color: #e0e6ed; font-size: 16px;">
                         ${serviceInfo}
                     </span>
                 </div>
 
-                <div style="color: #8fb6c4; margin-left: 28px; margin-bottom: 5px;">
+                <div style="color: #8fb6c4; margin-left: 28px; margin-bottom: 5px; font-size: 15px;">
                     ${maskedPhone}
                 </div>
 
-                <div class="contact-time" style="color: #8fb6c4; margin-left: 28px;">
+                <div class="contact-time" style="color: #8fb6c4; margin-left: 28px; font-size: 15px;">
                     빠른 시간에 연락드립니다
                 </div>
 
@@ -896,7 +896,7 @@ function updateConsultationList(data) {
                         <span class="gift-label" style="color: #8fb6c4; display: block; margin-bottom: 5px;">
                             사은품 지급
                         </span>
-                        <span class="gift-amount" style="color: #ffc107; font-weight: bold;">
+                        <span class="gift-amount" style="color: #ffc107; font-weight: bold; font-size: 28px;">
                             ${item.gift_amount}만원
                         </span>
                     </div>` : ''
