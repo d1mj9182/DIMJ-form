@@ -810,66 +810,76 @@ async function loadRealtimeData() {
     }
 }
 
-// script.js에서 updateConsultationList 함수 찾아서 교체
 function updateConsultationList(data) {
-    // 여러 선택자를 시도하여 안전하게 요소 찾기
-    const container = document.getElementById('consultationList') ||
-                     document.querySelector('.consultation-list') ||
-                     document.querySelector('.consultation-list-container');
-
-    if (!container) {
-        console.error('상담 목록 컨테이너를 찾을 수 없습니다. 사용 가능한 선택자:', {
-            byId: !!document.getElementById('consultationList'),
-            byClass: !!document.querySelector('.consultation-list'),
-            byContainer: !!document.querySelector('.consultation-list-container')
-        });
-        return;
-    }
+    const container = document.getElementById('consultationList');
+    if (!container) return;
 
     if (!data || data.length === 0) {
-        container.innerHTML = '<div style="text-align: center; padding: 20px; color: #8fb6c4;">접수 대기 중</div>';
+        container.innerHTML = '';
         return;
     }
 
-    // 카드 형태로 각 접수건 표시
     container.innerHTML = data.map(item => {
+        // 이름 마스킹
         const maskedName = item.name ? item.name[0] + '*' + item.name[item.name.length-1] : '-';
-        const phoneLastFour = item.phone ? item.phone.slice(-4) : '-';
+
+        // 전화번호 마스킹 (010-7***-6361 형태)
+        let maskedPhone = '-';
+        if (item.phone) {
+            const parts = item.phone.split('-');
+            if (parts.length === 3) {
+                maskedPhone = `${parts[0]}-${parts[1].substring(0,1)}***-${parts[2]}`;
+            }
+        }
+
+        // 서비스 정보
         const serviceInfo = [item.carrier, item.main_service, item.other_service].filter(Boolean).join(' · ');
 
+        // 상태별 색상 (통계 카드와 동일)
         const statusColors = {
             '상담대기': '#17a2b8',
             '상담중': '#dc3545',
-            '상담완료': '#28a745',
+            '상담완료': '#007bff',
             '설치예약': '#6f42c1',
             '설치완료': '#fd7e14'
         };
 
+        const statusColor = statusColors[item.status] || '#17a2b8';
+        const borderColor = statusColor;
+
         return `
             <div style="
-                background: rgba(30, 40, 50, 0.8);
-                border: 1px solid #28a745;
+                background: rgba(30, 40, 50, 0.9);
+                border: 2px solid ${borderColor};
                 border-radius: 10px;
                 padding: 15px;
                 margin-bottom: 10px;
             ">
-                <div style="color: #fff;">
-                    <strong>${maskedName} 고객님</strong>
-                </div>
-                <div style="color: #8fb6c4; margin-top: 5px;">
-                    ${serviceInfo} | ${phoneLastFour} | 빠른 시간에 연락드립니다
-                </div>
-                <div style="margin-top: 5px;">
-                    <span style="color: ${statusColors[item.status]}; font-weight: bold;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <div>
+                        <span style="color: #fff; font-weight: bold; font-size: 16px;">
+                            ${maskedName} 고객님
+                        </span>
+                        <span style="color: #8fb6c4; margin-left: 10px; font-size: 14px;">
+                            신청일: 09/29
+                        </span>
+                    </div>
+                    <div style="color: ${statusColor}; font-weight: bold; font-size: 16px;">
                         ${item.status || '상담대기'}
-                    </span>
-                    <span style="float: right; color: #ffc107; font-weight: bold; font-size: 16px;">
-                        ${item.gift_amount ? item.gift_amount + '만원' : ''}
-                    </span>
+                    </div>
                 </div>
-                <div style="color: #6c757d; font-size: 12px; margin-top: 5px;">
-                    신청일: 09/29
+
+                <div style="color: #e0e6ed; font-size: 14px; margin-bottom: 8px;">
+                    ${serviceInfo} | ${maskedPhone} | 빠른 시간에 연락드립니다
                 </div>
+
+                ${item.gift_amount ?
+                    `<div style="text-align: right;">
+                        <span style="color: #ffc107; font-weight: bold; font-size: 20px;">
+                            ${item.gift_amount}만원
+                        </span>
+                    </div>` : ''
+                }
             </div>
         `;
     }).join('');
