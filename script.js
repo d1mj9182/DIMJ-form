@@ -2,6 +2,9 @@
 let currentStep = 1;
 window.currentStep = currentStep;
 
+// API Configuration
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXd6dnlyb2RwZG1mZ2xzcXF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIzMjUzMzEsImV4cCI6MjA0NzkwMTMzMX0.MkFZj8gNdkZT7xE9ysD1fkzN3bfOh5CtpOEtQGUCqY4';
+
 // Simple nextStep function - defined early to ensure it's available
 function nextStep() {
     console.log('nextStep function called, currentStep:', currentStep);
@@ -748,106 +751,166 @@ async function updateStatistics() {
     if (cashRewardEl) cashRewardEl.textContent = realTimeData.cashReward || 0;
 }
 
-async function updateConsultationList() {
-    console.log('🔄 Supabase API 호출 시작...'); // 디버깅 로그
+// 실시간 데이터 로딩 함수
+async function loadRealtimeData() {
     try {
-        // 프록시 서버를 통해 실제 Supabase 데이터 가져오기
-        const response = await fetch(`https://dimj-form-proxy.vercel.app/api/supabase`, {
-            method: 'GET',
+        const response = await fetch('https://dimj-form-proxy.vercel.app/api/supabase?table=consultations', {
             headers: {
-                'Content-Type': 'application/json'
+                'x-api-key': SUPABASE_ANON_KEY
             }
         });
-        console.log('📡 API 응답 상태:', response.status); // 디버깅 로그
 
-        if (response.ok) {
-            const data = await response.json();
-            console.log('📊 Supabase 응답 데이터:', data);
+        const data = await response.json();
+        console.log('📊 실시간 데이터:', data);
 
-            if (data.success && data.records && data.records.length > 0) {
-                // Supabase 실제 데이터로 모든 통계 업데이트
-                const today = new Date().toISOString().split('T')[0]; // 오늘 날짜
+        // 데이터가 배열인지 확인
+        const applications = Array.isArray(data) ? data : data.data || [];
 
-                // 🔥 Supabase 영문 필드명 직접 접근 (fields 래퍼 제거)
-                function getFieldValue(record, fieldName) {
-                    return record[fieldName];
-                }
+        updateConsultationList(applications);
+        updateStatistics(applications);
 
-                // 오늘 접수 필터링 (이모지 무시)
-                const todayRecords = data.records.filter(record => {
-                    const recordDate = getFieldValue(record, 'created_at');
-                    return recordDate && recordDate.includes(today);
-                });
-
-                // 상태별 통계 계산 (이모지 무시)
-                const consultingRecords = data.records.filter(record => getFieldValue(record, 'status') === '상담 중');
-                const completedRecords = data.records.filter(record => getFieldValue(record, 'status') === '상담완료');
-                const installedRecords = data.records.filter(record => getFieldValue(record, 'status') === '설치완료');
-                const reservedRecords = data.records.filter(record => getFieldValue(record, 'status') === '설치예약');
-                const waitingRecords = data.records.filter(record => getFieldValue(record, 'status') === '상담 대기');
-
-                // 실제 데이터로 업데이트
-                realTimeData.todayApplications = todayRecords.length; // 오늘 접수
-                realTimeData.cashReward = data.records.reduce((sum, record) => sum + (getFieldValue(record, 'gift_amount') || 0), 0); // Supabase 값 그대로 사용
-                realTimeData.installationsCompleted = installedRecords.length; // 설치완료
-                realTimeData.onlineConsultants = installedRecords.length; // 설치완료를 onlineConsultants ID에 표시
-                realTimeData.waitingConsultation = waitingRecords.length; // 상담 대기
-                realTimeData.consultingNow = consultingRecords.length; // 상담 중
-                realTimeData.completedConsultations = completedRecords.length; // 상담 완료
-                realTimeData.installReservation = reservedRecords.length; // 설치 예약
-
-                // Supabase의 실제 데이터만 상담 목록으로 변환 (이모지 무시)
-                const consultations = data.records.map((record, index) => {
-                    return {
-                        id: record.id || `record_${index}`,
-                        name: getFieldValue(record, 'name') ? getFieldValue(record, 'name').replace(/(.{1})/g, '$1○').slice(0, 3) + '○' : '익명○○',
-                        service: getFieldValue(record, 'main_service') || '상담',
-                        status: getFieldValue(record, 'status') || '접수완료',
-                        amount: getFieldValue(record, 'gift_amount') || 0,
-                        time: '실시간',
-                        date: getFieldValue(record, 'created_at') ? new Date(getFieldValue(record, 'created_at')).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-                        color: ['green', 'blue', 'purple', 'orange'][index % 4]
-                    };
-                }).reverse().slice(0, 7);
-
-                realTimeData.recentConsultations = consultations;
-                renderConsultationList();
-                updateDashboardStats(); // 대시보드 통계 업데이트
-                return;
-            } else {
-                // Supabase에 데이터가 없으면 모든 통계를 0으로 초기화
-                console.log('📭 Supabase에 데이터 없음 - 모든 통계 0으로 초기화');
-                realTimeData.todayApplications = 0;
-                realTimeData.cashReward = 0;
-                realTimeData.installationsCompleted = 0;
-                realTimeData.waitingConsultation = 0;
-                realTimeData.consultingNow = 0;
-                realTimeData.completedConsultations = 0;
-                realTimeData.installReservation = 0;
-                realTimeData.recentConsultations = [];
-
-                renderConsultationList();
-                updateDashboardStats(); // 0으로 초기화된 통계 업데이트
-                return;
-            }
-        }
     } catch (error) {
-        console.error('실시간 데이터 로드 실패:', error);
+        console.error('❌ 실시간 데이터 로딩 실패:', error);
+    }
+}
+
+async function updateConsultationList(applications = null) {
+    console.log('🔄 상담 목록 업데이트 시작...', applications ? '매개변수 데이터 사용' : 'API 호출');
+
+    let data;
+
+    if (applications) {
+        // loadRealtimeData에서 전달된 데이터 사용
+        data = { success: true, records: applications };
+    } else {
+        // 기존 API 호출 방식 유지 (호환성)
+        try {
+            const response = await fetch(`https://dimj-form-proxy.vercel.app/api/supabase`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            data = await response.json();
+            console.log('📊 API 응답 데이터:', data);
+        } catch (error) {
+            console.error('❌ API 호출 실패:', error);
+            return;
+        }
     }
 
-    // API 호출 실패시 모든 통계를 0으로 초기화 (가짜 데이터 생성하지 않음)
-    console.log('⚠️ Supabase 연결 없음 - 모든 통계 0으로 초기화');
+    try {
+        if (data && data.success && data.records && data.records.length > 0) {
+            // Supabase 실제 데이터로 모든 통계 업데이트
+            const today = new Date().toISOString().split('T')[0];
 
-    // 연결 실패시 모든 데이터를 0/빈상태로 초기화
-    realTimeData.todayApplications = 0;
-    realTimeData.cashReward = 0;
-    realTimeData.installationsCompleted = 0;
-    realTimeData.waitingConsultation = 0;
-    realTimeData.consultingNow = 0;
-    realTimeData.completedConsultations = 0;
-    realTimeData.installReservation = 0;
-    realTimeData.recentConsultations = [];
+            // 🔥 Supabase 영문 필드명 직접 접근
+            function getFieldValue(record, fieldName) {
+                return record[fieldName];
+            }
 
+            // 오늘 접수 필터링
+            const todayRecords = data.records.filter(record => {
+                const recordDate = getFieldValue(record, 'created_at');
+                return recordDate && recordDate.includes(today);
+            });
+
+            // 상태별 통계 계산
+            const consultingRecords = data.records.filter(record => getFieldValue(record, 'status') === '상담 중');
+            const completedRecords = data.records.filter(record => getFieldValue(record, 'status') === '상담완료');
+            const installedRecords = data.records.filter(record => getFieldValue(record, 'status') === '설치완료');
+            const reservedRecords = data.records.filter(record => getFieldValue(record, 'status') === '설치예약');
+            const waitingRecords = data.records.filter(record => getFieldValue(record, 'status') === '상담 대기');
+
+            // 실제 데이터로 업데이트
+            realTimeData.todayApplications = todayRecords.length;
+            realTimeData.cashReward = data.records.reduce((sum, record) => sum + (getFieldValue(record, 'gift_amount') || 0), 0);
+            realTimeData.installationsCompleted = installedRecords.length;
+            realTimeData.onlineConsultants = installedRecords.length;
+            realTimeData.waitingConsultation = waitingRecords.length;
+            realTimeData.consultingNow = consultingRecords.length;
+            realTimeData.completedConsultations = completedRecords.length;
+            realTimeData.installReservation = reservedRecords.length;
+
+            // 상담 목록 변환
+            const consultations = data.records.map((record, index) => {
+                return {
+                    id: record.id || `record_${index}`,
+                    name: getFieldValue(record, 'name') ? getFieldValue(record, 'name').replace(/(.{1})/g, '$1○').slice(0, 3) + '○' : '익명○○',
+                    service: getFieldValue(record, 'main_service') || '상담',
+                    status: getFieldValue(record, 'status') || '접수완료',
+                    amount: getFieldValue(record, 'gift_amount') || 0,
+                    time: '실시간',
+                    date: getFieldValue(record, 'created_at') ? new Date(getFieldValue(record, 'created_at')).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+                    color: ['green', 'blue', 'purple', 'orange'][index % 4]
+                };
+            }).reverse().slice(0, 7);
+
+            realTimeData.recentConsultations = consultations;
+        } else {
+            // 데이터가 없으면 모든 통계를 0으로 초기화
+            console.log('📭 데이터 없음 - 모든 통계 0으로 초기화');
+            realTimeData.todayApplications = 0;
+            realTimeData.cashReward = 0;
+            realTimeData.installationsCompleted = 0;
+            realTimeData.waitingConsultation = 0;
+            realTimeData.consultingNow = 0;
+            realTimeData.completedConsultations = 0;
+            realTimeData.installReservation = 0;
+            realTimeData.recentConsultations = [];
+        }
+
+        renderConsultationList();
+        updateDashboardStats();
+    } catch (error) {
+        console.error('❌ 데이터 처리 실패:', error);
+    }
+}
+
+// 통계 업데이트 함수
+function updateStatistics(applications) {
+    if (!applications || !Array.isArray(applications)) return;
+
+    const today = new Date().toISOString().split('T')[0];
+
+    // 오늘 접수 필터링
+    const todayRecords = applications.filter(record => {
+        const recordDate = record.created_at;
+        return recordDate && recordDate.includes(today);
+    });
+
+    // 상태별 통계 계산
+    const consultingRecords = applications.filter(record => record.status === '상담 중');
+    const completedRecords = applications.filter(record => record.status === '상담완료');
+    const installedRecords = applications.filter(record => record.status === '설치완료');
+    const reservedRecords = applications.filter(record => record.status === '설치예약');
+    const waitingRecords = applications.filter(record => record.status === '상담 대기');
+
+    // 실시간 데이터 업데이트
+    realTimeData.todayApplications = todayRecords.length;
+    realTimeData.cashReward = applications.reduce((sum, record) => sum + (record.gift_amount || 0), 0);
+    realTimeData.installationsCompleted = installedRecords.length;
+    realTimeData.onlineConsultants = installedRecords.length;
+    realTimeData.waitingConsultation = waitingRecords.length;
+    realTimeData.consultingNow = consultingRecords.length;
+    realTimeData.completedConsultations = completedRecords.length;
+    realTimeData.installReservation = reservedRecords.length;
+
+    // 상담 목록 변환
+    const consultations = applications.map((record, index) => {
+        return {
+            id: record.id || `record_${index}`,
+            name: record.name ? record.name.replace(/(.{1})/g, '$1○').slice(0, 3) + '○' : '익명○○',
+            service: record.main_service || '상담',
+            status: record.status || '접수완료',
+            amount: record.gift_amount || 0,
+            time: '실시간',
+            date: record.created_at ? new Date(record.created_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+            color: ['green', 'blue', 'purple', 'orange'][index % 4]
+        };
+    }).reverse().slice(0, 7);
+
+    realTimeData.recentConsultations = consultations;
     renderConsultationList();
     updateDashboardStats();
 }
@@ -2273,5 +2336,13 @@ document.addEventListener('click', function(e) {
     if (fraudModal && e.target === fraudModal) {
         closeFraudWarning();
     }
+});
+
+// 주기적으로 업데이트 (5초마다)
+setInterval(loadRealtimeData, 5000);
+// 초기 로딩
+document.addEventListener('DOMContentLoaded', function() {
+    // 페이지 로드 후 1초 뒤에 실시간 데이터 로딩 시작
+    setTimeout(loadRealtimeData, 1000);
 });
 
