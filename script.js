@@ -810,58 +810,68 @@ async function loadRealtimeData() {
     }
 }
 
-// script.js에서 updateConsultationList 함수 찾아서 교체
 function updateConsultationList(data) {
-    // consultationList ID로 찾기 (consultation-list-container가 아님)
-    const container = document.getElementById('consultationList');
-    if (!container) {
-        console.error('consultationList 요소를 찾을 수 없습니다');
-        return;
-    }
+    const container = document.querySelector('.consultation-list-container');
 
     if (!data || data.length === 0) {
-        container.innerHTML = '';
+        container.innerHTML = '<div style="text-align: center; padding: 20px; color: #8fb6c4;">접수 대기 중</div>';
         return;
     }
 
-    // 카드 형태로 각 접수건 표시
     container.innerHTML = data.map(item => {
+        // 이름 마스킹
         const maskedName = item.name ? item.name[0] + '*' + item.name[item.name.length-1] : '-';
-        const phoneLastFour = item.phone ? item.phone.slice(-4) : '-';
+
+        // 전화번호 전체 표시 (010-7171-6361 형태)
+        const fullPhone = item.phone || '010-0000-0000';
+
+        // 서비스 정보
         const serviceInfo = [item.carrier, item.main_service, item.other_service].filter(Boolean).join(' · ');
 
+        // 상태 색상
         const statusColors = {
             '상담대기': '#17a2b8',
             '상담중': '#dc3545',
-            '상담완료': '#28a745',
+            '상담완료': '#007bff',
             '설치예약': '#6f42c1',
             '설치완료': '#fd7e14'
         };
 
+        const statusColor = statusColors[item.status] || '#17a2b8';
+        const statusBg = statusColor + '20';
+
         return `
             <div style="
-                background: rgba(30, 40, 50, 0.8);
-                border: 1px solid #28a745;
+                background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
                 border-radius: 10px;
-                padding: 15px;
+                padding: 15px 20px;
                 margin-bottom: 10px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.2);
             ">
-                <div style="color: #fff;">
-                    <strong>${maskedName} 고객님</strong>
-                </div>
-                <div style="color: #8fb6c4; margin-top: 5px;">
-                    ${serviceInfo} | ${phoneLastFour} | 빠른 시간에 연락드립니다
-                </div>
-                <div style="margin-top: 5px;">
-                    <span style="color: ${statusColors[item.status]}; font-weight: bold;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <span style="color: #fff; font-weight: bold; font-size: 16px;">
+                            ${maskedName} 고객님
+                        </span>
+                    </div>
+                    <div style="
+                        background: ${statusBg};
+                        color: ${statusColor};
+                        padding: 5px 12px;
+                        border-radius: 20px;
+                        font-weight: bold;
+                    ">
                         ${item.status || '상담대기'}
-                    </span>
-                    <span style="float: right; color: #ffc107; font-weight: bold; font-size: 16px;">
-                        ${item.gift_amount ? item.gift_amount + '만원' : ''}
-                    </span>
+                    </div>
                 </div>
-                <div style="color: #6c757d; font-size: 12px; margin-top: 5px;">
-                    신청일: 09/29
+                <div style="margin-top: 10px; color: #b8d4e3; font-size: 14px;">
+                    연락처: ${fullPhone} | ${serviceInfo} | 빠른 시간에 연락드립니다
+                </div>
+                <div style="margin-top: 8px; display: flex; justify-content: space-between;">
+                    <span style="color: #8fb6c4; font-size: 12px;">
+                        신청일: ${new Date(item.created_at).toLocaleDateString('ko-KR').slice(5)}
+                    </span>
+                    ${item.gift_amount ? `<span style="color: #ffc107; font-weight: bold;">${item.gift_amount}만원</span>` : ''}
                 </div>
             </div>
         `;
