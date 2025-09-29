@@ -823,19 +823,19 @@ function updateConsultationList(data) {
         // 이름 마스킹
         const maskedName = item.name ? item.name[0] + '*' + item.name[item.name.length-1] : '-';
 
-        // 전화번호 마스킹 (010-7***-6361 형태)
+        // 전화번호 마스킹 (010-71**-6361)
         let maskedPhone = '-';
         if (item.phone) {
             const parts = item.phone.split('-');
             if (parts.length === 3) {
-                maskedPhone = `${parts[0]}-${parts[1].substring(0,1)}***-${parts[2]}`;
+                maskedPhone = `${parts[0]}-${parts[1].substring(0,2)}**-${parts[2]}`;
             }
         }
 
         // 서비스 정보
         const serviceInfo = [item.carrier, item.main_service, item.other_service].filter(Boolean).join(' · ');
 
-        // 상태별 색상 (통계 카드와 동일)
+        // 상태별 색상
         const statusColors = {
             '상담대기': '#17a2b8',
             '상담중': '#dc3545',
@@ -845,17 +845,16 @@ function updateConsultationList(data) {
         };
 
         const statusColor = statusColors[item.status] || '#17a2b8';
-        const borderColor = statusColor;
 
         return `
             <div style="
                 background: rgba(30, 40, 50, 0.9);
-                border: 2px solid ${borderColor};
+                border: 2px solid ${statusColor};
                 border-radius: 10px;
                 padding: 15px;
                 margin-bottom: 10px;
             ">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                     <div>
                         <span style="color: #fff; font-weight: bold; font-size: 16px;">
                             ${maskedName} 고객님
@@ -864,18 +863,36 @@ function updateConsultationList(data) {
                             신청일: 09/29
                         </span>
                     </div>
-                    <div style="color: ${statusColor}; font-weight: bold; font-size: 16px;">
+                    <div style="
+                        background: ${statusColor};
+                        color: #fff;
+                        padding: 5px 12px;
+                        border-radius: 15px;
+                        font-weight: bold;
+                        font-size: 14px;
+                    ">
                         ${item.status || '상담대기'}
                     </div>
                 </div>
 
-                <div style="color: #e0e6ed; font-size: 14px; margin-bottom: 8px;">
-                    ${serviceInfo} | ${maskedPhone} | 빠른 시간에 연락드립니다
+                <div style="margin-bottom: 5px;">
+                    <span style="color: ${statusColor}; font-size: 20px; margin-right: 8px;">●</span>
+                    <span style="color: #e0e6ed; font-size: 14px;">
+                        ${serviceInfo}
+                    </span>
+                </div>
+
+                <div style="color: #8fb6c4; font-size: 13px; margin-left: 28px; margin-bottom: 5px;">
+                    ${maskedPhone}
+                </div>
+
+                <div style="color: #8fb6c4; font-size: 13px; margin-left: 28px;">
+                    빠른 시간에 연락드립니다
                 </div>
 
                 ${item.gift_amount ?
-                    `<div style="text-align: right;">
-                        <span style="color: #ffc107; font-weight: bold; font-size: 20px;">
+                    `<div style="text-align: right; margin-top: 10px;">
+                        <span style="color: #ffc107; font-weight: bold; font-size: 24px;">
                             ${item.gift_amount}만원
                         </span>
                     </div>` : ''
