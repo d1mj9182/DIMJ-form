@@ -2973,19 +2973,21 @@ button.telecom-btn.selected:nth-child(6):hover {
     .container {
         max-width: 100vw !important;
         width: 100% !important;
-        padding: 0.5rem !important;
+        padding: 0 !important;
         margin: 0 !important;
         box-sizing: border-box !important;
     }
-    
+
     .main-content {
-        width: 100% !important;
-        max-width: 100% !important;
+        width: 100vw !important;
+        max-width: 100vw !important;
         padding: 0.5rem !important;
-        margin-bottom: 1rem !important;
-        border-radius: 1rem !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
         box-sizing: border-box !important;
         overflow: hidden !important;
+        margin-left: calc(-50vw + 50%) !important;
+        margin-right: calc(-50vw + 50%) !important;
     }
     
     /* 네비게이션 버튼 완전 수정 */
@@ -3051,9 +3053,15 @@ button.telecom-btn.selected:nth-child(6):hover {
         opacity: 0.9 !important;
     }
     
-    /* 폼 섹션 */
+    /* 폼 섹션 - 모바일 전체 너비 사용 */
     .form-section {
         margin-bottom: 1.5rem !important;
+        width: 100vw !important;
+        max-width: 100vw !important;
+        padding: 1rem 0.5rem !important;
+        margin-left: calc(-50vw + 50%) !important;
+        margin-right: calc(-50vw + 50%) !important;
+        box-sizing: border-box !important;
     }
     
     .form-section h2 {
@@ -3933,18 +3941,28 @@ button.telecom-btn.selected:nth-child(6):hover {
         margin-right: 0 !important;
     }
     
-    /* 2페이지 메인배너 수정 */
+    /* 2페이지 메인배너 모바일 최적화 - 크게 확대 */
     #step2MainBanner {
-        width: 100% !important;
+        width: 100vw !important;
         height: auto !important;
-        min-height: 150px !important;
-        max-height: 250px !important;
+        min-height: 300px !important;
+        max-height: 400px !important;
+        margin-left: calc(-50vw + 50%) !important;
+        margin-right: calc(-50vw + 50%) !important;
+        padding: 0 !important;
+        border-radius: 0 !important;
     }
-    
+
     #step2MainBanner .banner-image-container {
         height: 100% !important;
         width: 100% !important;
         overflow: hidden !important;
+    }
+
+    #step2MainBanner img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
     }
 }
 
