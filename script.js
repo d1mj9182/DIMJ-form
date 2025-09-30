@@ -850,6 +850,12 @@ function updateConsultationList(data) {
 
         const statusColor = statusColors[item.status] || '#17a2b8';
 
+        // 실제 날짜 계산
+        const createdDate = new Date(item.created_at);
+        const month = String(createdDate.getMonth() + 1).padStart(2, '0');
+        const day = String(createdDate.getDate()).padStart(2, '0');
+        const displayDate = `${month}/${day}`;  // "09/05" 형태
+
         return `
             <div style="
                 background: rgba(30, 40, 50, 0.9);
@@ -864,7 +870,7 @@ function updateConsultationList(data) {
                             ${maskedName} 고객님
                         </span>
                         <span class="apply-date" style="color: #8fb6c4; margin-left: 6px; font-size: 18px;">
-                            09/29
+                            ${displayDate}
                         </span>
                     </div>
                     <div style="
