@@ -122,9 +122,11 @@
                     <div class="filter-controls">
                         <select id="statusFilter">
                             <option value="">모든 상태</option>
-                            <option value="pending">대기 중</option>
-                            <option value="contacted">연락 완료</option>
-                            <option value="completed">완료</option>
+                            <option value="상담대기">상담대기</option>
+                            <option value="상담중">상담중</option>
+                            <option value="상담완료">상담완료</option>
+                            <option value="설치예약">설치예약</option>
+                            <option value="설치완료">설치완료</option>
                         </select>
                         <input type="date" id="dateFilter">
                         <button class="refresh-btn" onclick="loadApplications()">

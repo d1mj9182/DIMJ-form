@@ -846,53 +846,51 @@ function updateConsultationList(data) {
             <div style="
                 background: rgba(30, 40, 50, 0.9);
                 border: 2px solid ${statusColor};
-                border-radius: 10px;
-                padding: 15px;
-                margin-bottom: 10px;
+                border-radius: 8px;
+                padding: 10px 12px;
+                margin-bottom: 6px;
             ">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                     <div>
-                        <span class="customer-name" style="color: #fff; font-weight: bold; font-size: 20px;">
+                        <span class="customer-name" style="color: #fff; font-weight: bold; font-size: 16px;">
                             ${maskedName} 고객님
                         </span>
-                        <span class="apply-date" style="color: #8fb6c4; margin-left: 10px; font-size: 16px;">
-                            신청일: 09/29
+                        <span class="apply-date" style="color: #8fb6c4; margin-left: 8px; font-size: 13px;">
+                            09/29
                         </span>
                     </div>
                     <div style="
                         color: ${statusColor};
-                        padding: 5px 12px;
-                        border: 2px solid ${statusColor};
-                        border-radius: 15px;
+                        padding: 3px 8px;
+                        border: 1px solid ${statusColor};
+                        border-radius: 12px;
                         font-weight: bold;
+                        font-size: 12px;
                     ">
                         ${item.status || '상담대기'}
                     </div>
                 </div>
 
-                <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                <div style="display: flex; align-items: center; margin-bottom: 4px;">
                     <span style="
                         color: ${statusColor};
-                        font-size: 20px;
+                        font-size: 14px;
                         display: inline-flex;
                         align-items: center;
-                        margin-right: 8px;
+                        margin-right: 6px;
                     ">●</span>
-                    <span class="service-info" style="color: #e0e6ed; font-size: 16px;">
+                    <span class="service-info" style="color: #e0e6ed; font-size: 13px;">
                         ${serviceInfo}
                     </span>
                 </div>
 
-                <div style="color: #8fb6c4; margin-left: 28px; margin-bottom: 10px; font-size: 15px;">
+                <div style="color: #8fb6c4; margin-left: 20px; font-size: 12px;">
                     ${maskedPhone}
                 </div>
 
                 ${item.gift_amount ?
-                    `<div style="text-align: right; margin-top: 10px;">
-                        <span class="gift-label" style="color: #8fb6c4; display: block; margin-bottom: 5px;">
-                            사은품 지급
-                        </span>
-                        <span class="gift-amount" style="color: #ffc107; font-weight: bold; font-size: 28px;">
+                    `<div style="text-align: right; margin-top: 6px;">
+                        <span class="gift-amount" style="color: #ffc107; font-weight: bold; font-size: 18px;">
                             ${item.gift_amount}만원
                         </span>
                     </div>` : ''

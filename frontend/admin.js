@@ -285,9 +285,16 @@ function renderApplicationsTable(applications) {
 
 function getStatusText(status) {
     switch (status) {
-        case 'contacted': return '연락 완료';
-        case 'completed': return '완료';
-        default: return '대기 중';
+        case '상담대기': return '상담대기';
+        case '상담중': return '상담중';
+        case '상담완료': return '상담완료';
+        case '설치예약': return '설치예약';
+        case '설치완료': return '설치완료';
+        // 기존 상태 호환성 유지
+        case 'pending': return '상담대기';
+        case 'contacted': return '상담완료';
+        case 'completed': return '설치완료';
+        default: return '상담대기';
     }
 }
 
@@ -302,20 +309,22 @@ function formatDate(timestamp) {
 }
 
 function updateStatus(id) {
-    const newStatus = prompt('상태를 선택하세요:\n1. pending (대기 중)\n2. contacted (연락 완료)\n3. completed (완료)', '1');
-    
+    const newStatus = prompt('상태를 선택하세요:\n1. 상담대기\n2. 상담중\n3. 상담완료\n4. 설치예약\n5. 설치완료', '1');
+
     const statusMap = {
-        '1': 'pending',
-        '2': 'contacted', 
-        '3': 'completed'
+        '1': '상담대기',
+        '2': '상담중',
+        '3': '상담완료',
+        '4': '설치예약',
+        '5': '설치완료'
     };
-    
+
     if (statusMap[newStatus]) {
         const appKey = `application_${id}`;
         const appData = JSON.parse(localStorage.getItem(appKey));
         appData.status = statusMap[newStatus];
         localStorage.setItem(appKey, JSON.stringify(appData));
-        
+
         loadApplications();
         updateStats();
     }
@@ -344,10 +353,45 @@ function updateGiftAmount(id) {
     }
 }
 
-function deleteApplication(id) {
-    if (confirm('정말로 이 신청을 삭제하시겠습니까?')) {
-        localStorage.removeItem(`application_${id}`);
-        // TODO: Delete from Supabase through proxy server
+async function deleteApplication(id) {
+    if (confirm('정말로 이 신청을 삭제하시겠습니까? (localStorage + Supabase에서 모두 삭제됩니다)')) {
+        try {
+            // 1. localStorage에서 삭제
+            localStorage.removeItem(`application_${id}`);
+            console.log(`✅ localStorage에서 삭제 완료: application_${id}`);
+
+            // 2. Supabase에서 삭제 (프록시 서버를 통해)
+            const response = await fetch('https://dimj-form-proxy.vercel.app/api/supabase', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    table: 'consultations',
+                    id: id
+                })
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                if (result.success) {
+                    console.log('✅ Supabase에서 삭제 완료:', id);
+                    alert('신청이 모든 시스템에서 삭제되었습니다.');
+                } else {
+                    console.error('❌ Supabase 삭제 실패:', result.error);
+                    alert('Supabase 삭제 중 오류가 발생했습니다: ' + result.error);
+                }
+            } else {
+                console.error('❌ 삭제 요청 실패:', response.status);
+                alert('삭제 요청이 실패했습니다.');
+            }
+
+        } catch (error) {
+            console.error('❌ 삭제 중 오류:', error);
+            alert('삭제 중 오류가 발생했습니다: ' + error.message);
+        }
+
+        // 목록 새로고침
         loadApplications();
         updateStats();
     }
