@@ -799,6 +799,13 @@ async function loadRealtimeData() {
             });
         });
 
+        // 최신 날짜와 시간 기준으로 정렬 (최신이 상단에)
+        applications.sort((a, b) => {
+            const dateA = new Date(a.created_at);
+            const dateB = new Date(b.created_at);
+            return dateB - dateA; // 최신 접수건이 위로
+        });
+
         updateConsultationList(applications);
         updateStatistics(applications);
 

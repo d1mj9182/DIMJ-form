@@ -36,10 +36,10 @@ function setupEventListeners() {
     if (statusFilter) statusFilter.addEventListener('change', loadApplications);
     if (dateFilter) dateFilter.addEventListener('change', loadApplications);
 
-    // Set today's date as default
-    if (dateFilter) {
-        dateFilter.value = new Date().toISOString().split('T')[0];
-    }
+    // 날짜 필터 기본값 제거 - 전체 보기로 시작
+    // if (dateFilter) {
+    //     dateFilter.value = new Date().toISOString().split('T')[0];
+    // }
 }
 
 // Login handling
@@ -160,7 +160,7 @@ async function loadApplications() {
                         preference: record.preferred_time || '',
                         timestamp: record.created_at || '',
                         ip: record.ip_address || '',
-                        status: record.status || 'pending',
+                        status: record.status || '상담대기',
                         giftAmount: record.gift_amount || 0,
                         additionalServices: record.other_service || '',
                         source: 'supabase'
@@ -193,8 +193,12 @@ async function loadApplications() {
         });
     }
     
-    // Sort by timestamp (newest first)
-    filteredApps.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    // Sort by timestamp (newest first) - 최신 접수건이 상단에 표시
+    filteredApps.sort((a, b) => {
+        const dateA = new Date(a.timestamp);
+        const dateB = new Date(b.timestamp);
+        return dateB - dateA; // 최신 날짜가 위로
+    });
     
     renderApplicationsTable(filteredApps);
     adminState.applications = filteredApps;
