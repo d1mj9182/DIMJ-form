@@ -868,8 +868,9 @@ function updateConsultationList(data) {
                 background: rgba(30, 40, 50, 0.9);
                 border: 1px solid ${statusColor};
                 border-radius: 6px;
-                padding: 2px 4px;
-                margin-bottom: 1px;
+                padding: 1px 3px;
+                margin-bottom: 0.5px;
+                line-height: 1.1;
             ">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
@@ -911,7 +912,7 @@ function updateConsultationList(data) {
 
                 ${item.gift_amount ?
                     `<div style="text-align: right;">
-                        <div style="color: #8fb6c4; font-size: 12px; margin-bottom: 1px;">
+                        <div style="color: #8fb6c4; font-size: 24px; margin-bottom: 1px; font-weight: bold;">
                             당일지급
                         </div>
                         <span class="gift-amount" style="color: #ffc107; font-weight: bold; font-size: 22px;">

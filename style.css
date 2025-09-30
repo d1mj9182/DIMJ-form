@@ -4880,11 +4880,57 @@ button.fraud-prevention-btn {
         font-size: 22px !important; /* 사은품은 그대로 유지 */
     }
 
+    /* 당일지급 텍스트는 모바일에서도 큰 크기 유지 */
+    #consultationList div[style*="당일지급"] {
+        font-size: 24px !important; /* 당일지급 텍스트 크기 유지 */
+    }
+
     #consultationList div[style*="color: #8fb6c4"]:not(.gift-amount) {
         font-size: 14px !important; /* 18px -> 14px (전화번호 등) */
     }
 
     #consultationList div[style*="border: 1px solid"] {
         font-size: 14px !important; /* 18px -> 14px (상태 배지) */
+    }
+
+    /* 모바일 통계 카드들 높이 축소 */
+    .stats-grid {
+        gap: 0.3rem !important;
+        margin: 0.3rem 0 !important;
+    }
+
+    .stat-card {
+        padding: 0.4rem 0.6rem !important;
+        min-height: 60px !important;
+    }
+
+    .stat-content p {
+        font-size: 0.7rem !important;
+        margin-bottom: 0.2rem !important;
+    }
+
+    .stat-number {
+        font-size: 1.1rem !important;
+        line-height: 1.1 !important;
+    }
+
+    .stat-unit {
+        font-size: 0.6rem !important;
+    }
+
+    .stat-icon {
+        width: 25px !important;
+        height: 25px !important;
+        font-size: 0.8rem !important;
+    }
+
+    .stat-indicator {
+        font-size: 0.55rem !important;
+        margin-top: 0.1rem !important;
+    }
+
+    .pulse-mini {
+        width: 4px !important;
+        height: 4px !important;
     }
 }
