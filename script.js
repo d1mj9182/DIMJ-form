@@ -847,15 +847,15 @@ function updateConsultationList(data) {
                 background: rgba(30, 40, 50, 0.9);
                 border: 1px solid ${statusColor};
                 border-radius: 6px;
-                padding: 6px 8px;
-                margin-bottom: 3px;
+                padding: 4px 6px;
+                margin-bottom: 1px;
             ">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1px;">
                     <div>
-                        <span class="customer-name" style="color: #fff; font-weight: bold; font-size: 13px;">
+                        <span class="customer-name" style="color: #fff; font-weight: bold; font-size: 21px;">
                             ${maskedName} 고객님
                         </span>
-                        <span class="apply-date" style="color: #8fb6c4; margin-left: 6px; font-size: 10px;">
+                        <span class="apply-date" style="color: #8fb6c4; margin-left: 6px; font-size: 18px;">
                             09/29
                         </span>
                     </div>
@@ -865,32 +865,32 @@ function updateConsultationList(data) {
                         border: 1px solid ${statusColor};
                         border-radius: 8px;
                         font-weight: bold;
-                        font-size: 10px;
+                        font-size: 18px;
                     ">
                         ${item.status || '상담대기'}
                     </div>
                 </div>
 
-                <div style="display: flex; align-items: center; margin-bottom: 2px;">
+                <div style="display: flex; align-items: center; margin-bottom: 1px;">
                     <span style="
                         color: ${statusColor};
-                        font-size: 12px;
+                        font-size: 20px;
                         display: inline-flex;
                         align-items: center;
                         margin-right: 4px;
                     ">●</span>
-                    <span class="service-info" style="color: #e0e6ed; font-size: 11px;">
+                    <span class="service-info" style="color: #e0e6ed; font-size: 19px;">
                         ${serviceInfo}
                     </span>
                 </div>
 
-                <div style="color: #8fb6c4; margin-left: 16px; font-size: 10px; margin-bottom: 2px;">
+                <div style="color: #8fb6c4; margin-left: 16px; font-size: 18px; margin-bottom: 1px;">
                     ${maskedPhone}
                 </div>
 
                 ${item.gift_amount ?
-                    `<div style="text-align: right; margin-top: 2px;">
-                        <span class="gift-amount" style="color: #ffc107; font-weight: bold; font-size: 14px;">
+                    `<div style="text-align: right; margin-top: 1px;">
+                        <span class="gift-amount" style="color: #ffc107; font-weight: bold; font-size: 22px;">
                             ${item.gift_amount}만원
                         </span>
                     </div>` : ''
