@@ -4893,44 +4893,66 @@ button.fraud-prevention-btn {
         font-size: 14px !important; /* 18px -> 14px (상태 배지) */
     }
 
-    /* 모바일 통계 카드들 높이 축소 */
+    /* 모바일 통계 카드들 높이 대폭 축소 */
     .stats-grid {
-        gap: 0.3rem !important;
-        margin: 0.3rem 0 !important;
+        gap: 0.2rem !important;
+        margin: 0.2rem 0 !important;
     }
 
     .stat-card {
-        padding: 0.4rem 0.6rem !important;
-        min-height: 60px !important;
+        padding: 0.3rem 0.4rem !important;
+        min-height: 45px !important;
+        height: 45px !important;
+    }
+
+    .stat-content {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
+        height: 100% !important;
     }
 
     .stat-content p {
-        font-size: 0.7rem !important;
-        margin-bottom: 0.2rem !important;
+        font-size: 0.65rem !important;
+        margin: 0 !important;
+        line-height: 1 !important;
+    }
+
+    /* 숫자와 단위를 가로로 배치 */
+    .stat-content .stat-number-container {
+        display: flex !important;
+        align-items: baseline !important;
+        gap: 2px !important;
+        margin-top: 1px !important;
     }
 
     .stat-number {
-        font-size: 1.1rem !important;
-        line-height: 1.1 !important;
+        font-size: 1rem !important;
+        line-height: 1 !important;
+        margin: 0 !important;
     }
 
     .stat-unit {
-        font-size: 0.6rem !important;
+        font-size: 0.5rem !important;
+        margin: 0 !important;
+        line-height: 1 !important;
     }
 
     .stat-icon {
-        width: 25px !important;
-        height: 25px !important;
-        font-size: 0.8rem !important;
+        width: 20px !important;
+        height: 20px !important;
+        font-size: 0.7rem !important;
     }
 
     .stat-indicator {
-        font-size: 0.55rem !important;
-        margin-top: 0.1rem !important;
+        font-size: 0.5rem !important;
+        margin-top: 0 !important;
+        line-height: 1 !important;
     }
 
     .pulse-mini {
-        width: 4px !important;
-        height: 4px !important;
+        width: 3px !important;
+        height: 3px !important;
     }
 }
