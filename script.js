@@ -816,10 +816,18 @@ function updateConsultationList(data) {
 
     if (!data || data.length === 0) {
         container.innerHTML = '';
+        updatePagination(0, 0);
         return;
     }
 
-    container.innerHTML = data.map(item => {
+    // 페이지네이션 계산
+    const totalItems = data.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const currentData = data.slice(startIndex, endIndex);
+
+    container.innerHTML = currentData.map(item => {
         const maskedName = item.name ? item.name[0] + '*' + item.name[item.name.length-1] : '-';
 
         let maskedPhone = '-';
@@ -847,10 +855,10 @@ function updateConsultationList(data) {
                 background: rgba(30, 40, 50, 0.9);
                 border: 1px solid ${statusColor};
                 border-radius: 6px;
-                padding: 4px 6px;
+                padding: 2px 4px;
                 margin-bottom: 1px;
             ">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
                         <span class="customer-name" style="color: #fff; font-weight: bold; font-size: 21px;">
                             ${maskedName} 고객님
@@ -871,7 +879,7 @@ function updateConsultationList(data) {
                     </div>
                 </div>
 
-                <div style="display: flex; align-items: center; margin-bottom: 1px;">
+                <div style="display: flex; align-items: center;">
                     <span style="
                         color: ${statusColor};
                         font-size: 20px;
@@ -884,12 +892,15 @@ function updateConsultationList(data) {
                     </span>
                 </div>
 
-                <div style="color: #8fb6c4; margin-left: 16px; font-size: 18px; margin-bottom: 1px;">
+                <div style="color: #8fb6c4; margin-left: 16px; font-size: 18px;">
                     ${maskedPhone}
                 </div>
 
                 ${item.gift_amount ?
-                    `<div style="text-align: right; margin-top: 1px;">
+                    `<div style="text-align: right;">
+                        <div style="color: #8fb6c4; font-size: 12px; margin-bottom: 1px;">
+                            당일지급
+                        </div>
                         <span class="gift-amount" style="color: #ffc107; font-weight: bold; font-size: 22px;">
                             ${item.gift_amount}만원
                         </span>
@@ -898,6 +909,9 @@ function updateConsultationList(data) {
             </div>
         `;
     }).join('');
+
+    // 페이지네이션 업데이트
+    updatePagination(totalPages, totalItems);
 }
 
 // 🚫 중복 함수 제거됨 - 단일 updateConsultationList 함수 사용
@@ -2385,6 +2399,91 @@ if (window.dataInterval) clearInterval(window.dataInterval);
 
 // 하나만 실행
 window.dataInterval = setInterval(loadRealtimeData, 5000);
+
+// 페이지네이션 변수
+let currentPage = 1;
+const itemsPerPage = 7;
+
+// 페이지네이션 함수들
+function updatePagination(totalPages, totalItems) {
+    let paginationContainer = document.getElementById('paginationContainer');
+
+    // 페이지네이션 컨테이너가 없으면 생성
+    if (!paginationContainer) {
+        paginationContainer = document.createElement('div');
+        paginationContainer.id = 'paginationContainer';
+        paginationContainer.style.cssText = `
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+            gap: 8px;
+        `;
+
+        const consultationList = document.getElementById('consultationList');
+        if (consultationList && consultationList.parentNode) {
+            consultationList.parentNode.insertBefore(paginationContainer, consultationList.nextSibling);
+        }
+    }
+
+    if (totalPages <= 1) {
+        paginationContainer.innerHTML = '';
+        return;
+    }
+
+    let paginationHTML = '';
+
+    // 이전 버튼
+    if (currentPage > 1) {
+        paginationHTML += `
+            <button onclick="changePage(${currentPage - 1})"
+                style="background: rgba(23, 162, 184, 0.8); color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                ◀
+            </button>
+        `;
+    }
+
+    // 페이지 번호들
+    const startPage = Math.max(1, currentPage - 2);
+    const endPage = Math.min(totalPages, currentPage + 2);
+
+    for (let i = startPage; i <= endPage; i++) {
+        const isActive = i === currentPage;
+        paginationHTML += `
+            <button onclick="changePage(${i})"
+                style="background: ${isActive ? '#17a2b8' : 'rgba(255, 255, 255, 0.1)'};
+                       color: white; border: none; padding: 6px 10px; border-radius: 4px;
+                       cursor: pointer; font-size: 12px; font-weight: ${isActive ? 'bold' : 'normal'};">
+                ${i}
+            </button>
+        `;
+    }
+
+    // 다음 버튼
+    if (currentPage < totalPages) {
+        paginationHTML += `
+            <button onclick="changePage(${currentPage + 1})"
+                style="background: rgba(23, 162, 184, 0.8); color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                ▶
+            </button>
+        `;
+    }
+
+    // 페이지 정보
+    paginationHTML += `
+        <span style="color: #8fb6c4; margin-left: 10px; font-size: 11px;">
+            ${currentPage}/${totalPages} (${totalItems}건)
+        </span>
+    `;
+
+    paginationContainer.innerHTML = paginationHTML;
+}
+
+function changePage(page) {
+    currentPage = page;
+    // 데이터 다시 로드
+    loadRealtimeData();
+}
 
 // 초기 로딩
 document.addEventListener('DOMContentLoaded', function() {

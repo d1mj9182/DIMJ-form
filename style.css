@@ -3515,10 +3515,10 @@ button.telecom-btn.selected:nth-child(6):hover {
         margin-top: 0.25rem !important;
     }
     
-    /* 상담 목록 - 5개 카드 완전 수용하도록 높이 대폭 증가 */
+    /* 상담 목록 - 7개 카드 완전 수용하도록 높이 대폭 증가 */
     .consultation-list {
-        max-height: 500px !important;
-        min-height: 450px !important;
+        max-height: 700px !important;
+        min-height: 650px !important;
         overflow-y: auto !important;
         overflow-x: hidden !important;
         background: rgba(15, 23, 42, 0.3) !important;
@@ -4257,10 +4257,10 @@ button.telecom-btn.selected:nth-child(6):hover {
         box-sizing: border-box !important;
     }
     
-    /* 상담 목록 모바일 최적화 - 5개 카드 완전 수용 */
+    /* 상담 목록 모바일 최적화 - 7개 카드 완전 수용 */
     .consultation-list {
-        max-height: 400px !important;
-        min-height: 350px !important;
+        max-height: 550px !important;
+        min-height: 500px !important;
         padding: 0.5rem !important;
         margin: 0 0.25rem !important;
         overflow-y: auto !important;
@@ -4860,4 +4860,31 @@ button.fraud-prevention-btn {
 
 #consultationList::-webkit-scrollbar-thumb:hover {
     background: #718096;
+}
+
+/* 모바일 상담현황 카드 폰트 4px 감소 (사은품 제외) */
+@media (max-width: 768px) {
+    #consultationList .customer-name {
+        font-size: 17px !important; /* 21px -> 17px */
+    }
+
+    #consultationList .apply-date {
+        font-size: 14px !important; /* 18px -> 14px */
+    }
+
+    #consultationList .service-info {
+        font-size: 15px !important; /* 19px -> 15px */
+    }
+
+    #consultationList .gift-amount {
+        font-size: 22px !important; /* 사은품은 그대로 유지 */
+    }
+
+    #consultationList div[style*="color: #8fb6c4"]:not(.gift-amount) {
+        font-size: 14px !important; /* 18px -> 14px (전화번호 등) */
+    }
+
+    #consultationList div[style*="border: 1px solid"] {
+        font-size: 14px !important; /* 18px -> 14px (상태 배지) */
+    }
 }
