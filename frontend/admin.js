@@ -241,7 +241,7 @@ function mergeApplications(localApps, supabaseApps) {
 
 function renderApplicationsTable(applications) {
     const tbody = document.getElementById('applicationsTableBody');
-    
+
     if (applications.length === 0) {
         tbody.innerHTML = `
             <tr>
@@ -252,10 +252,11 @@ function renderApplicationsTable(applications) {
         `;
         return;
     }
-    
-    tbody.innerHTML = applications.map(app => `
+
+    // 자동 순서 번호 부여 (1, 2, 3, 4, 5...)
+    tbody.innerHTML = applications.map((app, index) => `
         <tr>
-            <td>${app.id}</td>
+            <td>${index + 1}</td>
             <td>${app.name}</td>
             <td>${app.phone}</td>
             <td>${app.service}${app.additionalServices ? ` + ${app.additionalServices}` : ''}</td>

@@ -3515,10 +3515,10 @@ button.telecom-btn.selected:nth-child(6):hover {
         margin-top: 0.25rem !important;
     }
     
-    /* 상담 목록 - 컴팩트하게 더 많이 보이도록 최적화 */
+    /* 상담 목록 - 5개 카드 수용 가능하도록 높이 최적화 */
     .consultation-list {
-        max-height: 400px !important;
-        min-height: 350px !important;
+        max-height: 280px !important;
+        min-height: 250px !important;
         overflow-y: auto !important;
         overflow-x: hidden !important;
         background: rgba(15, 23, 42, 0.3) !important;
@@ -3526,6 +3526,8 @@ button.telecom-btn.selected:nth-child(6):hover {
         padding: 0.5rem !important;
         scrollbar-width: thin !important;
         scrollbar-color: #4a5568 #2d3748 !important;
+        position: relative !important;
+        z-index: 1 !important;
     }
     
     .consultation-item {
@@ -4255,14 +4257,16 @@ button.telecom-btn.selected:nth-child(6):hover {
         box-sizing: border-box !important;
     }
     
-    /* 상담 목록 모바일 최적화 - 컴팩트하게 더 많이 보이도록 */
+    /* 상담 목록 모바일 최적화 - 5개 카드 수용 */
     .consultation-list {
-        max-height: 320px !important;
-        min-height: 280px !important;
+        max-height: 240px !important;
+        min-height: 200px !important;
         padding: 0.5rem !important;
         margin: 0 0.25rem !important;
         overflow-y: auto !important;
         overflow-x: hidden !important;
+        position: relative !important;
+        z-index: 1 !important;
     }
     
     .consultation-item {
