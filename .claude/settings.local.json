@@ -212,7 +212,8 @@
       "Bash(find:*)",
       "Bash(rm:*)",
       "Bash(supabase:*)",
-      "Bash(npx supabase:*)"
+      "Bash(npx supabase:*)",
+      "Bash(git log:*)"
     ],
     "deny": [],
     "ask": []
