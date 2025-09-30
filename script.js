@@ -2505,3 +2505,176 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(loadRealtimeData, 1000);
 });
 
+// ============================================
+// 자동 슬라이드 캐러셀 기능 (기존 코드 유지하면서 추가)
+// ============================================
+
+let autoSlideInterval = null;
+let autoSlideCurrentPage = 1;
+let autoSlideData = [];
+const AUTO_SLIDE_INTERVAL = 3000; // 3초마다 슬라이드
+
+// 자동 슬라이드 시작
+function startAutoSlide(data) {
+    if (!data || data.length === 0) return;
+
+    autoSlideData = data;
+    const totalPages = Math.ceil(data.length / itemsPerPage);
+
+    // 기존 인터벌이 있으면 제거
+    if (autoSlideInterval) {
+        clearInterval(autoSlideInterval);
+    }
+
+    // 첫 페이지 표시
+    displayAutoSlidePage(autoSlideData, autoSlideCurrentPage);
+
+    // 자동 슬라이드 시작 (페이지가 2개 이상일 때만)
+    if (totalPages > 1) {
+        autoSlideInterval = setInterval(() => {
+            autoSlideCurrentPage++;
+            if (autoSlideCurrentPage > totalPages) {
+                autoSlideCurrentPage = 1;
+            }
+            displayAutoSlidePage(autoSlideData, autoSlideCurrentPage);
+        }, AUTO_SLIDE_INTERVAL);
+    }
+}
+
+// 특정 페이지 표시
+function displayAutoSlidePage(data, page) {
+    const container = document.getElementById('consultationList');
+    if (!container) return;
+
+    const totalItems = data.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const currentData = data.slice(startIndex, endIndex);
+
+    // 기존 updateConsultationList의 로직 재사용
+    container.innerHTML = currentData.map(item => {
+        const maskedName = item.name ? item.name[0] + '*' + item.name[item.name.length-1] : '-';
+
+        let maskedPhone = '-';
+        if (item.phone) {
+            const parts = item.phone.split('-');
+            if (parts.length === 3) {
+                maskedPhone = `${parts[0]}-${parts[1].substring(0,1)}***-${parts[2]}`;
+            }
+        }
+
+        const serviceInfo = [item.carrier, item.main_service, item.other_service].filter(Boolean).join(' · ');
+
+        const statusColors = {
+            '대기': 'status-waiting',
+            '상담중': 'status-consulting',
+            '완료': 'status-completed',
+            '예약': 'status-reserved',
+            '설치완료': 'status-installed'
+        };
+
+        const statusClass = statusColors[item.status] || 'status-waiting';
+
+        const createdAt = item.created_at ? new Date(item.created_at) : new Date();
+        const timeString = createdAt.toLocaleTimeString('ko-KR', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        });
+
+        return `
+            <div class="consultation-item ${statusClass}">
+                <div class="consult-header">
+                    <span class="consult-time">${timeString}</span>
+                    <span class="consult-status">${item.status || '대기'}</span>
+                </div>
+                <div class="consult-info">
+                    <span class="consult-name">${maskedName}</span>
+                    <span class="consult-phone">${maskedPhone}</span>
+                </div>
+                <div class="consult-service">${serviceInfo || '서비스 정보 없음'}</div>
+            </div>
+        `;
+    }).join('');
+
+    // 페이지네이션 업데이트
+    updateAutoSlidePagination(totalItems, totalPages, page);
+}
+
+// 페이지네이션 업데이트 (자동 슬라이드용)
+function updateAutoSlidePagination(totalItems, totalPages, currentPage) {
+    const paginationContainer = document.getElementById('paginationContainer');
+    if (!paginationContainer) return;
+
+    let paginationHTML = '';
+
+    if (totalPages <= 1) {
+        paginationHTML = `
+            <span class="pagination-info">
+                전체 ${totalItems}건
+            </span>
+        `;
+    } else {
+        const pageButtons = [];
+        for (let i = 1; i <= totalPages; i++) {
+            const activeClass = i === currentPage ? 'active' : '';
+            pageButtons.push(`
+                <button class="page-btn ${activeClass}" onclick="goToAutoSlidePage(${i})">
+                    ${i}
+                </button>
+            `);
+        }
+
+        paginationHTML = `
+            <div class="pagination-controls">
+                <button class="page-btn" onclick="goToAutoSlidePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                ${pageButtons.join('')}
+                <button class="page-btn" onclick="goToAutoSlidePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            <span class="pagination-info">
+                전체 ${totalItems}건 · ${currentPage}/${totalPages} 페이지 · 자동 슬라이드 중
+            </span>
+        `;
+    }
+
+    paginationContainer.innerHTML = paginationHTML;
+}
+
+// 특정 페이지로 이동 (수동)
+function goToAutoSlidePage(page) {
+    const totalPages = Math.ceil(autoSlideData.length / itemsPerPage);
+
+    if (page < 1 || page > totalPages) return;
+
+    autoSlideCurrentPage = page;
+    displayAutoSlidePage(autoSlideData, autoSlideCurrentPage);
+
+    // 자동 슬라이드 재시작
+    if (autoSlideInterval) {
+        clearInterval(autoSlideInterval);
+    }
+
+    if (totalPages > 1) {
+        autoSlideInterval = setInterval(() => {
+            autoSlideCurrentPage++;
+            if (autoSlideCurrentPage > totalPages) {
+                autoSlideCurrentPage = 1;
+            }
+            displayAutoSlidePage(autoSlideData, autoSlideCurrentPage);
+        }, AUTO_SLIDE_INTERVAL);
+    }
+}
+
+// 자동 슬라이드 중지
+function stopAutoSlide() {
+    if (autoSlideInterval) {
+        clearInterval(autoSlideInterval);
+        autoSlideInterval = null;
+    }
+}
+
