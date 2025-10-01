@@ -1145,13 +1145,14 @@ body {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    height: 1200px !important;
-    min-height: 1200px !important;
+    height: 1400px !important;
+    min-height: 1400px !important;
     overflow: hidden !important;
     overflow-y: hidden !important;
     scrollbar-width: none !important;
     -ms-overflow-style: none !important;
     padding-right: 0;
+    padding-bottom: 20px;
     align-items: stretch;
 }
 
