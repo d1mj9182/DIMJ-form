@@ -2458,11 +2458,7 @@ function updatePagination(totalPages, totalItems) {
         paginationContainer = document.createElement('div');
         paginationContainer.id = 'paginationContainer';
         paginationContainer.style.cssText = `
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 10px;
-            gap: 8px;
+            display: none !important;
         `;
 
         const consultationList = document.getElementById('consultationList');
@@ -2471,57 +2467,9 @@ function updatePagination(totalPages, totalItems) {
         }
     }
 
-    if (totalPages <= 1) {
-        paginationContainer.innerHTML = '';
-        return;
-    }
-
-    let paginationHTML = '';
-
-    // 이전 버튼
-    if (currentPage > 1) {
-        paginationHTML += `
-            <button onclick="changePage(${currentPage - 1})"
-                style="background: rgba(23, 162, 184, 0.8); color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">
-                ◀
-            </button>
-        `;
-    }
-
-    // 페이지 번호들
-    const startPage = Math.max(1, currentPage - 2);
-    const endPage = Math.min(totalPages, currentPage + 2);
-
-    for (let i = startPage; i <= endPage; i++) {
-        const isActive = i === currentPage;
-        paginationHTML += `
-            <button onclick="changePage(${i})"
-                style="background: ${isActive ? '#17a2b8' : 'rgba(255, 255, 255, 0.1)'};
-                       color: white; border: none; padding: 6px 10px; border-radius: 4px;
-                       cursor: pointer; font-size: 12px; font-weight: ${isActive ? 'bold' : 'normal'};">
-                ${i}
-            </button>
-        `;
-    }
-
-    // 다음 버튼
-    if (currentPage < totalPages) {
-        paginationHTML += `
-            <button onclick="changePage(${currentPage + 1})"
-                style="background: rgba(23, 162, 184, 0.8); color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">
-                ▶
-            </button>
-        `;
-    }
-
-    // 페이지 정보
-    paginationHTML += `
-        <span style="color: #8fb6c4; margin-left: 10px; font-size: 11px;">
-            ${currentPage}/${totalPages} (${totalItems}건)
-        </span>
-    `;
-
-    paginationContainer.innerHTML = paginationHTML;
+    // 페이지네이션 완전히 숨김
+    paginationContainer.style.display = 'none';
+    paginationContainer.innerHTML = '';
 }
 
 function changePage(page) {
