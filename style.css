@@ -4941,33 +4941,53 @@ button.fraud-prevention-btn {
 
 /* 모바일 상담현황 카드 폰트 4px 감소 (사은품 제외) */
 @media (max-width: 768px) {
+    /* 카드 전체 높이와 패딩 줄이기 */
+    #consultationList > div {
+        padding: 8px 10px !important;
+        margin-bottom: 6px !important;
+        line-height: 1.2 !important;
+    }
+
     #consultationList .customer-name {
-        font-size: 17px !important; /* 21px -> 17px */
+        font-size: 14px !important; /* 17px -> 14px */
+        margin-bottom: 3px !important;
     }
 
     #consultationList .apply-date {
-        font-size: 14px !important; /* 18px -> 14px */
+        font-size: 11px !important; /* 14px -> 11px */
     }
 
     #consultationList .service-info {
-        font-size: 15px !important; /* 19px -> 15px */
+        font-size: 12px !important; /* 15px -> 12px */
+        margin-bottom: 2px !important;
     }
 
     #consultationList .gift-amount {
-        font-size: 22px !important; /* 사은품은 그대로 유지 */
+        font-size: 16px !important; /* 22px -> 16px */
     }
 
-    /* 당일지급 텍스트는 모바일에서도 큰 크기 유지 */
+    /* 당일지급 텍스트 */
     #consultationList div[style*="당일지급"] {
-        font-size: 24px !important; /* 당일지급 텍스트 크기 유지 */
+        font-size: 11px !important; /* 24px -> 11px */
+        margin-bottom: 2px !important;
     }
 
     #consultationList div[style*="color: #8fb6c4"]:not(.gift-amount) {
-        font-size: 14px !important; /* 18px -> 14px (전화번호 등) */
+        font-size: 11px !important; /* 14px -> 11px (전화번호 등) */
     }
 
     #consultationList div[style*="border: 1px solid"] {
-        font-size: 14px !important; /* 18px -> 14px (상태 배지) */
+        font-size: 11px !important; /* 14px -> 11px (상태 배지) */
+        padding: 2px 6px !important;
+    }
+
+    /* 카드 내부 여백 줄이기 */
+    #consultationList > div > div {
+        margin-bottom: 3px !important;
+    }
+
+    #consultationList > div > div:last-child {
+        margin-bottom: 0 !important;
     }
 
     /* 모바일 통계 카드들 높이 대폭 축소 */
