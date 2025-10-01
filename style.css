@@ -1133,7 +1133,7 @@ body {
 .live-time {
     font-family: 'Courier New', monospace;
     color: #9ca3af;
-    font-size: 0.875rem;
+    font-size: 1.75rem;
 }
 
 /* Consultation List */
@@ -3502,6 +3502,33 @@ button.telecom-btn.selected:nth-child(6):hover {
         font-weight: 600 !important;
         padding: 0 0.25rem !important;
         line-height: 1.2 !important;
+    }
+
+    /* 모바일 실시간 상담 현황 헤더 보이기 */
+    .status-header {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        margin-bottom: 0.8rem !important;
+        padding: 0.5rem !important;
+    }
+
+    .live-indicator {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin-bottom: 0.3rem !important;
+    }
+
+    .status-title {
+        font-size: 1.2rem !important;
+        font-weight: 700 !important;
+    }
+
+    .live-time {
+        font-size: 1rem !important;
+        color: #10b981 !important;
+        font-weight: 600 !important;
     }
     
     /* 통계 카드 그리드 - 모바일 3열 배치 */
