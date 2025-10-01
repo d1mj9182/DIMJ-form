@@ -868,52 +868,58 @@ function updateConsultationList(data) {
                 background: rgba(30, 40, 50, 0.9);
                 border: 1px solid ${statusColor};
                 border-radius: 6px;
-                padding: 8px 10px;
-                margin-bottom: 4px;
-                line-height: 1.3;
-                height: 55px;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
+                padding: 12px 16px;
+                margin-bottom: 8px;
+                line-height: 1.4;
             ">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                     <div>
-                        <span class="customer-name" style="color: #fff; font-weight: bold; font-size: 14px;">
+                        <span class="customer-name" style="color: #fff; font-weight: bold; font-size: 16px;">
                             ${maskedName} 고객님
                         </span>
-                        <span class="apply-date" style="color: #8fb6c4; margin-left: 6px; font-size: 12px;">
+                        <span class="apply-date" style="color: #8fb6c4; margin-left: 8px; font-size: 13px;">
                             ${displayDate}
                         </span>
                     </div>
                     <div style="
                         color: ${statusColor};
-                        padding: 2px 6px;
+                        padding: 4px 10px;
                         border: 1px solid ${statusColor};
-                        border-radius: 4px;
+                        border-radius: 6px;
                         font-weight: bold;
-                        font-size: 11px;
+                        font-size: 13px;
                     ">
                         ${item.status || '상담대기'}
                     </div>
                 </div>
 
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div style="display: flex; align-items: center;">
-                        <span style="
-                            color: ${statusColor};
-                            font-size: 12px;
-                            display: inline-flex;
-                            align-items: center;
-                            margin-right: 4px;
-                        ">●</span>
-                        <span class="service-info" style="color: #e0e6ed; font-size: 12px;">
-                            ${serviceInfo}
-                        </span>
-                    </div>
-                    <span style="color: #8fb6c4; font-size: 11px;">
-                        ${maskedPhone}
+                <div style="display: flex; align-items: center; margin-bottom: 4px;">
+                    <span style="
+                        color: ${statusColor};
+                        font-size: 14px;
+                        display: inline-flex;
+                        align-items: center;
+                        margin-right: 6px;
+                    ">●</span>
+                    <span class="service-info" style="color: #e0e6ed; font-size: 14px;">
+                        ${serviceInfo}
                     </span>
                 </div>
+
+                <div style="color: #8fb6c4; font-size: 13px;">
+                    ${maskedPhone}
+                </div>
+
+                ${item.gift_amount ?
+                    `<div style="text-align: right; margin-top: 8px;">
+                        <div style="color: #8fb6c4; font-size: 12px; margin-bottom: 2px;">
+                            당일지급
+                        </div>
+                        <span class="gift-amount" style="color: #ffc107; font-weight: bold; font-size: 16px;">
+                            ${item.gift_amount}만원
+                        </span>
+                    </div>` : ''
+                }
             </div>
         `;
     }).join('');
