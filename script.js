@@ -823,9 +823,8 @@ function updateConsultationList(data) {
 
     // 스크롤바 완전 제거 + 높이 설정
     container.style.cssText = `
-        height: 600px !important;
-        min-height: 600px !important;
-        max-height: 600px !important;
+        height: 1200px !important;
+        min-height: 1200px !important;
         overflow: hidden !important;
         overflow-y: hidden !important;
         overflow-x: hidden !important;
