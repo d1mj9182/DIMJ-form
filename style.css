@@ -1142,10 +1142,18 @@ body {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    min-height: auto;
-    overflow: visible;
+    overflow: hidden !important;
+    overflow-y: hidden !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
     padding-right: 0;
     align-items: stretch;
+}
+
+.consultation-list::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
 }
 
 .consultation-item {
