@@ -3504,11 +3504,14 @@ button.telecom-btn.selected:nth-child(6):hover {
         left: 0 !important;
         right: 0 !important;
         margin: 0 !important;
-        padding: 0.75rem 0.25rem !important;
-        border-radius: 0 !important;
+        padding: 1rem 0.5rem !important;
+        border-radius: 1.5rem !important;
         box-sizing: border-box !important;
         overflow: hidden !important;
         transform: none !important;
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%) !important;
+        border: 1px solid rgba(148, 163, 184, 0.2) !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
     }
     
     .status-board h2 {
@@ -3526,8 +3529,12 @@ button.telecom-btn.selected:nth-child(6):hover {
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
-        margin-bottom: 0.8rem !important;
-        padding: 0.5rem !important;
+        margin-bottom: 1rem !important;
+        padding: 1rem 1.5rem !important;
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.6) 0%, rgba(30, 41, 59, 0.6) 100%) !important;
+        border-radius: 1rem !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+        border: 1px solid rgba(148, 163, 184, 0.15) !important;
     }
 
     .live-indicator {
@@ -3543,9 +3550,14 @@ button.telecom-btn.selected:nth-child(6):hover {
     }
 
     .live-time {
-        font-size: 1rem !important;
+        font-size: 1.1rem !important;
         color: #10b981 !important;
-        font-weight: 600 !important;
+        font-weight: 700 !important;
+        padding: 0.4rem 1rem !important;
+        background: rgba(16, 185, 129, 0.15) !important;
+        border-radius: 0.5rem !important;
+        box-shadow: 0 0 20px rgba(16, 185, 129, 0.3) !important;
+        letter-spacing: 0.5px !important;
     }
     
     /* 통계 카드 그리드 - 모바일 3열 배치 */
