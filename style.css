@@ -1093,7 +1093,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2.5rem;
 }
 
 .live-indicator {
@@ -1133,7 +1133,7 @@ body {
 .live-time {
     font-family: 'Courier New', monospace;
     color: #9ca3af;
-    font-size: 1.75rem;
+    font-size: 3.5rem;
 }
 
 /* Consultation List */
