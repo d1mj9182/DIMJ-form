@@ -3583,15 +3583,16 @@ button.telecom-btn.selected:nth-child(6):hover {
     
     /* 상담 목록 - 7개 카드 완전 수용하도록 높이 2배 증가 */
     .consultation-list {
-        max-height: 1400px !important;
-        min-height: 1300px !important;
-        overflow-y: auto !important;
+        max-height: 800px !important;
+        min-height: 700px !important;
+        overflow: hidden !important;
+        overflow-y: hidden !important;
         overflow-x: hidden !important;
         background: rgba(15, 23, 42, 0.3) !important;
         border-radius: 0.75rem !important;
         padding: 0.5rem !important;
-        scrollbar-width: thin !important;
-        scrollbar-color: #4a5568 #2d3748 !important;
+        scrollbar-width: none !important;
+        -ms-overflow-style: none !important;
         position: relative !important;
         z-index: 1 !important;
     }
