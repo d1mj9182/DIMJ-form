@@ -868,16 +868,20 @@ function updateConsultationList(data) {
                 background: rgba(30, 40, 50, 0.9);
                 border: 1px solid ${statusColor};
                 border-radius: 6px;
-                padding: 1px 3px;
-                margin-bottom: 0.5px;
-                line-height: 1.1;
+                padding: 8px 10px;
+                margin-bottom: 4px;
+                line-height: 1.3;
+                height: 55px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
             ">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
                     <div>
-                        <span class="customer-name" style="color: #fff; font-weight: bold; font-size: 21px;">
+                        <span class="customer-name" style="color: #fff; font-weight: bold; font-size: 14px;">
                             ${maskedName} 고객님
                         </span>
-                        <span class="apply-date" style="color: #8fb6c4; margin-left: 6px; font-size: 18px;">
+                        <span class="apply-date" style="color: #8fb6c4; margin-left: 6px; font-size: 12px;">
                             ${displayDate}
                         </span>
                     </div>
@@ -885,41 +889,31 @@ function updateConsultationList(data) {
                         color: ${statusColor};
                         padding: 2px 6px;
                         border: 1px solid ${statusColor};
-                        border-radius: 8px;
+                        border-radius: 4px;
                         font-weight: bold;
-                        font-size: 18px;
+                        font-size: 11px;
                     ">
                         ${item.status || '상담대기'}
                     </div>
                 </div>
 
-                <div style="display: flex; align-items: center;">
-                    <span style="
-                        color: ${statusColor};
-                        font-size: 20px;
-                        display: inline-flex;
-                        align-items: center;
-                        margin-right: 4px;
-                    ">●</span>
-                    <span class="service-info" style="color: #e0e6ed; font-size: 19px;">
-                        ${serviceInfo}
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; align-items: center;">
+                        <span style="
+                            color: ${statusColor};
+                            font-size: 12px;
+                            display: inline-flex;
+                            align-items: center;
+                            margin-right: 4px;
+                        ">●</span>
+                        <span class="service-info" style="color: #e0e6ed; font-size: 12px;">
+                            ${serviceInfo}
+                        </span>
+                    </div>
+                    <span style="color: #8fb6c4; font-size: 11px;">
+                        ${maskedPhone}
                     </span>
                 </div>
-
-                <div style="color: #8fb6c4; margin-left: 16px; font-size: 18px;">
-                    ${maskedPhone}
-                </div>
-
-                ${item.gift_amount ?
-                    `<div style="text-align: right;">
-                        <div style="color: #8fb6c4; font-size: 24px; margin-bottom: 1px; font-weight: bold;">
-                            당일지급
-                        </div>
-                        <span class="gift-amount" style="color: #ffc107; font-weight: bold; font-size: 22px;">
-                            ${item.gift_amount}만원
-                        </span>
-                    </div>` : ''
-                }
             </div>
         `;
     }).join('');
