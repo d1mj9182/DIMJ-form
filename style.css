@@ -1141,10 +1141,10 @@ body {
     margin-bottom: 1.5rem;
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
-    height: 480px;
-    overflow-y: auto;
-    padding-right: 0.5rem;
+    gap: 8px;
+    min-height: auto;
+    overflow: visible;
+    padding-right: 0;
     align-items: stretch;
 }
 
