@@ -863,7 +863,10 @@ function updateConsultationList(data) {
     const currentData = data.slice(startIndex, endIndex);
 
     container.innerHTML = currentData.map(item => {
-        const maskedName = item.name ? item.name[0] + '*' + item.name[item.name.length-1] : '-';
+        const maskedName = item.name ?
+            (item.name.length === 1 ? item.name[0] + '*' :
+             item.name.length === 2 ? item.name[0] + '*' :
+             item.name[0] + '*'.repeat(item.name.length - 2) + item.name[item.name.length-1]) : '-';
 
         let maskedPhone = '-';
         if (item.phone) {
@@ -2582,7 +2585,10 @@ function displayAutoSlidePage(data, page) {
 
     // 기존 updateConsultationList의 로직 재사용
     container.innerHTML = currentData.map(item => {
-        const maskedName = item.name ? item.name[0] + '*' + item.name[item.name.length-1] : '-';
+        const maskedName = item.name ?
+            (item.name.length === 1 ? item.name[0] + '*' :
+             item.name.length === 2 ? item.name[0] + '*' :
+             item.name[0] + '*'.repeat(item.name.length - 2) + item.name[item.name.length-1]) : '-';
 
         let maskedPhone = '-';
         if (item.phone) {
