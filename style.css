@@ -1922,12 +1922,14 @@ button.telecom-btn.selected:nth-child(6):hover {
     border-radius: 0.75rem;
     font-size: 1.25rem;
     font-weight: bold;
-    cursor: pointer;
+    cursor: pointer !important;
+    pointer-events: auto !important;
     transition: all 0.3s ease;
     box-shadow: 0 10px 40px rgba(250, 112, 154, 0.4), 0 6px 20px rgba(48, 207, 208, 0.3);
     position: relative;
     overflow: hidden;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 9999 !important;
 }
 
 .submit-button::before {
