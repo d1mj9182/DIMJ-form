@@ -1161,9 +1161,9 @@ body {
 /* 모바일 전용 높이 조정 */
 @media screen and (max-width: 768px) {
     .consultation-list {
-        height: 900px !important;
-        min-height: 900px !important;
-        max-height: 900px !important;
+        height: 950px !important;
+        min-height: 950px !important;
+        max-height: 950px !important;
     }
 }
 

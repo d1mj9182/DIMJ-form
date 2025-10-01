@@ -824,8 +824,8 @@ function updateConsultationList(data) {
     // 스크롤바 완전 제거 + 높이 설정 (모바일/데스크톱 분리)
     const isMobile = window.innerWidth <= 768;
     container.style.cssText = `
-        height: ${isMobile ? '900px' : '1200px'} !important;
-        min-height: ${isMobile ? '900px' : '1200px'} !important;
+        height: ${isMobile ? '950px' : '1200px'} !important;
+        min-height: ${isMobile ? '950px' : '1200px'} !important;
         overflow: hidden !important;
         overflow-y: hidden !important;
         overflow-x: hidden !important;
