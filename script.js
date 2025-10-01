@@ -821,6 +821,29 @@ function updateConsultationList(data) {
     const container = document.getElementById('consultationList');
     if (!container) return;
 
+    // 스크롤바 완전 제거 + 높이 설정
+    container.style.cssText = `
+        overflow: hidden !important;
+        overflow-y: hidden !important;
+        overflow-x: hidden !important;
+        scrollbar-width: none !important;
+        -ms-overflow-style: none !important;
+    `;
+
+    // 웹킷 브라우저 스크롤바 숨기기
+    if (!document.getElementById('hide-scrollbar-style')) {
+        const style = document.createElement('style');
+        style.id = 'hide-scrollbar-style';
+        style.textContent = `
+            #consultationList::-webkit-scrollbar {
+                display: none !important;
+                width: 0 !important;
+                height: 0 !important;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
     if (!data || data.length === 0) {
         container.innerHTML = '';
         updatePagination(0, 0);
