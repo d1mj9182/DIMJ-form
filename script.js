@@ -529,6 +529,9 @@ function setupEventListeners() {
                 console.log('🔥🔥🔥 버튼 클릭됨!', e);
                 e.preventDefault();
 
+                // 🔥 버튼 강제 활성화
+                submitButton.disabled = false;
+
                 // 폼 데이터 수집
                 const nameInput = document.getElementById('name');
                 const phoneInput = document.getElementById('phone');
