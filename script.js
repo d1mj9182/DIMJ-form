@@ -523,46 +523,7 @@ function setupEventListeners() {
             submitButton.classList.remove('disabled');
             submitButton.style.opacity = '1';
             submitButton.style.pointerEvents = 'auto';
-
-            // 🔥 직접 클릭 이벤트 추가
-            submitButton.addEventListener('click', function(e) {
-                console.log('🔥🔥🔥 버튼 클릭됨!', e);
-                e.preventDefault();
-
-                // 폼 데이터 수집
-                const nameInput = document.getElementById('name');
-                const phoneInput = document.getElementById('phone');
-                const privacyAgree = document.getElementById('privacyAgree');
-
-                // 🔥 개인정보 체크박스 강제 체크
-                if (privacyAgree) {
-                    privacyAgree.checked = true;
-                    console.log('✅ 개인정보 동의 자동 체크됨');
-                }
-
-                if (nameInput?.value && phoneInput?.value && privacyAgree?.checked) {
-                    console.log('✅ 폼 검증 통과 - 즉시 다음 페이지로!');
-
-                    // 폼 데이터 설정
-                    formData.name = nameInput.value.trim();
-                    formData.phone = phoneInput.value.trim();
-                    formData.service = '인터넷+IPTV';
-                    formData.provider = 'SK';
-
-                    // 즉시 다음 페이지로
-                    nextStep();
-                    displaySubmittedInfo();
-
-                    // 백그라운드에서 Supabase 전송
-                    submitToSupabase(formData).catch(err => {
-                        console.error('백그라운드 전송 실패:', err);
-                    });
-                } else {
-                    alert('이름, 연락처, 개인정보 동의가 필요합니다.');
-                }
-            });
-
-            console.log('✅ 버튼 강제 활성화 + 클릭 이벤트 추가 완료');
+            console.log('✅ 버튼 활성화 완료 - form submit 이벤트 사용');
         } else {
             console.error('❌ submitButton을 찾을 수 없음');
         }
