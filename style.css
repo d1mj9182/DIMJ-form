@@ -1095,23 +1095,27 @@ body {
     align-items: center;
     margin-top: 2rem;
     margin-bottom: 3rem;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
+    padding: 2rem 3rem;
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.6) 0%, rgba(30, 41, 59, 0.6) 100%);
+    border-radius: 1.5rem;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .live-indicator {
     display: flex;
     align-items: center;
+    gap: 1.5rem;
 }
 
 .pulse-dot {
-    width: 1rem;
-    height: 1rem;
-    background-color: #ef4444;
+    width: 1.2rem;
+    height: 1.2rem;
+    background-color: #10b981;
     border-radius: 50%;
     animation: pulse 2s infinite;
-    margin-right: 1rem;
     position: relative;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
 }
 
 .pulse-dot::after {
@@ -1120,14 +1124,15 @@ body {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    background-color: #ef4444;
+    background-color: #10b981;
     animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
 .status-title {
-    font-size: 1.5rem;
-    font-weight: bold;
-    background: linear-gradient(135deg, #10b981, #3b82f6);
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -1135,8 +1140,15 @@ body {
 
 .live-time {
     font-family: 'Courier New', monospace;
-    color: #9ca3af;
-    font-size: 7rem;
+    color: #10b981;
+    font-size: 3rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    padding: 0.5rem 1.5rem;
+    background: rgba(16, 185, 129, 0.1);
+    border-radius: 0.75rem;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);
 }
 
 /* Consultation List */
