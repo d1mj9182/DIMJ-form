@@ -1139,12 +1139,13 @@ body {
 /* Consultation List */
 .consultation-list {
     margin-bottom: 1.5rem;
-    display: grid;
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 0.4rem;
     height: 480px;
     overflow-y: auto;
     padding-right: 0.5rem;
+    align-items: stretch;
 }
 
 .consultation-item {
