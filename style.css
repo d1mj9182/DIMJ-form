@@ -1142,6 +1142,9 @@ body {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    height: 600px !important;
+    min-height: 600px !important;
+    max-height: 600px !important;
     overflow: hidden !important;
     overflow-y: hidden !important;
     scrollbar-width: none !important;

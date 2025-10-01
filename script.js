@@ -823,11 +823,16 @@ function updateConsultationList(data) {
 
     // 스크롤바 완전 제거 + 높이 설정
     container.style.cssText = `
+        height: 600px !important;
+        min-height: 600px !important;
+        max-height: 600px !important;
         overflow: hidden !important;
         overflow-y: hidden !important;
         overflow-x: hidden !important;
         scrollbar-width: none !important;
         -ms-overflow-style: none !important;
+        padding: 10px;
+        box-sizing: border-box;
     `;
 
     // 웹킷 브라우저 스크롤바 숨기기
