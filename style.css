@@ -5290,4 +5290,8 @@ button.fraud-prevention-btn {
         margin: 0 !important;
         padding: 0 !important;
     }
+
+    #step2MainBanner .banner-placeholder {
+        display: none !important;
+    }
 }
