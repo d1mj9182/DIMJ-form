@@ -5280,13 +5280,8 @@ button.fraud-prevention-btn {
         margin-top: 0 !important;
     }
 
-    /* 2페이지 모바일 배너 placeholder 숨김 */
-    #step2MainBanner .banner-placeholder {
-        display: none !important;
-    }
-
+    /* 2페이지 모바일 배너 완전 숨김 */
     #step2MainBanner {
-        margin-bottom: 0 !important;
-        padding-bottom: 0 !important;
+        display: none !important;
     }
 }
