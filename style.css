@@ -5251,6 +5251,8 @@ button.fraud-prevention-btn {
         margin-bottom: 0 !important;
         padding-top: 0 !important;
         padding-bottom: 0 !important;
+        background: transparent !important;
+        padding: 0 !important;
     }
 
     /* 모바일 실시간 상담 현황 폰트 크기 줄이기 */
