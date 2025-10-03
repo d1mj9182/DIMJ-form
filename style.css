@@ -5280,7 +5280,13 @@ button.fraud-prevention-btn {
         margin-top: 0 !important;
     }
 
-    /* 2페이지 모바일 배너 여백만 제거 */
+    /* 2페이지 모바일 배너 여백 완전 제거 */
+    #step2,
+    #step2.step-content,
+    div[id="step2"] {
+        padding: 0 !important;
+    }
+
     #step2 .banner-container,
     #step2MainBanner {
         margin: 0 !important;
@@ -5294,7 +5300,20 @@ button.fraud-prevention-btn {
         padding: 0 !important;
     }
 
+    #step2MainBanner img,
+    #step2 .banner-container img {
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+
     #step2MainBanner .banner-placeholder {
         display: none !important;
+    }
+
+    /* 이전으로 버튼 위 여백 최소화 */
+    #step2 .back-button-container {
+        margin-top: 0.5rem !important;
     }
 }
