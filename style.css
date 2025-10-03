@@ -4051,8 +4051,11 @@ button.telecom-btn.selected:nth-child(6):hover {
         max-height: 400px !important;
         margin-left: calc(-50vw + 50%) !important;
         margin-right: calc(-50vw + 50%) !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
         padding: 0 !important;
         border-radius: 0 !important;
+        background: transparent !important;
     }
 
     #step2MainBanner .banner-image-container {
@@ -4080,6 +4083,31 @@ button.telecom-btn.selected:nth-child(6):hover {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+/* 2페이지 배너만 여백 제거 */
+#step2 .banner-container,
+#step2MainBanner {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    line-height: 0 !important;
+}
+
+#step2 .banner-inner,
+#step2MainBanner .banner-inner {
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 0 !important;
+}
+
+#step2 .banner-container img,
+#step2MainBanner img {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    vertical-align: top !important;
 }
 
 /* 내부 래퍼 */
@@ -5281,23 +5309,28 @@ button.fraud-prevention-btn {
     }
 
     /* 2페이지 모바일 배너 여백 완전 제거 */
-    #step2,
-    #step2.step-content,
-    div[id="step2"] {
-        padding: 0 !important;
-    }
-
-    #step2 .banner-container,
+    #step2 .back-button-container ~ *:first-of-type,
+    #step2 .banner-container:first-of-type,
     #step2MainBanner {
-        margin: 0 !important;
-        padding: 0 !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
         background: transparent !important;
     }
 
-    #step2 .banner-inner,
-    #step2MainBanner .banner-inner {
+    #step2MainBanner,
+    #step2 .banner-container {
         margin: 0 !important;
         padding: 0 !important;
+        line-height: 0 !important;
+    }
+
+    #step2MainBanner .banner-inner,
+    #step2 .banner-inner {
+        margin: 0 !important;
+        padding: 0 !important;
+        line-height: 0 !important;
     }
 
     #step2MainBanner img,
@@ -5306,14 +5339,10 @@ button.fraud-prevention-btn {
         margin: 0 !important;
         padding: 0 !important;
         width: 100% !important;
+        vertical-align: top !important;
     }
 
     #step2MainBanner .banner-placeholder {
         display: none !important;
-    }
-
-    /* 이전으로 버튼 위 여백 최소화 */
-    #step2 .back-button-container {
-        margin-top: 0.5rem !important;
     }
 }
