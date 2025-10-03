@@ -812,6 +812,9 @@ async function loadRealtimeData() {
         updateConsultationList(applications);
         updateStatistics(applications);
 
+        // 자동 롤링 시작
+        startAutoRolling(applications);
+
     } catch (error) {
         console.error('❌ 실시간 데이터 로딩 실패:', error);
         // 에러 시에도 빈 배열로 처리하여 일관성 유지
@@ -2661,6 +2664,102 @@ function stopAutoSlide() {
     if (autoSlideInterval) {
         clearInterval(autoSlideInterval);
         autoSlideInterval = null;
+    }
+}
+
+// 자동 롤링 리스트 기능
+let rollingInterval = null;
+let currentRollingIndex = 0;
+let rollingData = [];
+
+function startAutoRolling(data) {
+    if (!data || data.length === 0) return;
+
+    // 최신순 정렬
+    rollingData = [...data].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    currentRollingIndex = 0;
+
+    // 기존 인터벌 정리
+    if (rollingInterval) {
+        clearInterval(rollingInterval);
+    }
+
+    // 첫 카드 표시
+    displayRollingCard();
+
+    // 5초마다 다음 카드로 전환
+    rollingInterval = setInterval(() => {
+        currentRollingIndex = (currentRollingIndex + 1) % rollingData.length;
+        displayRollingCard();
+    }, 5000);
+}
+
+function displayRollingCard() {
+    const container = document.getElementById('consultationList');
+    if (!container || rollingData.length === 0) return;
+
+    const item = rollingData[currentRollingIndex];
+
+    const maskedName = item.name ?
+        (item.name.length === 1 ? item.name[0] + '*' :
+         item.name.length === 2 ? item.name[0] + '*' :
+         item.name[0] + '*'.repeat(item.name.length - 2) + item.name[item.name.length-1]) : '-';
+
+    let maskedPhone = '-';
+    if (item.phone) {
+        const parts = item.phone.split('-');
+        if (parts.length === 3) {
+            maskedPhone = `${parts[0]}-${parts[1].substring(0,1)}***-${parts[2]}`;
+        }
+    }
+
+    const serviceInfo = [item.carrier, item.main_service, item.other_service].filter(Boolean).join(' · ');
+
+    const statusColors = {
+        '대기': 'status-waiting',
+        '상담중': 'status-consulting',
+        '완료': 'status-completed',
+        '예약': 'status-reserved',
+        '설치완료': 'status-installed'
+    };
+
+    const statusClass = statusColors[item.status] || 'status-waiting';
+
+    const createdAt = item.created_at ? new Date(item.created_at) : new Date();
+    const timeString = createdAt.toLocaleTimeString('ko-KR', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    });
+
+    // 페이드 아웃
+    container.style.transition = 'opacity 0.5s';
+    container.style.opacity = '0';
+
+    setTimeout(() => {
+        container.innerHTML = `
+            <div class="consultation-item ${statusClass}">
+                <div class="consult-header">
+                    <span class="consult-time">${timeString}</span>
+                    <span class="consult-status">${item.status || '대기'}</span>
+                </div>
+                <div class="consult-info">
+                    <span class="consult-name">${maskedName}</span>
+                    <span class="consult-phone">${maskedPhone}</span>
+                </div>
+                <div class="consult-service">${serviceInfo || '서비스 정보 없음'}</div>
+            </div>
+        `;
+
+        // 페이드 인
+        container.style.opacity = '1';
+    }, 500);
+}
+
+function stopAutoRolling() {
+    if (rollingInterval) {
+        clearInterval(rollingInterval);
+        rollingInterval = null;
     }
 }
 
