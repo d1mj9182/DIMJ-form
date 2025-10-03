@@ -873,6 +873,7 @@ body {
     position: relative;
     overflow: hidden;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    min-height: 60px;
 }
 
 /* 데스크탑 전용 CTA 버튼 크기 조정 제거 */
@@ -1916,6 +1917,7 @@ button.telecom-btn.selected:nth-child(6):hover {
     overflow: hidden;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     z-index: 9999 !important;
+    min-height: 60px;
 }
 
 .submit-button::before {
