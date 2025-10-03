@@ -5279,4 +5279,9 @@ button.fraud-prevention-btn {
     #step2 .status-board {
         margin-top: 3rem !important;
     }
+
+    /* 🔴 2페이지 모바일 배너 숨김 */
+    #step2MainBanner {
+        display: none !important;
+    }
 }
