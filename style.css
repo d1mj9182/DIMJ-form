@@ -5290,4 +5290,17 @@ button.fraud-prevention-btn {
     #step2 .banner-container {
         margin-bottom: 0 !important;
     }
+
+    /* 2페이지 배너 내부 요소 최소화 */
+    #step2MainBanner .banner-inner,
+    #step2MainBanner .banner-placeholder {
+        min-height: 0 !important;
+        height: auto !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    #step2MainBanner .banner-placeholder .placeholder-content {
+        display: none !important;
+    }
 }
