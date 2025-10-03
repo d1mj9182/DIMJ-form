@@ -2745,3 +2745,16 @@ function stopAutoSlide() {
     }
 }
 
+// 2페이지 메인 배너 인라인 스타일 강제 제거
+document.addEventListener('DOMContentLoaded', function() {
+    const banner = document.getElementById('step2MainBanner');
+    if (banner) {
+        banner.removeAttribute('style');
+    }
+
+    const bannerInner = document.querySelector('#step2MainBanner .banner-inner');
+    if (bannerInner) {
+        bannerInner.removeAttribute('style');
+    }
+});
+
