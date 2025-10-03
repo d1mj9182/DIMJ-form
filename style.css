@@ -4086,6 +4086,10 @@ button.telecom-btn.selected:nth-child(6):hover {
 }
 
 /* 2페이지 배너만 여백 제거 */
+#step2 .back-button-container {
+    margin-bottom: 0 !important;
+}
+
 #step2 .banner-container,
 #step2MainBanner {
     margin-top: 0 !important;
