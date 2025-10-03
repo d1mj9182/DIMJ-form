@@ -1098,11 +1098,11 @@ body {
 .pulse-dot {
     width: 1.2rem;
     height: 1.2rem;
-    background-color: #10b981;
+    background-color: #ef4444;
     border-radius: 50%;
     animation: pulse 2s infinite;
     position: relative;
-    box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
 }
 
 .pulse-dot::after {
@@ -5129,7 +5129,7 @@ button.fraud-prevention-btn {
     -webkit-text-fill-color: transparent !important;
     background-clip: text !important;
     font-weight: bold !important;
-    font-size: 1.5rem !important;
+    font-size: 3rem !important;
     text-shadow: none !important;
 }
 
