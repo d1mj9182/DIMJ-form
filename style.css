@@ -5184,28 +5184,46 @@ button.fraud-prevention-btn {
 
 /* 🔴 1페이지 상세페이지 모바일 전용 - 좌우 여백 제거 */
 @media screen and (max-width: 768px) {
-    /* 부모 컨테이너 여백 제거 */
-    #step1,
-    #step1 .container,
-    #step1 .main-content,
-    #step1 .step-content {
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-    }
-
-    /* 상세페이지 최대 크기 */
-    #step1 .detail-images-section,
-    #step1 .detail-images-grid,
-    #step1 .detail-image-single,
-    #step1 .detail-image-item {
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
+    /* 상세페이지 섹션 - 부모 컨테이너 벗어나기 */
+    #step1 .detail-images-section {
+        position: relative !important;
+        left: 50% !important;
+        right: 50% !important;
+        margin-left: -50vw !important;
+        margin-right: -50vw !important;
         width: 100vw !important;
         max-width: 100vw !important;
+        padding: 0 !important;
         box-sizing: border-box !important;
+    }
+
+    /* 상세페이지 그리드 */
+    #step1 .detail-images-grid {
+        width: 100vw !important;
+        max-width: 100vw !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 상세페이지 이미지 */
+    #step1 .detail-image-single,
+    #step1 .detail-image-item {
+        width: 100vw !important;
+        max-width: 100vw !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 이미지 자체 */
+    #step1 .detail-image-single img,
+    #step1 .detail-image-item img {
+        width: 100vw !important;
+        max-width: 100vw !important;
+        height: auto !important;
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 }
