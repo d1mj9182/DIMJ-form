@@ -5280,8 +5280,8 @@ button.fraud-prevention-btn {
         margin-top: 3rem !important;
     }
 
-    /* 🔴 2페이지 모바일 배너 숨김 */
+    /* 🔴 2페이지 모바일 배너 표시 */
     #step2MainBanner {
-        display: none !important;
+        display: block !important;
     }
 }
