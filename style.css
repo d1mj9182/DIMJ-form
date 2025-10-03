@@ -5252,4 +5252,13 @@ button.fraud-prevention-btn {
         padding-top: 0 !important;
         padding-bottom: 0 !important;
     }
+
+    /* 모바일 실시간 상담 현황 폰트 크기 줄이기 */
+    .status-title,
+    .status-header h2,
+    .consultation-list h2,
+    [class*="status"] h2,
+    .status-board h2 {
+        font-size: 1.5rem !important;
+    }
 }
