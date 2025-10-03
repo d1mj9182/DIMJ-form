@@ -2446,7 +2446,10 @@ document.addEventListener('click', function(e) {
 // ⚠️ 중복 실행 방지
 if (window.dataInterval) clearInterval(window.dataInterval);
 
-// 하나만 실행
+// 최초 1회 즉시 실행
+loadRealtimeData();
+
+// 5초마다 자동 롤링
 window.dataInterval = setInterval(loadRealtimeData, 5000);
 
 // 페이지네이션 변수
