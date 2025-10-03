@@ -1755,6 +1755,11 @@ function loadMainBannersContent() {
                     imageElement.src = bannerData.imageData;
                     imageElement.style.display = 'block';
 
+                    // 인라인 스타일 강제 제거
+                    bannerElement.removeAttribute('style');
+                    const bannerInner = bannerElement.querySelector('.banner-inner');
+                    if (bannerInner) bannerInner.removeAttribute('style');
+
                     // Hide placeholder and show image
                     const placeholder = document.getElementById(`${stepName}BannerPlaceholder`);
                     if (placeholder) placeholder.style.display = 'none';
