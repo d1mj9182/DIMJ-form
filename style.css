@@ -5261,4 +5261,13 @@ button.fraud-prevention-btn {
     .status-board h2 {
         font-size: 1.5rem !important;
     }
+
+    /* 모바일 실시간 상담 현황 전체 확대 */
+    .status-board {
+        width: 100% !important;
+        max-width: 100% !important;
+        transform: scale(1.3) !important;
+        transform-origin: center !important;
+        margin: 2rem 0 !important;
+    }
 }
