@@ -856,44 +856,30 @@ body {
 
 .cta-button {
     width: 100%;
-    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 30%, #ff9a9e 60%, #fad0c4 100%);
-    color: #1a1a1a;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    color: white;
     border: none;
-    padding: 2rem 4rem;
-    border-radius: 1.2rem;
-    font-size: 1.75rem;
-    font-weight: 800;
+    padding: 1.25rem 2rem;
+    border-radius: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
-    min-height: 90px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 10px 40px rgba(255, 154, 158, 0.5), 0 6px 20px rgba(252, 182, 159, 0.4);
+    box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4), 0 6px 20px rgba(118, 75, 162, 0.3);
     margin-bottom: 2rem;
     position: relative;
     overflow: hidden;
-    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* 데스크탑 전용 CTA 버튼 2배 크기 */
+/* 데스크탑 전용 CTA 버튼 크기 조정 제거 */
 @media (min-width: 769px) {
     .cta-button {
-        padding: 6rem 12rem !important;
-        font-size: 4rem !important;
-        min-height: 240px !important;
-        border-radius: 3rem !important;
-        box-shadow: 0 20px 80px rgba(59, 130, 246, 0.8) !important;
-        font-weight: 900 !important;
-        margin-top: 4rem !important;
-        margin-bottom: 5rem !important;
-        letter-spacing: 0.1em !important;
-        transform: scale(1) !important;
-    }
-
-    .cta-button:hover {
-        transform: scale(1.02) !important;
-        box-shadow: 0 25px 100px rgba(59, 130, 246, 0.9) !important;
+        padding: 1.25rem 2rem;
+        font-size: 1.25rem;
     }
 }
 
@@ -914,18 +900,18 @@ body {
 
 .cta-button:hover {
     transform: scale(1.05);
-    box-shadow: 0 15px 50px rgba(255, 154, 158, 0.7), 0 10px 30px rgba(252, 182, 159, 0.6);
-    background: linear-gradient(135deg, #fad0c4 0%, #ff9a9e 30%, #fcb69f 60%, #ffecd2 100%);
+    box-shadow: 0 15px 50px rgba(102, 126, 234, 0.5), 0 10px 30px rgba(118, 75, 162, 0.4);
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 50%, #f093fb 100%);
 }
 
 /* Mobile CTA Button */
 @media (max-width: 768px) {
     .cta-button {
-        padding: 0.875rem 1.5rem;
-        font-size: 1rem;
-        border-radius: 0.6rem;
+        padding: 1.25rem 2rem;
+        font-size: 1.25rem;
+        border-radius: 0.75rem;
     }
-    
+
     .cta-button:hover {
         transform: scale(1.02);
     }
@@ -1915,7 +1901,7 @@ button.telecom-btn.selected:nth-child(6):hover {
 /* Submit Button */
 .submit-button {
     width: 100%;
-    background: linear-gradient(135deg, #fa709a 0%, #fee140 50%, #30cfd0 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
     color: white;
     border: none;
     padding: 1.25rem 2rem;
@@ -1925,7 +1911,7 @@ button.telecom-btn.selected:nth-child(6):hover {
     cursor: pointer !important;
     pointer-events: auto !important;
     transition: all 0.3s ease;
-    box-shadow: 0 10px 40px rgba(250, 112, 154, 0.4), 0 6px 20px rgba(48, 207, 208, 0.3);
+    box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4), 0 6px 20px rgba(118, 75, 162, 0.3);
     position: relative;
     overflow: hidden;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -1949,8 +1935,8 @@ button.telecom-btn.selected:nth-child(6):hover {
 
 .submit-button:hover:not(:disabled) {
     transform: scale(1.05);
-    box-shadow: 0 15px 50px rgba(250, 112, 154, 0.5), 0 10px 30px rgba(48, 207, 208, 0.4);
-    background: linear-gradient(135deg, #fee140 0%, #fa709a 50%, #30cfd0 100%);
+    box-shadow: 0 15px 50px rgba(102, 126, 234, 0.5), 0 10px 30px rgba(118, 75, 162, 0.4);
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 50%, #f093fb 100%);
 }
 
 .submit-button:disabled {
