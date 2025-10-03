@@ -5113,3 +5113,38 @@ button.fraud-prevention-btn {
         height: 3px !important;
     }
 }
+
+/* ============================================
+   실시간 상담 현황 - 아름다운 그라데이션
+   ============================================ */
+
+/* 실시간 상담 현황 텍스트 */
+.status-title,
+.status-header h2,
+.consultation-list h2,
+[class*="status"] h2,
+.status-board h2 {
+    background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #f472b6 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    font-weight: bold !important;
+    font-size: 1.5rem !important;
+    text-shadow: none !important;
+}
+
+/* 심장박동 점 - 빨간색 */
+.pulse-dot,
+.live-indicator::before,
+.status-header::before,
+[class*="pulse"]::before,
+.status-title::before {
+    background-color: #ef4444 !important;
+    box-shadow: 0 0 10px #ef4444 !important;
+}
+
+/* 만약 점이 ● 문자라면 */
+.pulse-dot,
+.live-indicator .pulse-dot {
+    color: #ef4444 !important;
+}
