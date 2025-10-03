@@ -5157,3 +5157,27 @@ button.fraud-prevention-btn {
         padding-right: 0 !important;
     }
 }
+
+/* 🔴 실시간 현황판 모바일 전용 - 우측 쏠림 해결 */
+@media screen and (max-width: 768px) {
+    /* 실시간 현황판 컨테이너 */
+    .status-board,
+    .consultation-list,
+    #consultationList {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 접수 카드 */
+    .consultation-card {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+}
