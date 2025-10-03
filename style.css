@@ -5148,3 +5148,12 @@ button.fraud-prevention-btn {
 .live-indicator .pulse-dot {
     color: #ef4444 !important;
 }
+
+/* ===== 모바일 상세페이지 좌우 여백 완전 제거 ===== */
+@media screen and (max-width: 768px) {
+    .status-board,
+    .consultation-list {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+}
