@@ -5277,7 +5277,7 @@ button.fraud-prevention-btn {
 
     /* 2페이지 배너와 실시간 상담 현황 간격 조정 */
     #step2 .status-board {
-        margin-top: 3rem !important;
+        margin-top: 1rem !important;
     }
 
     /* 🔴 2페이지 모바일 배너 표시 */
