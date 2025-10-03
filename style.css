@@ -5281,11 +5281,14 @@ button.fraud-prevention-btn {
     }
 
     /* 2페이지 모바일 배너 여백만 제거 */
+    #step2 .banner-container,
     #step2MainBanner {
         margin: 0 !important;
         padding: 0 !important;
+        background: transparent !important;
     }
 
+    #step2 .banner-inner,
     #step2MainBanner .banner-inner {
         margin: 0 !important;
         padding: 0 !important;
