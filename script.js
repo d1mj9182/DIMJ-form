@@ -809,11 +809,8 @@ async function loadRealtimeData() {
             return dateB - dateA; // 최신 접수건이 위로
         });
 
-        // updateConsultationList(applications); // 자동 롤링으로 대체
+        updateConsultationList(applications);
         updateStatistics(applications);
-
-        // 자동 롤링 시작
-        startAutoRolling(applications);
 
     } catch (error) {
         console.error('❌ 실시간 데이터 로딩 실패:', error);
