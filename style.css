@@ -5184,6 +5184,18 @@ button.fraud-prevention-btn {
 
 /* 🔴 1페이지 상세페이지 모바일 전용 - 좌우 여백 제거 */
 @media screen and (max-width: 768px) {
+    /* 부모 컨테이너 여백 제거 */
+    #step1,
+    #step1 .container,
+    #step1 .main-content,
+    #step1 .step-content {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    /* 상세페이지 최대 크기 */
     #step1 .detail-images-section,
     #step1 .detail-images-grid,
     #step1 .detail-image-single,
