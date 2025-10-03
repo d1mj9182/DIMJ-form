@@ -5283,5 +5283,11 @@ button.fraud-prevention-btn {
     /* 🔴 2페이지 모바일 배너 표시 */
     #step2MainBanner {
         display: block !important;
+        margin-bottom: 0 !important;
+    }
+
+    /* 2페이지 배너 컨테이너 하단 여백 제거 */
+    #step2 .banner-container {
+        margin-bottom: 0 !important;
     }
 }
