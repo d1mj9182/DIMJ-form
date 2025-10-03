@@ -1754,11 +1754,17 @@ function loadMainBannersContent() {
                     // Set banner image
                     imageElement.src = bannerData.imageData;
                     imageElement.style.display = 'block';
-                    
+
+                    // 모바일에서 2페이지 배너 여백 완전 제거
+                    if (stepName === 'step2' && window.innerWidth <= 768) {
+                        bannerElement.style.cssText = 'margin: 0 !important; padding: 0 !important; background: transparent !important;';
+                        imageElement.style.cssText = 'display: block !important; margin: 0 !important; padding: 0 !important; width: 100% !important;';
+                    }
+
                     // Hide placeholder and show image
                     const placeholder = document.getElementById(`${stepName}BannerPlaceholder`);
                     if (placeholder) placeholder.style.display = 'none';
-                    
+
                     console.log(`${stepName} main banner loaded with image`);
                 } else if (bannerElement) {
                     // No image, show placeholder
