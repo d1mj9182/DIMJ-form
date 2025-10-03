@@ -2446,11 +2446,84 @@ document.addEventListener('click', function(e) {
 // ⚠️ 중복 실행 방지
 if (window.dataInterval) clearInterval(window.dataInterval);
 
+// 자동 롤링 변수
+let autoRollingPage = 0;
+let allConsultationData = [];
+
+// 자동 롤링 시작
+async function startAutoRolling() {
+    try {
+        console.log('🔥 자동 롤링 시작');
+
+        // Supabase에서 데이터 가져오기
+        const getUrl = 'https://dimj-form-proxy.vercel.app/api/supabase';
+        const response = await fetch(getUrl, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        let applications = [];
+
+        if (Array.isArray(result)) {
+            applications = result;
+        } else if (result && result.success && Array.isArray(result.data)) {
+            applications = result.data;
+        } else if (result && Array.isArray(result.records)) {
+            applications = result.records;
+        } else if (result && result.fullData && Array.isArray(result.fullData)) {
+            applications = result.fullData;
+        }
+
+        // 최신순 정렬
+        allConsultationData = applications.sort((a, b) =>
+            new Date(b.created_at) - new Date(a.created_at)
+        );
+
+        console.log('✅ 전체 데이터:', allConsultationData.length, '개');
+
+        // 통계 업데이트
+        updateStatistics(allConsultationData);
+
+        // 첫 7개 표시
+        displayRollingPage();
+
+    } catch (error) {
+        console.error('❌ 자동 롤링 데이터 로드 실패:', error);
+    }
+}
+
+function displayRollingPage() {
+    const start = autoRollingPage * 7;
+    const displayData = allConsultationData.slice(start, start + 7);
+
+    console.log('📄 현재 페이지:', autoRollingPage);
+    console.log('📄 표시 데이터:', displayData);
+
+    // 카드 표시
+    updateConsultationList(displayData);
+
+    // 다음 페이지로
+    autoRollingPage++;
+    if (autoRollingPage * 7 >= allConsultationData.length) {
+        autoRollingPage = 0; // 처음으로
+    }
+}
+
 // 최초 1회 즉시 실행
-loadRealtimeData();
+startAutoRolling();
 
 // 5초마다 자동 롤링
-window.dataInterval = setInterval(loadRealtimeData, 5000);
+window.dataInterval = setInterval(() => {
+    displayRollingPage();
+}, 5000);
 
 // 페이지네이션 변수
 let currentPage = 1;
