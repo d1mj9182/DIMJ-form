@@ -5277,11 +5277,12 @@ button.fraud-prevention-btn {
 
     /* 2페이지 배너와 실시간 상담 현황 간격 조정 */
     #step2 .status-board {
-        margin-top: 1rem !important;
+        margin-top: 0 !important;
     }
 
-    /* 🔴 2페이지 모바일 배너 완전히 숨김 */
+    /* 2페이지 모바일 배너 여백 최소화 */
     #step2MainBanner {
-        display: none !important;
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
     }
 }
