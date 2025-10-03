@@ -809,7 +809,7 @@ async function loadRealtimeData() {
             return dateB - dateA; // 최신 접수건이 위로
         });
 
-        updateConsultationList(applications);
+        // updateConsultationList(applications); // 자동 롤링으로 대체
         updateStatistics(applications);
 
         // 자동 롤링 시작
