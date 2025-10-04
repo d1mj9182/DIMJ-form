@@ -1376,32 +1376,32 @@ body {
     }
 
     .stat-content p {
-        font-size: 13px;
+        font-size: 18px;
     }
 
     .stat-number {
-        font-size: 28px;
+        font-size: 36px;
     }
 
     .stat-unit {
-        font-size: 14px;
+        font-size: 18px;
         margin-left: 4px;
     }
 
     .stat-icon {
-        width: 40px;
-        height: 40px;
+        width: 50px;
+        height: 50px;
         border-radius: 8px;
-        font-size: 20px;
+        font-size: 26px;
     }
 
     .stat-indicator {
-        font-size: 11px;
+        font-size: 14px;
     }
 
     .pulse-mini {
-        width: 6px;
-        height: 6px;
+        width: 8px;
+        height: 8px;
         margin-right: 6px;
     }
 }
