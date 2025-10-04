@@ -432,8 +432,13 @@ document.addEventListener('DOMContentLoaded', function() {
     loadMainBannersContent();
     loadDetailImagesContent();
     setupClickHandlers();
-    initializeTelecomButtons();
-    
+
+    // 이미지 로드 후 충분한 시간을 두고 이벤트 리스너 등록
+    setTimeout(() => {
+        initializeTelecomButtons();
+        console.log('✅ 이벤트 리스너 등록 완료 (이미지 로드 후)');
+    }, 300);
+
     // Add entrance animations with delay
     setTimeout(addEntranceAnimations, 100);
     
