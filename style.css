@@ -1364,45 +1364,45 @@ body {
     animation: pulse 2s infinite;
 }
 
-/* 데스크탑에서만 통계카드 컨테이너 1/2 축소, 폰트/이모지 2배 이상 확대 */
+/* 데스크탑 전용 통계카드 */
 @media (min-width: 769px) {
     .stat-card {
-        padding: 2px;
-        border-radius: 2px;
+        padding: 12px;
+        border-radius: 8px;
     }
 
     .stat-content {
-        margin-bottom: 1.5px;
+        margin-bottom: 8px;
     }
 
     .stat-content p {
-        font-size: 44px;
+        font-size: 13px;
     }
 
     .stat-number {
-        font-size: 88px;
+        font-size: 28px;
     }
 
     .stat-unit {
-        font-size: 48px;
-        margin-left: 0.75px;
+        font-size: 14px;
+        margin-left: 4px;
     }
 
     .stat-icon {
-        width: 112px;
-        height: 112px;
-        border-radius: 1.5px;
-        font-size: 56px;
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        font-size: 20px;
     }
 
     .stat-indicator {
-        font-size: 36px;
+        font-size: 11px;
     }
 
     .pulse-mini {
-        width: 20px;
-        height: 20px;
-        margin-right: 1px;
+        width: 6px;
+        height: 6px;
+        margin-right: 6px;
     }
 }
 
