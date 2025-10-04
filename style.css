@@ -4085,6 +4085,14 @@ button.telecom-btn.selected:nth-child(6):hover {
     justify-content: center;
 }
 
+/* 2페이지 배너는 예외 */
+#step2 .banner-container,
+#step2MainBanner.banner-container {
+    margin-bottom: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
+
 /* 2페이지 배너만 여백 제거 */
 #step2 .back-button-container {
     margin-bottom: 0 !important;
