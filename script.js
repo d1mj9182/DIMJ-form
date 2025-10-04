@@ -822,29 +822,50 @@ async function loadRealtimeData() {
 
 function updateConsultationList(data) {
     const container = document.getElementById('consultationList');
-    if (!container) return;
+    const containerStep1 = document.getElementById('consultationListStep1');
 
-    // 스크롤바 완전 제거 + 높이 설정 (모바일/데스크톱 분리)
-    const isMobile = window.innerWidth <= 768;
-    container.style.cssText = `
-        height: ${isMobile ? '1050px' : '1300px'} !important;
-        min-height: ${isMobile ? '1050px' : '1300px'} !important;
-        overflow: hidden !important;
-        overflow-y: hidden !important;
-        overflow-x: hidden !important;
-        scrollbar-width: none !important;
-        -ms-overflow-style: none !important;
-        padding: 10px;
-        padding-bottom: 20px;
-        box-sizing: border-box;
-    `;
+    // Step 2 컨테이너 처리
+    if (container) {
+        // 스크롤바 완전 제거 + 높이 설정 (모바일/데스크톱 분리)
+        const isMobile = window.innerWidth <= 768;
+        container.style.cssText = `
+            height: ${isMobile ? '1050px' : '1300px'} !important;
+            min-height: ${isMobile ? '1050px' : '1300px'} !important;
+            overflow: hidden !important;
+            overflow-y: hidden !important;
+            overflow-x: hidden !important;
+            scrollbar-width: none !important;
+            -ms-overflow-style: none !important;
+            padding: 10px;
+            padding-bottom: 20px;
+            box-sizing: border-box;
+        `;
+    }
+
+    // Step 1 컨테이너 처리
+    if (containerStep1) {
+        const isMobile = window.innerWidth <= 768;
+        containerStep1.style.cssText = `
+            height: ${isMobile ? '1050px' : '1300px'} !important;
+            min-height: ${isMobile ? '1050px' : '1300px'} !important;
+            overflow: hidden !important;
+            overflow-y: hidden !important;
+            overflow-x: hidden !important;
+            scrollbar-width: none !important;
+            -ms-overflow-style: none !important;
+            padding: 10px;
+            padding-bottom: 20px;
+            box-sizing: border-box;
+        `;
+    }
 
     // 웹킷 브라우저 스크롤바 숨기기
     if (!document.getElementById('hide-scrollbar-style')) {
         const style = document.createElement('style');
         style.id = 'hide-scrollbar-style';
         style.textContent = `
-            #consultationList::-webkit-scrollbar {
+            #consultationList::-webkit-scrollbar,
+            #consultationListStep1::-webkit-scrollbar {
                 display: none !important;
                 width: 0 !important;
                 height: 0 !important;
@@ -854,7 +875,8 @@ function updateConsultationList(data) {
     }
 
     if (!data || data.length === 0) {
-        container.innerHTML = '';
+        if (container) container.innerHTML = '';
+        if (containerStep1) containerStep1.innerHTML = '';
         updatePagination(0, 0);
         return;
     }
@@ -866,7 +888,7 @@ function updateConsultationList(data) {
     const endIndex = startIndex + itemsPerPage;
     const currentData = data.slice(startIndex, endIndex);
 
-    container.innerHTML = currentData.map(item => {
+    const htmlContent = currentData.map(item => {
         const maskedName = item.name ?
             (item.name.length === 1 ? item.name[0] + '*' :
              item.name.length === 2 ? item.name[0] + '*' :
@@ -959,6 +981,10 @@ function updateConsultationList(data) {
         `;
     }).join('');
 
+    // Step 2와 Step 1에 동일한 내용 표시
+    if (container) container.innerHTML = htmlContent;
+    if (containerStep1) containerStep1.innerHTML = htmlContent;
+
     // 페이지네이션 업데이트
     updatePagination(totalPages, totalItems);
 }
@@ -1029,8 +1055,25 @@ function updateStatistics(data) {
     realTimeData.onlineConsultants = stats.installed;
     realTimeData.cashReward = stats.totalGift;
 
-    // 대시보드 업데이트 (이미 ID 기반으로 정확히 구현됨)
+    // Step 2 대시보드 업데이트
     updateDashboardStats();
+
+    // Step 1 대시보드 업데이트
+    const todayApplicationsStep1 = document.getElementById('todayApplicationsStep1');
+    const waitingConsultationStep1 = document.getElementById('waitingConsultationStep1');
+    const consultingNowStep1 = document.getElementById('consultingNowStep1');
+    const completedConsultationsStep1 = document.getElementById('completedConsultationsStep1');
+    const installReservationStep1 = document.getElementById('installReservationStep1');
+    const installationsCompletedStep1 = document.getElementById('installationsCompletedStep1');
+    const cashRewardStep1 = document.getElementById('cashRewardStep1');
+
+    if (todayApplicationsStep1) todayApplicationsStep1.textContent = stats.today;
+    if (waitingConsultationStep1) waitingConsultationStep1.textContent = stats.waiting;
+    if (consultingNowStep1) consultingNowStep1.textContent = stats.consulting;
+    if (completedConsultationsStep1) completedConsultationsStep1.textContent = stats.completed;
+    if (installReservationStep1) installReservationStep1.textContent = stats.scheduled;
+    if (installationsCompletedStep1) installationsCompletedStep1.textContent = stats.installed;
+    if (cashRewardStep1) cashRewardStep1.textContent = stats.totalGift + '만원';
 
     console.log('✅ 통계 업데이트 완료:', {
         todayApplications: realTimeData.todayApplications,
@@ -1094,10 +1137,16 @@ function formatDate(dateString) {
 
 function updateLiveTime() {
     const liveTimeEl = document.getElementById('liveTime');
+    const liveTimeElStep1 = document.getElementById('liveTimeStep1');
+
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('ko-KR');
+
     if (liveTimeEl) {
-        const now = new Date();
-        const timeString = now.toLocaleTimeString('ko-KR');
         liveTimeEl.textContent = `LIVE • ${timeString}`;
+    }
+    if (liveTimeElStep1) {
+        liveTimeElStep1.textContent = `LIVE • ${timeString}`;
     }
 }
 

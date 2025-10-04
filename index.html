@@ -81,6 +81,135 @@
                     <p><i class="fas fa-check-circle"></i>1:1 맞춤 컨설팅 · 공식요금비교 · 현금혜택 안내</p>
                 </div>
 
+                <!-- Real-time Status Board for Step 1 -->
+                <div class="status-board">
+                    <div class="status-header">
+                        <div class="live-indicator">
+                            <div class="pulse-dot"></div>
+                            <span class="status-title">실시간 상담 현황</span>
+                        </div>
+                        <div class="live-time" id="liveTimeStep1">LIVE • 00:00:00</div>
+                    </div>
+
+                    <!-- Consultation List -->
+                    <div class="consultation-list" id="consultationListStep1">
+                        <!-- Dynamic content will be inserted here -->
+                    </div>
+
+                    <!-- Statistics Dashboard -->
+                    <div class="stats-grid">
+                        <div class="stat-card stat-green">
+                            <div class="stat-content">
+                                <p>오늘 접수</p>
+                                <div class="stat-number-container">
+                                    <span class="stat-number" id="todayApplicationsStep1">0</span><span class="stat-unit">건</span>
+                                </div>
+                            </div>
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-indicator">
+                                <div class="pulse-mini"></div>
+                                <span>실시간 업데이트</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card stat-teal">
+                            <div class="stat-content">
+                                <p>상담 대기</p>
+                                <div class="stat-number-container">
+                                    <span class="stat-number" id="waitingConsultationStep1">0</span><span class="stat-unit">명</span>
+                                </div>
+                            </div>
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-indicator">
+                                <div class="pulse-mini"></div>
+                                <span>대기 중</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card stat-red">
+                            <div class="stat-content">
+                                <p>상담 중</p>
+                                <div class="stat-number-container">
+                                    <span class="stat-number" id="consultingNowStep1">0</span><span class="stat-unit">명</span>
+                                </div>
+                            </div>
+                            <div class="stat-icon">
+                                <i class="fas fa-headset"></i>
+                            </div>
+                            <div class="stat-indicator">
+                                <div class="pulse-mini"></div>
+                                <span>실시간 상담</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card stat-blue">
+                            <div class="stat-content">
+                                <p>상담 완료</p>
+                                <div class="stat-number-container">
+                                    <span class="stat-number" id="completedConsultationsStep1">0</span><span class="stat-unit">건</span>
+                                </div>
+                            </div>
+                            <div class="stat-icon">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="stat-indicator">
+                                <div class="pulse-mini"></div>
+                                <span>오늘 기준</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card stat-purple">
+                            <div class="stat-content">
+                                <p>설치 예약</p>
+                                <div class="stat-number-container">
+                                    <span class="stat-number" id="installReservationStep1">0</span><span class="stat-unit">건</span>
+                                </div>
+                            </div>
+                            <div class="stat-icon">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <div class="stat-indicator">
+                                <div class="pulse-mini"></div>
+                                <span>대기 중</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card stat-yellow">
+                            <div class="stat-content">
+                                <p>설치 완료</p>
+                                <div class="stat-number-container">
+                                    <span class="stat-number" id="onlineConsultantsStep1">0</span><span class="stat-unit">건</span>
+                                </div>
+                            </div>
+                            <div class="stat-icon">
+                                <i class="fas fa-thumbs-up"></i>
+                            </div>
+                            <div class="stat-indicator">
+                                <div class="pulse-mini"></div>
+                                <span>설치완료 누적량</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card stat-orange stat-wide">
+                            <div class="stat-content">
+                                <p>사은품 지급</p>
+                                <div class="stat-number-container">
+                                    <span class="stat-number" id="cashRewardStep1">0</span><span class="stat-unit">만원</span>
+                                </div>
+                            </div>
+                            <div class="stat-icon">💰</div>
+                            <div class="stat-indicator">
+                                <div class="pulse-mini"></div>
+                                <span>누적 금액</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Detail Page Images Section -->
                 <div class="detail-images-section" id="detailImagesSection">
                     <div class="detail-images-grid" id="detailImagesGrid">
