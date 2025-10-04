@@ -4091,9 +4091,11 @@ button.telecom-btn.selected:nth-child(6):hover {
 }
 
 #step2 .banner-container,
-#step2MainBanner {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
+#step2MainBanner,
+#step2 #step2MainBanner,
+div#step2 .banner-container,
+div#step2 div#step2MainBanner {
+    margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
     line-height: 0 !important;
