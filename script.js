@@ -822,30 +822,12 @@ async function loadRealtimeData() {
 
 function updateConsultationList(data) {
     const container = document.getElementById('consultationList');
-    const containerStep1 = document.getElementById('consultationListStep1');
 
-    // Step 2 컨테이너 처리
+    // Step 2 컨테이너만 처리 (Step 1에는 접수건 리스트 표시 안함)
     if (container) {
         // 스크롤바 완전 제거 + 높이 설정 (모바일/데스크톱 분리)
         const isMobile = window.innerWidth <= 768;
         container.style.cssText = `
-            height: ${isMobile ? '1050px' : '1300px'} !important;
-            min-height: ${isMobile ? '1050px' : '1300px'} !important;
-            overflow: hidden !important;
-            overflow-y: hidden !important;
-            overflow-x: hidden !important;
-            scrollbar-width: none !important;
-            -ms-overflow-style: none !important;
-            padding: 10px;
-            padding-bottom: 20px;
-            box-sizing: border-box;
-        `;
-    }
-
-    // Step 1 컨테이너 처리
-    if (containerStep1) {
-        const isMobile = window.innerWidth <= 768;
-        containerStep1.style.cssText = `
             height: ${isMobile ? '1050px' : '1300px'} !important;
             min-height: ${isMobile ? '1050px' : '1300px'} !important;
             overflow: hidden !important;
@@ -864,8 +846,7 @@ function updateConsultationList(data) {
         const style = document.createElement('style');
         style.id = 'hide-scrollbar-style';
         style.textContent = `
-            #consultationList::-webkit-scrollbar,
-            #consultationListStep1::-webkit-scrollbar {
+            #consultationList::-webkit-scrollbar {
                 display: none !important;
                 width: 0 !important;
                 height: 0 !important;
@@ -876,7 +857,6 @@ function updateConsultationList(data) {
 
     if (!data || data.length === 0) {
         if (container) container.innerHTML = '';
-        if (containerStep1) containerStep1.innerHTML = '';
         updatePagination(0, 0);
         return;
     }
@@ -981,9 +961,8 @@ function updateConsultationList(data) {
         `;
     }).join('');
 
-    // Step 2와 Step 1에 동일한 내용 표시
+    // Step 2만 표시 (Step 1에는 접수건 리스트 없음)
     if (container) container.innerHTML = htmlContent;
-    if (containerStep1) containerStep1.innerHTML = htmlContent;
 
     // 페이지네이션 업데이트
     updatePagination(totalPages, totalItems);
