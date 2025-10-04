@@ -4340,7 +4340,7 @@ div#step2 div#step2MainBanner {
 @media (min-width: 1024px) {
     .stats-grid {
         display: grid !important;
-        grid-template-columns: repeat(2, 1fr) !important;
+        grid-template-columns: repeat(6, 1fr) !important;
         gap: 20px !important;
         padding: 20px !important;
         max-width: 1400px;
