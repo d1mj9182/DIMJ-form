@@ -1366,6 +1366,11 @@ body {
 
 /* 데스크탑 전용 통계카드 */
 @media (min-width: 769px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        grid-template-rows: repeat(3, auto) !important;
+    }
+
     .stat-card {
         padding: 6px 8px;
         border-radius: 4px;
@@ -1405,6 +1410,10 @@ body {
         width: 8px;
         height: 8px;
         margin-right: 6px;
+    }
+
+    .stats-grid .stat-wide {
+        grid-column: 1 / -1;
     }
 }
 
