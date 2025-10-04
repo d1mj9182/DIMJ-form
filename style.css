@@ -4340,23 +4340,60 @@ div#step2 div#step2MainBanner {
 @media (min-width: 1024px) {
     .stats-grid {
         display: grid !important;
-        grid-template-columns: repeat(3, 1fr) !important;
+        grid-template-columns: repeat(2, 1fr) !important;
         gap: 20px !important;
         padding: 20px !important;
         max-width: 1400px;
         margin: 0 auto;
     }
-    
+
     .stat-card {
-        min-height: 150px !important;
-        padding: 20px !important;
+        min-height: 80px !important;
+        max-width: 140px !important;
+        padding: 6px 8px !important;
+        border-radius: 4px !important;
     }
-    
+
+    .stat-content {
+        margin-bottom: 4px !important;
+    }
+
+    .stat-content p {
+        font-size: 18px !important;
+    }
+
+    .stat-number {
+        font-size: 36px !important;
+    }
+
+    .stat-unit {
+        font-size: 18px !important;
+        margin-left: 4px !important;
+    }
+
+    .stat-icon {
+        width: 50px !important;
+        height: 50px !important;
+        border-radius: 8px !important;
+        font-size: 26px !important;
+    }
+
+    .stat-indicator {
+        font-size: 14px !important;
+    }
+
+    .pulse-mini {
+        width: 8px !important;
+        height: 8px !important;
+        margin-right: 6px !important;
+    }
+
     /* 하단 전체 너비 카드 (사은품 지급) */
     .stat-card.stat-wide {
         grid-column: 1 / -1 !important;
+        max-width: none !important;
     }
-    
+
     /* 현황판 컨테이너 */
     .status-board {
         max-width: 1400px;
