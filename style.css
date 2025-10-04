@@ -1300,6 +1300,7 @@ body {
     font-size: 2rem;
 }
 
+/* 모바일 기본 */
 .stat-card {
     padding: 4px;
     border-radius: 4px;
@@ -1361,6 +1362,48 @@ body {
     border-radius: 50%;
     margin-right: 2px;
     animation: pulse 2s infinite;
+}
+
+/* 데스크탑에서만 통계카드 1/2 더 축소 */
+@media (min-width: 769px) {
+    .stat-card {
+        padding: 2px;
+        border-radius: 2px;
+    }
+
+    .stat-content {
+        margin-bottom: 1.5px;
+    }
+
+    .stat-content p {
+        font-size: 2.75px;
+    }
+
+    .stat-number {
+        font-size: 5.5px;
+    }
+
+    .stat-unit {
+        font-size: 3px;
+        margin-left: 0.75px;
+    }
+
+    .stat-icon {
+        width: 7px;
+        height: 7px;
+        border-radius: 1.5px;
+        font-size: 3.5px;
+    }
+
+    .stat-indicator {
+        font-size: 2.25px;
+    }
+
+    .pulse-mini {
+        width: 1.25px;
+        height: 1.25px;
+        margin-right: 1px;
+    }
 }
 
 .stat-green .pulse-mini { background-color: #10b981; }
