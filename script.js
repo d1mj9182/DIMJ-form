@@ -601,6 +601,11 @@ function updateStep() {
     // Re-setup event listeners for new step
     if (currentStep === 2) {
         setupEventListeners();
+        // 서비스 버튼 이벤트 리스너 재등록 (메인배너/상세페이지 로드 후에도 정상 작동)
+        setTimeout(() => {
+            initializeTelecomButtons();
+            console.log('✅ Step2 진입 시 이벤트 리스너 재등록 완료');
+        }, 100);
     }
 }
 
