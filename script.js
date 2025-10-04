@@ -1179,13 +1179,13 @@ function validateForm() {
     
     formData.name = nameInput.value.trim();
     formData.phone = phoneInput.value.trim();
-    
+
     // 🔥 폼 검증 완전 간소화 - 이름과 전화번호만 필수
-    const nameValue = document.getElementById('name')?.value?.trim();
-    const phoneValue = document.getElementById('phone')?.value?.trim();
+    const nameValue = nameInput.value.trim();
+    const phoneValue = phoneInput.value.trim();
     const privacyChecked = document.getElementById('privacyAgree')?.checked;
 
-    // 기본값 자동 설정
+    // 기본값 자동 설정 (기타서비스는 선택사항)
     if (!formData.service) formData.service = '인터넷+IPTV';
     if (!formData.provider) formData.provider = 'SK';
 
@@ -1194,17 +1194,18 @@ function validateForm() {
         phone: phoneValue,
         service: formData.service,
         provider: formData.provider,
-        privacy: privacyChecked
+        privacy: privacyChecked,
+        note: '기타서비스는 선택사항'
     });
 
-    // 🔥 실제 체크박스 상태 사용 (자동 체크되므로 정상 작동)
-    const isValid = nameValue && phoneValue && privacyChecked;
-    
+    // 🔥 기타서비스와 무관하게 이름+전화번호+개인정보만 검증
+    const isValid = !!(nameValue && phoneValue && privacyChecked);
+
     submitButton.disabled = !isValid;
-    
+
     if (isValid) {
         submitButton.classList.remove('disabled');
-        console.log('✅ 버튼 활성화됨');
+        console.log('✅ 버튼 활성화됨 (기타서비스 불필요)');
     } else {
         submitButton.classList.add('disabled');
         console.log('❌ 버튼 비활성화됨');
