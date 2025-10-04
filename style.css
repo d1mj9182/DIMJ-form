@@ -1364,7 +1364,7 @@ body {
     animation: pulse 2s infinite;
 }
 
-/* 데스크탑에서만 통계카드 컨테이너 1/2 축소, 폰트/이모지 4배 확대 */
+/* 데스크탑에서만 통계카드 컨테이너 1/2 축소, 폰트/이모지 2배 이상 확대 */
 @media (min-width: 769px) {
     .stat-card {
         padding: 2px;
@@ -1376,32 +1376,32 @@ body {
     }
 
     .stat-content p {
-        font-size: 22px;
-    }
-
-    .stat-number {
         font-size: 44px;
     }
 
+    .stat-number {
+        font-size: 88px;
+    }
+
     .stat-unit {
-        font-size: 24px;
+        font-size: 48px;
         margin-left: 0.75px;
     }
 
     .stat-icon {
-        width: 56px;
-        height: 56px;
+        width: 112px;
+        height: 112px;
         border-radius: 1.5px;
-        font-size: 28px;
+        font-size: 56px;
     }
 
     .stat-indicator {
-        font-size: 18px;
+        font-size: 36px;
     }
 
     .pulse-mini {
-        width: 10px;
-        height: 10px;
+        width: 20px;
+        height: 20px;
         margin-right: 1px;
     }
 }
