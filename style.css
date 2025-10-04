@@ -1367,12 +1367,14 @@ body {
 /* 데스크탑 전용 통계카드 */
 @media (min-width: 769px) {
     .stat-card {
-        padding: 4px;
-        border-radius: 2.67px;
+        padding: 6px 8px;
+        border-radius: 4px;
+        min-height: 80px;
+        max-width: 140px;
     }
 
     .stat-content {
-        margin-bottom: 2.67px;
+        margin-bottom: 4px;
     }
 
     .stat-content p {
