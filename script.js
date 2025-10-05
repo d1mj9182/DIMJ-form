@@ -1206,7 +1206,15 @@ function validateForm() {
     const mainServiceCategory = Array.from(allCategories).find(cat =>
         cat.querySelector('.category-title')?.textContent.includes('주요 서비스')
     );
-    const hasMainService = mainServiceCategory ? !!mainServiceCategory.querySelector('.telecom-btn.selected') : false;
+    const selectedMainServiceBtn = mainServiceCategory ? mainServiceCategory.querySelector('.telecom-btn.selected') : null;
+    const hasMainService = !!selectedMainServiceBtn;
+
+    console.log('🔍 디버깅:', {
+        allCategoriesCount: allCategories.length,
+        mainServiceCategory: !!mainServiceCategory,
+        selectedMainServiceBtn: selectedMainServiceBtn?.textContent.trim(),
+        hasMainService: hasMainService
+    });
 
     console.log('폼 검증:', {
         name: nameValue,
