@@ -1190,28 +1190,48 @@ function validateForm() {
     formData.name = nameInput.value.trim();
     formData.phone = phoneInput.value.trim();
 
-    // 🔥 폼 검증 완전 간소화 - 이름과 전화번호만 필수
+    // 🔥 폼 검증 - 이름, 전화번호, 통신사, 주요서비스, 개인정보동의 필수
     const nameValue = nameInput.value.trim();
     const phoneValue = phoneInput.value.trim();
     const privacyChecked = document.getElementById('privacyAgree')?.checked;
 
-    // 기본값 자동 설정 (기타서비스는 선택사항)
-    if (!formData.service) formData.service = '인터넷+IPTV';
-    if (!formData.provider) formData.provider = 'SK';
+    // 선택된 통신사 확인
+    const selectedProvider = document.querySelector('.telecom-btn.selected[data-provider]') ||
+                            document.querySelector('.service-category:has(.category-title:contains("신청 통신사")) .telecom-btn.selected');
+    const hasProvider = !!selectedProvider;
+
+    // 선택된 주요 서비스 확인
+    const selectedMainService = document.querySelector('.main-service-btn.selected') ||
+                                document.querySelector('.service-category:first-child .telecom-btn.selected');
+    const hasMainService = !!selectedMainService;
 
     console.log('폼 검증:', {
         name: nameValue,
         phone: phoneValue,
-        service: formData.service,
-        provider: formData.provider,
+        provider: hasProvider,
+        mainService: hasMainService,
         privacy: privacyChecked,
         note: '기타서비스는 선택사항'
     });
 
-    // 🔥 버튼 항상 활성화 - 기타서비스와 무관
-    submitButton.disabled = false;
-    submitButton.classList.remove('disabled');
-    console.log('✅ 버튼 항상 활성화 (기타서비스 조건 제거)');
+    // 🔥 필수 조건: 이름 + 전화번호 + 통신사 + 주요서비스 + 개인정보동의
+    const isValid = !!(nameValue && phoneValue && hasProvider && hasMainService && privacyChecked);
+
+    submitButton.disabled = !isValid;
+
+    if (isValid) {
+        submitButton.classList.remove('disabled');
+        console.log('✅ 버튼 활성화 - 모든 필수 조건 충족');
+    } else {
+        submitButton.classList.add('disabled');
+        console.log('❌ 버튼 비활성화 - 미충족:', {
+            noName: !nameValue,
+            noPhone: !phoneValue,
+            noProvider: !hasProvider,
+            noMainService: !hasMainService,
+            noPrivacy: !privacyChecked
+        });
+    }
 }
 
 function handleFormSubmit(e) {
