@@ -1195,15 +1195,13 @@ function validateForm() {
     const phoneValue = phoneInput.value.trim();
     const privacyChecked = document.getElementById('privacyAgree')?.checked;
 
-    // 선택된 통신사 확인
-    const selectedProvider = document.querySelector('.telecom-btn.selected[data-provider]') ||
-                            document.querySelector('.service-category:has(.category-title:contains("신청 통신사")) .telecom-btn.selected');
-    const hasProvider = !!selectedProvider;
+    // 선택된 통신사 확인 (첫 번째 service-category)
+    const providerCategory = document.querySelectorAll('.service-category')[0];
+    const hasProvider = providerCategory ? !!providerCategory.querySelector('.telecom-btn.selected') : false;
 
-    // 선택된 주요 서비스 확인
-    const selectedMainService = document.querySelector('.main-service-btn.selected') ||
-                                document.querySelector('.service-category:first-child .telecom-btn.selected');
-    const hasMainService = !!selectedMainService;
+    // 선택된 주요 서비스 확인 (두 번째 service-category의 main-service-btn)
+    const mainServiceCategory = document.querySelectorAll('.service-category')[1];
+    const hasMainService = mainServiceCategory ? !!mainServiceCategory.querySelector('.main-service-btn.selected') : false;
 
     console.log('폼 검증:', {
         name: nameValue,
