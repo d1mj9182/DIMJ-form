@@ -2372,6 +2372,7 @@ function initializeTelecomButtons() {
                     if (buttonText.includes('IPTV추가')) {
                         // IPTV추가는 독립적으로 토글 가능
                         this.classList.toggle('selected');
+                        console.log('IPTV추가 토글:', this.classList.contains('selected'));
                     } else {
                         // 인터넷+IPTV, 단품 인터넷은 라디오 버튼 방식
                         Array.from(currentGrid.querySelectorAll('.telecom-btn')).forEach(b => {
@@ -2380,11 +2381,16 @@ function initializeTelecomButtons() {
                             }
                         });
                         this.classList.add('selected');
+                        console.log('주요서비스 선택:', buttonText, 'selected:', this.classList.contains('selected'));
                     }
                 } else {
                     // 기타 서비스는 토글
                     this.classList.toggle('selected');
+                    console.log('기타서비스 토글:', buttonText, this.classList.contains('selected'));
                 }
+
+                // 선택 후 즉시 validateForm 호출
+                validateForm();
                 
                 // Check if any button in this grid is selected
                 const hasSelection = Array.from(currentGrid.querySelectorAll('.telecom-btn'))
