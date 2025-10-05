@@ -1199,9 +1199,9 @@ function validateForm() {
     const providerCategory = document.querySelectorAll('.service-category')[0];
     const hasProvider = providerCategory ? !!providerCategory.querySelector('.telecom-btn.selected') : false;
 
-    // 선택된 주요 서비스 확인 (두 번째 service-category의 main-service-btn)
+    // 선택된 주요 서비스 확인 (두 번째 service-category의 모든 telecom-btn)
     const mainServiceCategory = document.querySelectorAll('.service-category')[1];
-    const hasMainService = mainServiceCategory ? !!mainServiceCategory.querySelector('.main-service-btn.selected') : false;
+    const hasMainService = mainServiceCategory ? !!mainServiceCategory.querySelector('.telecom-btn.selected') : false;
 
     console.log('폼 검증:', {
         name: nameValue,
