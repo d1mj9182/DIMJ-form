@@ -1208,24 +1208,10 @@ function validateForm() {
         note: '기타서비스는 선택사항'
     });
 
-    // 🔥 기타서비스와 무관하게 이름+전화번호+개인정보만 검증
-    const isValid = !!(nameValue && phoneValue && privacyChecked);
-
-    submitButton.disabled = !isValid;
-
-    if (isValid) {
-        submitButton.classList.remove('disabled');
-        console.log('✅ 버튼 활성화됨 (기타서비스 불필요)');
-    } else {
-        submitButton.classList.add('disabled');
-        console.log('❌ 버튼 비활성화됨');
-    }
-
-    console.log('🎯 버튼 상태:', {
-        disabled: submitButton.disabled,
-        className: submitButton.className,
-        isValid: isValid
-    });
+    // 🔥 버튼 항상 활성화 - 기타서비스와 무관
+    submitButton.disabled = false;
+    submitButton.classList.remove('disabled');
+    console.log('✅ 버튼 항상 활성화 (기타서비스 조건 제거)');
 }
 
 function handleFormSubmit(e) {
