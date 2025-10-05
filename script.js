@@ -2389,20 +2389,17 @@ function initializeTelecomButtons() {
                     console.log('기타서비스 토글:', buttonText, this.classList.contains('selected'));
                 }
 
-                // 선택 후 즉시 validateForm 호출
-                validateForm();
-                
                 // Check if any button in this grid is selected
                 const hasSelection = Array.from(currentGrid.querySelectorAll('.telecom-btn'))
                     .some(b => b.classList.contains('selected'));
-                
+
                 // Add/remove has-selection class for dimming effect
                 if (hasSelection) {
                     currentGrid.classList.add('has-selection');
                 } else {
                     currentGrid.classList.remove('has-selection');
                 }
-                
+
                 // Update form data for services
                 const selectedServices = Array.from(allServiceButtons)
                     .filter(b => b.classList.contains('selected'))
@@ -2412,10 +2409,12 @@ function initializeTelecomButtons() {
                         return text.includes(' ') ? text.split(' ').pop() : text;
                     })
                     .join(',');
-                
+
                 formData.service = selectedServices;
-                validateForm();
                 console.log('Services selected:', formData.service);
+
+                // 마지막에 한 번만 validateForm 호출
+                validateForm();
             });
         });
     }
