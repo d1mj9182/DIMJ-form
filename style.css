@@ -4144,56 +4144,27 @@ button.telecom-btn.selected:nth-child(6):hover {
     justify-content: center;
 }
 
-/* 2페이지 배너 - 모든 여백 완전 제거 */
-#step2 .banner-container,
-#step2MainBanner.banner-container,
+/* ========================================
+   2페이지 메인배너 완전 초기화
+   ======================================== */
 #step2MainBanner,
-#step2 #step2MainBanner,
-div#step2 .banner-container,
-div#step2 div#step2MainBanner,
-div#step2MainBanner.banner-container {
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-    padding: 0 !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-    background: transparent !important;
-    overflow: hidden !important;
-    box-sizing: border-box !important;
-    line-height: 0 !important;
-    border: none !important;
-}
-
-/* 2페이지 배너만 여백 제거 */
-#step2 .back-button-container {
-    margin-bottom: 0 !important;
-}
-
-#step2 .banner-inner,
+#step2MainBanner *,
 #step2MainBanner .banner-inner,
-div#step2MainBanner .banner-inner {
-    margin: 0 !important;
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-    padding: 0 !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
+#step2MainBanner .banner-inner * {
+    all: unset !important;
+    display: block !important;
+    box-sizing: border-box !important;
+}
+
+#step2MainBanner {
+    width: 100% !important;
     line-height: 0 !important;
 }
 
-#step2 .banner-container img,
-#step2MainBanner img,
-div#step2MainBanner img,
-#step2BannerImage {
-    display: block !important;
-    margin: 0 !important;
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-    padding: 0 !important;
-    padding-top: 0 !important;
+#step2MainBanner img {
+    width: 100% !important;
+    height: auto !important;
+    vertical-align: top !important;
     padding-bottom: 0 !important;
     vertical-align: top !important;
     width: 100% !important;
@@ -5390,42 +5361,8 @@ button.fraud-prevention-btn {
     }
 }
 
-/* 🔴 모바일 1,2페이지 메인배너 높이 1/3 증가 */
+/* 🔴 모바일 실시간 상담 현황 */
 @media screen and (max-width: 768px) {
-    #step1 .banner-container,
-    #step2 .banner-container,
-    #step1MainBanner,
-    #step2MainBanner {
-        max-height: 333px !important;
-    }
-
-    #step1 .banner-container img,
-    #step2 .banner-container img,
-    #step1MainBanner img,
-    #step2MainBanner img {
-        max-height: 333px !important;
-    }
-
-    /* 2페이지 메인배너 상하 여백 제거 - 강화 */
-    #step2MainBanner,
-    #step2MainBanner.banner-container,
-    #step2 .banner-container {
-        margin: 0 !important;
-        padding: 0 !important;
-        margin-top: 0 !important;
-        margin-bottom: 0 !important;
-        padding-top: 0 !important;
-        padding-bottom: 0 !important;
-        background: transparent !important;
-    }
-
-    #step2MainBanner img,
-    #step2MainBanner.banner-container img {
-        display: block !important;
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-
     /* 모바일 실시간 상담 현황 폰트 크기 줄이기 */
     .status-title,
     .status-header h2,
@@ -5449,43 +5386,5 @@ button.fraud-prevention-btn {
     /* 2페이지 배너와 실시간 상담 현황 간격 조정 */
     #step2 .status-board {
         margin-top: 0 !important;
-    }
-
-    /* 2페이지 모바일 배너 여백 완전 제거 */
-    #step2 .back-button-container ~ *:first-of-type,
-    #step2 .banner-container:first-of-type,
-    #step2MainBanner {
-        margin-top: 0 !important;
-        margin-bottom: 0 !important;
-        padding-top: 0 !important;
-        padding-bottom: 0 !important;
-        background: transparent !important;
-    }
-
-    #step2MainBanner,
-    #step2 .banner-container {
-        margin: 0 !important;
-        padding: 0 !important;
-        line-height: 0 !important;
-    }
-
-    #step2MainBanner .banner-inner,
-    #step2 .banner-inner {
-        margin: 0 !important;
-        padding: 0 !important;
-        line-height: 0 !important;
-    }
-
-    #step2MainBanner img,
-    #step2 .banner-container img {
-        display: block !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        width: 100% !important;
-        vertical-align: top !important;
-    }
-
-    #step2MainBanner .banner-placeholder {
-        display: none !important;
     }
 }

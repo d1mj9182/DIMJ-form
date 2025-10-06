@@ -1,6 +1,5 @@
 // Admin configuration
 const ADMIN_CONFIG = {
-    password: 'aszx1004!', // 관리자 초기 패스워드
     sessionTimeout: 30 * 60 * 1000, // 30 minutes
     maxLoginAttempts: 5,
     lockoutTime: 15 * 60 * 1000 // 15 minutes
@@ -210,6 +209,67 @@ function navigateToPage(pageName) {
     }
 }
 
+// Simple hash function for password verification
+async function hashPassword(password) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return hashHex;
+}
+
+// Verify password against Supabase
+async function verifyPassword(inputPassword) {
+    try {
+        const hashedInput = await hashPassword(inputPassword);
+
+        const response = await fetch(`${PROXY_URL}?table=admin_settings&key=admin_password`, {
+            method: 'GET',
+            headers: {
+                'x-api-key': SUPABASE_ANON_KEY,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const result = await response.json();
+
+        if (result.success && result.data && result.data.length > 0) {
+            const storedHash = result.data[0].setting_value || result.data[0].설정값;
+            return hashedInput === storedHash;
+        }
+
+        // Fallback: 초기 설정이 없으면 기본 비밀번호로 로그인 허용 및 DB 저장
+        if (!result.data || result.data.length === 0) {
+            const defaultPassword = 'aszx1004!';
+            const defaultHash = await hashPassword(defaultPassword);
+
+            if (hashedInput === defaultHash) {
+                // Save to DB
+                await fetch(`${PROXY_URL}`, {
+                    method: 'POST',
+                    headers: {
+                        'x-api-key': SUPABASE_ANON_KEY,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        table: 'admin_settings',
+                        setting_key: 'admin_password',
+                        setting_value: defaultHash,
+                        setting_type: 'password'
+                    })
+                });
+                return true;
+            }
+        }
+
+        return false;
+    } catch (error) {
+        console.error('비밀번호 확인 실패:', error);
+        return false;
+    }
+}
+
 // Login handling
 async function handleLogin(e) {
     e.preventDefault();
@@ -217,15 +277,22 @@ async function handleLogin(e) {
     // Check if locked out
     if (isLockedOut()) {
         const remainingTime = Math.ceil((ADMIN_CONFIG.lockoutTime - (Date.now() - adminState.lastFailedLogin)) / 1000 / 60);
-        alert(`너무 많은 로그인 시도로 인해 잠겨있습니다. ${remainingTime}분 후 다시 시도하세요.`);
+        showToast('error', '계정 잠김', `너무 많은 로그인 시도로 인해 ${remainingTime}분간 잠겨있습니다.`);
         return;
     }
 
     const password = document.getElementById('adminPassword').value;
 
+    showLoading();
+
+    // Verify password from Supabase
+    const isValid = await verifyPassword(password);
+
+    hideLoading();
+
     // Get user IP
     getUserIP().then(ipAddress => {
-        if (password === ADMIN_CONFIG.password) {
+        if (isValid) {
             adminState.isLoggedIn = true;
             adminState.loginTime = Date.now();
             adminState.loginAttempts = 0;
@@ -351,6 +418,76 @@ function renderLoginHistory() {
     `).join('');
 }
 
+
+// Change password function
+async function changePassword() {
+    const currentPassword = document.getElementById('currentPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    // Validation
+    if (!currentPassword || !newPassword || !confirmPassword) {
+        showToast('warning', '입력 필요', '모든 필드를 입력해주세요.');
+        return;
+    }
+
+    if (newPassword !== confirmPassword) {
+        showToast('error', '비밀번호 불일치', '새 비밀번호가 일치하지 않습니다.');
+        return;
+    }
+
+    if (newPassword.length < 8) {
+        showToast('warning', '비밀번호 약함', '비밀번호는 최소 8자 이상이어야 합니다.');
+        return;
+    }
+
+    showLoading();
+
+    // Verify current password
+    const isCurrentValid = await verifyPassword(currentPassword);
+
+    if (!isCurrentValid) {
+        hideLoading();
+        showToast('error', '인증 실패', '현재 비밀번호가 올바르지 않습니다.');
+        return;
+    }
+
+    try {
+        // Hash new password
+        const newHash = await hashPassword(newPassword);
+
+        // Update in Supabase
+        const response = await fetch(`${PROXY_URL}`, {
+            method: 'PATCH',
+            headers: {
+                'x-api-key': SUPABASE_ANON_KEY,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                table: 'admin_settings',
+                setting_key: 'admin_password',
+                setting_value: newHash
+            })
+        });
+
+        hideLoading();
+
+        if (response.ok) {
+            showToast('success', '비밀번호 변경 완료', '비밀번호가 성공적으로 변경되었습니다.');
+
+            // Clear inputs
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+        } else {
+            throw new Error('비밀번호 업데이트 실패');
+        }
+    } catch (error) {
+        hideLoading();
+        console.error('비밀번호 변경 에러:', error);
+        showToast('error', '변경 실패', '비밀번호 변경에 실패했습니다.');
+    }
+}
 
 function isLockedOut() {
     return adminState.loginAttempts >= ADMIN_CONFIG.maxLoginAttempts &&

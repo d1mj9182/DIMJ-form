@@ -1717,6 +1717,23 @@ body {
    SECURITY PAGE
    ======================================== */
 
+.password-change-form {
+    background: linear-gradient(135deg, #ffffff, #f8fafc);
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 500px;
+}
+
+.password-change-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.password-change-form .btn-primary {
+    width: 100%;
+    margin-top: 1rem;
+}
+
 .login-history-container {
     background: white;
     border-radius: 12px;
