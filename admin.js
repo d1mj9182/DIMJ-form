@@ -649,16 +649,17 @@ async function previewMainBannerImage(event, step) {
 
         // Save to Supabase DB
         try {
-            const response = await fetch(`${PROXY_URL}?table=admin_settings`, {
+            const response = await fetch(`${PROXY_URL}`, {
                 method: 'POST',
                 headers: {
                     'x-api-key': SUPABASE_ANON_KEY,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    설정키: `main_banner_${step}`,
-                    설정값: imageData,
-                    설정타입: 'image'
+                    table: 'admin_settings',
+                    setting_key: `main_banner_${step}`,
+                    setting_value: imageData,
+                    setting_type: 'image'
                 })
             });
 
@@ -727,16 +728,17 @@ async function previewDetailImage(event, imageNumber) {
 
         // Save to Supabase DB
         try {
-            const response = await fetch(`${PROXY_URL}?table=admin_settings`, {
+            const response = await fetch(`${PROXY_URL}`, {
                 method: 'POST',
                 headers: {
                     'x-api-key': SUPABASE_ANON_KEY,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    설정키: `detail_image_${imageNumber}`,
-                    설정값: imageData,
-                    설정타입: 'image'
+                    table: 'admin_settings',
+                    setting_key: `detail_image_${imageNumber}`,
+                    setting_value: imageData,
+                    setting_type: 'image'
                 })
             });
 

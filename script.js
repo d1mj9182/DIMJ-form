@@ -20,8 +20,9 @@ async function loadBannersFromAdmin() {
         const result = await response.json();
 
         let step1BannerData = null;
-        if (result.success && result.data && result.data.length > 0) {
-            step1BannerData = result.data[0].setting_value || result.data[0].설정값;
+        // 프록시 서버는 배열을 직접 반환
+        if (Array.isArray(result) && result.length > 0) {
+            step1BannerData = result[0].setting_value;
             console.log('✅ Step1 배너 DB에서 로드');
         } else {
             step1BannerData = localStorage.getItem('mainBannerImage_step1');
@@ -61,8 +62,9 @@ async function loadBannersFromAdmin() {
         const result = await response.json();
 
         let step2BannerData = null;
-        if (result.success && result.data && result.data.length > 0) {
-            step2BannerData = result.data[0].setting_value || result.data[0].설정값;
+        // 프록시 서버는 배열을 직접 반환
+        if (Array.isArray(result) && result.length > 0) {
+            step2BannerData = result[0].setting_value;
             console.log('✅ Step2 배너 DB에서 로드');
         } else {
             step2BannerData = localStorage.getItem('mainBannerImage_step2');
@@ -114,9 +116,10 @@ async function loadBannersFromAdmin() {
             console.log(`📦 상세이미지 ${i} DB 응답:`, result);
 
             let detailImageData = null;
-            if (result.success && result.data && result.data.length > 0) {
-                detailImageData = result.data[0].setting_value || result.data[0].설정값;
-                console.log(`✅ 상세이미지 ${i} DB에서 로드 성공 (${detailImageData ? detailImageData.substring(0, 50) : 'null'}...)`);
+            // 프록시 서버는 배열을 직접 반환
+            if (Array.isArray(result) && result.length > 0) {
+                detailImageData = result[0].setting_value;
+                console.log(`✅ 상세이미지 ${i} DB에서 로드 성공`);
             } else {
                 detailImageData = localStorage.getItem(`detailImage${i}`);
                 console.log(`⚠️ 상세이미지 ${i} localStorage에서 로드 (${detailImageData ? '있음' : '없음'})`);

@@ -5388,14 +5388,23 @@ button.fraud-prevention-btn {
         max-height: 333px !important;
     }
 
-    /* 2페이지 메인배너 상하 여백 제거 */
-    #step2 .banner-container,
-    #step2MainBanner {
+    /* 2페이지 메인배너 상하 여백 제거 - 강화 */
+    #step2MainBanner,
+    #step2MainBanner.banner-container,
+    #step2 .banner-container {
+        margin: 0 !important;
+        padding: 0 !important;
         margin-top: 0 !important;
         margin-bottom: 0 !important;
         padding-top: 0 !important;
         padding-bottom: 0 !important;
         background: transparent !important;
+    }
+
+    #step2MainBanner img,
+    #step2MainBanner.banner-container img {
+        display: block !important;
+        margin: 0 !important;
         padding: 0 !important;
     }
 
