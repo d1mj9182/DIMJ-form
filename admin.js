@@ -130,8 +130,9 @@ function navigateToPage(pageName) {
     } else if (pageName === 'dashboard') {
         updateStats();
         loadRecentApplications();
-    } else if (pageName === 'content') {
-        loadDetailPageContent();
+    } else if (pageName === 'banners') {
+        // 배너 페이지 로드 시 기존 업로드된 이미지 표시
+        setTimeout(loadBannersToAdmin, 100);
     }
 }
 
@@ -314,7 +315,7 @@ function renderApplicationsTable(applications) {
     if (applications.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="11" style="text-align: center; color: #64748b; padding: 2rem;">
+                <td colspan="10" style="text-align: center; color: #64748b; padding: 2rem;">
                     신청 내역이 없습니다.
                 </td>
             </tr>
@@ -324,31 +325,27 @@ function renderApplicationsTable(applications) {
 
     tbody.innerHTML = applications.map(app => `
         <tr>
+            <td><input type="checkbox"></td>
             <td>${app.id}</td>
             <td>${app.name}</td>
             <td>${app.phone}</td>
             <td>${app.service}</td>
             <td>${app.provider || '-'}</td>
-            <td>${app.preference || '빠른 시간'}</td>
             <td>${formatDate(app.timestamp)}</td>
-            <td>${app.ip ? app.ip.substring(0, 12) + '...' : '-'}</td>
+            <td>${app.ip ? app.ip.substring(0, 15) : '-'}</td>
             <td>
-                <select class="status-select" onchange="updateStatus('${app.id}', this.value)" data-current="${app.status}" style="padding: 4px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; background-color: white;">
-                    <option value="">상태 변경</option>
-                    <option value="상담대기" ${app.status === '상담대기' ? 'selected' : ''}>상담대기</option>
-                    <option value="상담중" ${app.status === '상담중' ? 'selected' : ''}>상담중</option>
-                    <option value="상담완료" ${app.status === '상담완료' ? 'selected' : ''}>상담완료</option>
-                    <option value="설치예약" ${app.status === '설치예약' ? 'selected' : ''}>설치예약</option>
-                    <option value="설치완료" ${app.status === '설치완료' ? 'selected' : ''}>설치완료</option>
-                </select>
+                <span class="status-badge ${app.status === '상담대기' ? 'status-pending' : app.status === '상담중' ? 'status-processing' : 'status-completed'}">
+                    ${app.status || '상담대기'}
+                </span>
             </td>
-            <td>
-                <input type="number" value="${app.giftAmount || ''}" placeholder="사은품(만원)"
-                       onchange="updateGiftAmount('${app.id}', this.value)"
-                       style="width: 80px; padding: 4px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;">
-            </td>
-            <td>
-                <button class="btn-icon danger" onclick="deleteApplication('${app.id}')">
+            <td class="table-actions">
+                <button class="btn-icon" onclick="viewApplication('${app.id}')" title="상세보기">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn-icon" onclick="editApplication('${app.id}')" title="수정">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn-icon danger" onclick="deleteApplication('${app.id}')" title="삭제">
                     <i class="fas fa-trash"></i>
                 </button>
             </td>
@@ -494,6 +491,19 @@ async function deleteApplication(id) {
         console.error('❌ 삭제 실패:', error);
         alert(`삭제에 실패했습니다.\n\n에러: ${error.message}`);
     }
+}
+
+// View application
+function viewApplication(id) {
+    const app = adminState.applications.find(a => a.id === id);
+    if (app) {
+        alert(`신청 상세정보\n\nID: ${app.id}\n이름: ${app.name}\n전화: ${app.phone}\n서비스: ${app.service}\n통신사: ${app.provider}\n상태: ${app.status}\nIP: ${app.ip}`);
+    }
+}
+
+// Edit application
+function editApplication(id) {
+    alert('신청 수정 기능은 준비 중입니다.');
 }
 
 // Search functionality
@@ -898,9 +908,52 @@ function saveBannerSettings() {
 // Save main banner settings
 function saveMainBannerSettings() {
     alert('메인 배너 설정이 저장되었습니다.');
+    // 메인 폼에도 즉시 반영
+    if (window.opener && !window.opener.closed) {
+        window.opener.location.reload();
+    }
 }
 
 // Save detail images settings
 function saveDetailImagesSettings() {
     alert('상세페이지 이미지 설정이 저장되었습니다.');
+    // 메인 폼에도 즉시 반영
+    if (window.opener && !window.opener.closed) {
+        window.opener.location.reload();
+    }
+}
+
+// Load banners to admin (기존 업로드된 이미지 표시)
+function loadBannersToAdmin() {
+    console.log('어드민에 배너 로드 중...');
+
+    // Load Step 1 & 2 Main Banners
+    for (let step of ['step1', 'step2']) {
+        const imageData = localStorage.getItem(`mainBannerImage_${step}`);
+        const previewContainer = document.getElementById(`mainBannerPreview_${step}`);
+
+        if (imageData && previewContainer) {
+            previewContainer.innerHTML = `
+                <img src="${imageData}" class="preview-image" alt="Main Banner Preview" style="max-width: 100%; border-radius: 8px; margin-top: 1rem;">
+                <button class="btn btn-remove" onclick="removeMainBannerImage('${step}')" style="margin-top: 1rem;">
+                    <i class="fas fa-trash"></i> 이미지 제거
+                </button>
+            `;
+        }
+    }
+
+    // Load Detail Images
+    for (let i = 1; i <= 5; i++) {
+        const imageData = localStorage.getItem(`detailImage${i}`);
+        const previewContainer = document.getElementById(`detailImagePreview${i}`);
+
+        if (imageData && previewContainer) {
+            previewContainer.innerHTML = `
+                <img src="${imageData}" class="preview-image" alt="Detail Image ${i}" style="max-width: 100%; border-radius: 8px; margin-top: 1rem;">
+                <button class="btn btn-remove" onclick="removeDetailImage(${i})" style="margin-top: 1rem;">
+                    <i class="fas fa-trash"></i> 이미지 제거
+                </button>
+            `;
+        }
+    }
 }
