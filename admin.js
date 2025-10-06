@@ -385,8 +385,6 @@ async function loadApplications() {
         console.log(`✅ ${filteredApps.length}개 신청서 로딩 완료`);
 
         // Hide skeleton loader
-        const skeleton = document.getElementById('tableSkeletonLoader');
-        const table = document.getElementById('applicationsTable');
         if (skeleton) skeleton.style.display = 'none';
         if (table) table.style.opacity = '1';
 
@@ -399,8 +397,6 @@ async function loadApplications() {
         console.error('❌ 데이터 로딩 실패:', error);
 
         // Hide skeleton loader
-        const skeleton = document.getElementById('tableSkeletonLoader');
-        const table = document.getElementById('applicationsTable');
         if (skeleton) skeleton.style.display = 'none';
         if (table) table.style.opacity = '1';
 
