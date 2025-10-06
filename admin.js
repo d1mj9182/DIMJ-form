@@ -18,8 +18,70 @@ let adminState = {
     blockedIPs: [],
     loginAttempts: 0,
     lastFailedLogin: null,
-    currentPage: 'dashboard'
+    currentPage: 'dashboard',
+    currentPaginationPage: 1,
+    itemsPerPage: 10,
+    filteredApplications: []
 };
+
+// Utility Functions
+function showLoading() {
+    const overlay = document.getElementById('loadingOverlay');
+    if (overlay) overlay.style.display = 'flex';
+}
+
+function hideLoading() {
+    const overlay = document.getElementById('loadingOverlay');
+    if (overlay) overlay.style.display = 'none';
+}
+
+function showToast(type, title, message) {
+    const container = document.getElementById('toastContainer');
+    if (!container) return;
+
+    const icons = {
+        success: 'fa-check-circle',
+        error: 'fa-exclamation-circle',
+        warning: 'fa-exclamation-triangle',
+        info: 'fa-info-circle'
+    };
+
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `
+        <div class="toast-icon">
+            <i class="fas ${icons[type]}"></i>
+        </div>
+        <div class="toast-content">
+            <div class="toast-title">${title}</div>
+            <div class="toast-message">${message}</div>
+        </div>
+        <button class="toast-close" onclick="this.parentElement.remove()">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="toast-progress"></div>
+    `;
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.style.animation = 'slideInRight 0.3s ease reverse';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// Debounce function
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
 
 // Initialize admin page
 document.addEventListener('DOMContentLoaded', function() {
@@ -69,9 +131,17 @@ function setupEventListeners() {
 
     const statusFilter = document.getElementById('statusFilter');
     const dateFilter = document.getElementById('dateFilter');
+    const searchInput = document.getElementById('searchInput');
 
     if (statusFilter) statusFilter.addEventListener('change', loadApplications);
     if (dateFilter) dateFilter.addEventListener('change', loadApplications);
+
+    // Debounced search
+    if (searchInput) {
+        searchInput.addEventListener('input', debounce(function() {
+            filterAndRenderApplications();
+        }, 500));
+    }
 
     // Set today's date as default
     if (dateFilter) {
@@ -229,6 +299,12 @@ async function loadApplications() {
     try {
         console.log('📋 Supabase에서 관리자 데이터 로딩...');
 
+        // Show skeleton loader
+        const skeleton = document.getElementById('tableSkeletonLoader');
+        const table = document.getElementById('applicationsTable');
+        if (skeleton) skeleton.style.display = 'block';
+        if (table) table.style.opacity = '0.3';
+
         const response = await fetch(`${PROXY_URL}?table=consultations`, {
             method: 'GET',
             headers: {
@@ -297,21 +373,134 @@ async function loadApplications() {
         // 최신순 정렬
         filteredApps.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
-        renderApplicationsTable(filteredApps);
         adminState.applications = applications; // Store all applications for stats
+        adminState.filteredApplications = filteredApps;
+        adminState.currentPaginationPage = 1; // Reset to first page
+
+        renderPaginatedTable();
 
         console.log(`✅ ${filteredApps.length}개 신청서 로딩 완료`);
+
+        // Hide skeleton loader
+        const skeleton = document.getElementById('tableSkeletonLoader');
+        const table = document.getElementById('applicationsTable');
+        if (skeleton) skeleton.style.display = 'none';
+        if (table) table.style.opacity = '1';
 
         // Update stats after loading applications
         updateStats();
 
+        showToast('success', '로딩 완료', `${filteredApps.length}개의 신청서를 불러왔습니다.`);
+
     } catch (error) {
         console.error('❌ 데이터 로딩 실패:', error);
-        alert(`데이터를 불러오는데 실패했습니다.\n\n에러: ${error.message}`);
+
+        // Hide skeleton loader
+        const skeleton = document.getElementById('tableSkeletonLoader');
+        const table = document.getElementById('applicationsTable');
+        if (skeleton) skeleton.style.display = 'none';
+        if (table) table.style.opacity = '1';
+
+        showToast('error', '로딩 실패', `데이터를 불러오는데 실패했습니다: ${error.message}`);
     }
 }
 
-function renderApplicationsTable(applications) {
+// Pagination rendering
+function renderPaginatedTable() {
+    const { filteredApplications, currentPaginationPage, itemsPerPage } = adminState;
+
+    const startIdx = (currentPaginationPage - 1) * itemsPerPage;
+    const endIdx = startIdx + itemsPerPage;
+    const paginatedApps = filteredApplications.slice(startIdx, endIdx);
+
+    renderApplicationsTable(paginatedApps, startIdx);
+    renderPaginationControls();
+}
+
+function renderPaginationControls() {
+    const { filteredApplications, currentPaginationPage, itemsPerPage } = adminState;
+    const totalPages = Math.ceil(filteredApplications.length / itemsPerPage);
+    const startIdx = (currentPaginationPage - 1) * itemsPerPage;
+    const endIdx = Math.min(startIdx + itemsPerPage, filteredApplications.length);
+
+    // Update showing info
+    const showingInfo = document.getElementById('showingInfo');
+    if (showingInfo) {
+        showingInfo.textContent = `${startIdx + 1}-${endIdx} / 총 ${filteredApplications.length}개`;
+    }
+
+    // Render pagination buttons
+    const pagination = document.getElementById('pagination');
+    if (!pagination) return;
+
+    let html = '';
+
+    // Previous button
+    html += `<button class="pagination-btn" ${currentPaginationPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPaginationPage - 1})">
+        <i class="fas fa-chevron-left"></i>
+    </button>`;
+
+    // Page numbers
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, currentPaginationPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+    if (endPage - startPage < maxVisiblePages - 1) {
+        startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    if (startPage > 1) {
+        html += `<button class="pagination-btn" onclick="changePage(1)">1</button>`;
+        if (startPage > 2) html += `<span class="pagination-ellipsis">...</span>`;
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+        html += `<button class="pagination-btn ${i === currentPaginationPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+    }
+
+    if (endPage < totalPages) {
+        if (endPage < totalPages - 1) html += `<span class="pagination-ellipsis">...</span>`;
+        html += `<button class="pagination-btn" onclick="changePage(${totalPages})">${totalPages}</button>`;
+    }
+
+    // Next button
+    html += `<button class="pagination-btn" ${currentPaginationPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPaginationPage + 1})">
+        <i class="fas fa-chevron-right"></i>
+    </button>`;
+
+    pagination.innerHTML = html;
+}
+
+function changePage(page) {
+    const totalPages = Math.ceil(adminState.filteredApplications.length / adminState.itemsPerPage);
+    if (page < 1 || page > totalPages) return;
+
+    adminState.currentPaginationPage = page;
+    renderPaginatedTable();
+
+    // Scroll to top of table
+    document.getElementById('applicationsTable')?.scrollIntoView({ behavior: 'smooth' });
+}
+
+function filterAndRenderApplications() {
+    const searchInput = document.getElementById('searchInput');
+    if (!searchInput) return;
+
+    const searchTerm = searchInput.value.toLowerCase();
+    const { applications } = adminState;
+
+    const filtered = applications.filter(app => {
+        return app.name.toLowerCase().includes(searchTerm) ||
+               app.phone.includes(searchTerm) ||
+               app.ip.includes(searchTerm);
+    });
+
+    adminState.filteredApplications = filtered;
+    adminState.currentPaginationPage = 1;
+    renderPaginatedTable();
+}
+
+function renderApplicationsTable(applications, startIndex = 0) {
     const tbody = document.getElementById('applicationsTableBody');
 
     if (!tbody) return;
@@ -319,7 +508,7 @@ function renderApplicationsTable(applications) {
     if (applications.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="10" style="text-align: center; color: #64748b; padding: 2rem;">
+                <td colspan="12" style="text-align: center; color: #64748b; padding: 2rem;">
                     신청 내역이 없습니다.
                 </td>
             </tr>
@@ -330,7 +519,7 @@ function renderApplicationsTable(applications) {
     tbody.innerHTML = applications.map((app, index) => `
         <tr>
             <td><input type="checkbox"></td>
-            <td><strong>${index + 1}</strong></td>
+            <td><strong>${startIndex + index + 1}</strong></td>
             <td>${app.id}</td>
             <td>${app.name}</td>
             <td>${app.phone}</td>
@@ -1120,14 +1309,14 @@ function filterApplications() {
     loadApplications();
 }
 
-// Update application status
+// Update application status with retry
 async function updateApplicationStatus(id, newStatus) {
     if (!confirm(`상태를 "${newStatus}"(으)로 변경하시겠습니까?`)) {
         loadApplications(); // 취소 시 원래 값으로 되돌리기
         return;
     }
 
-    try {
+    await retryableOperation(async () => {
         const response = await fetch(`${PROXY_URL}`, {
             method: 'PATCH',
             headers: {
@@ -1141,19 +1330,39 @@ async function updateApplicationStatus(id, newStatus) {
             })
         });
 
-        const result = await response.json();
-
-        if (response.ok) {
-            alert('상태가 업데이트되었습니다.');
-            loadApplications();
-        } else {
-            throw new Error(result.error || '상태 업데이트 실패');
+        if (!response.ok) {
+            throw new Error('상태 업데이트 실패');
         }
-    } catch (error) {
-        console.error('상태 업데이트 에러:', error);
-        alert(`상태 업데이트 실패: ${error.message}`);
-        loadApplications(); // 실패 시 원래 값으로 되돌리기
+
+        showToast('success', '상태 변경', `상태가 "${newStatus}"(으)로 변경되었습니다.`);
+        loadApplications();
+    }, '상태 업데이트');
+}
+
+// Retryable operation wrapper
+async function retryableOperation(operation, operationName, maxRetries = 3) {
+    let lastError;
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            showLoading();
+            await operation();
+            hideLoading();
+            return;
+        } catch (error) {
+            lastError = error;
+            console.error(`${operationName} 시도 ${attempt}/${maxRetries} 실패:`, error);
+            hideLoading();
+
+            if (attempt < maxRetries) {
+                const retry = confirm(`${operationName}에 실패했습니다.\n다시 시도하시겠습니까? (${attempt}/${maxRetries})`);
+                if (!retry) break;
+            }
+        }
     }
+
+    showToast('error', operationName + ' 실패', `${maxRetries}번 시도했지만 실패했습니다: ${lastError.message}`);
+    loadApplications(); // 실패 시 원래 값으로 되돌리기
 }
 
 // Update gift amount

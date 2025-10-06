@@ -10,6 +10,17 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>로딩 중...</p>
+        </div>
+    </div>
+
     <!-- Login Screen -->
     <div class="login-screen" id="loginScreen">
         <div class="login-box">
@@ -260,7 +271,16 @@
                 </div>
 
                 <div class="table-container">
-                    <table class="data-table">
+                    <!-- Skeleton Loader -->
+                    <div id="tableSkeletonLoader" class="skeleton-loader" style="display: none;">
+                        <div class="skeleton-row"></div>
+                        <div class="skeleton-row"></div>
+                        <div class="skeleton-row"></div>
+                        <div class="skeleton-row"></div>
+                        <div class="skeleton-row"></div>
+                    </div>
+
+                    <table class="data-table" id="applicationsTable">
                         <thead>
                             <tr>
                                 <th>
