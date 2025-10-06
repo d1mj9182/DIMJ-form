@@ -170,8 +170,8 @@ function checkLoginStatus() {
 }
 
 function showAdminPanel() {
-    document.getElementById('loginScreen').classList.add('hidden');
-    document.getElementById('adminDashboard').classList.remove('hidden');
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminMain').style.display = 'flex';
 }
 
 function logout() {
@@ -179,8 +179,8 @@ function logout() {
     adminState.loginTime = null;
     sessionStorage.removeItem('adminAuth');
 
-    document.getElementById('loginScreen').classList.remove('hidden');
-    document.getElementById('adminDashboard').classList.add('hidden');
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('adminMain').style.display = 'none';
     document.getElementById('adminPassword').value = '';
 }
 
