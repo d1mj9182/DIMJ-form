@@ -395,6 +395,22 @@ async function updateStats() {
         return appDate === today;
     }).length;
 
+    const statusWaiting = adminState.applications.filter(app =>
+        app.status === '상담대기'
+    ).length;
+
+    const statusInProgress = adminState.applications.filter(app =>
+        app.status === '상담중'
+    ).length;
+
+    const statusDone = adminState.applications.filter(app =>
+        app.status === '상담완료'
+    ).length;
+
+    const statusScheduled = adminState.applications.filter(app =>
+        app.status === '설치예약'
+    ).length;
+
     const completedInstall = adminState.applications.filter(app =>
         app.status === '설치완료'
     ).length;
@@ -403,22 +419,26 @@ async function updateStats() {
         return sum + (app.giftAmount || 0);
     }, 0);
 
-    const pendingApplications = adminState.applications.filter(app =>
-        app.status === '상담대기'
-    ).length;
-
     // Update stat values
     const todayEl = document.getElementById('todayApplications');
+    const waitingEl = document.getElementById('statusWaiting');
+    const inProgressEl = document.getElementById('statusInProgress');
+    const doneEl = document.getElementById('statusDone');
+    const scheduledEl = document.getElementById('statusScheduled');
     const completedEl = document.getElementById('completedInstall');
     const giftEl = document.getElementById('totalGiftAmount');
     const pendingBadgeEl = document.getElementById('pendingBadge');
 
     if (todayEl) todayEl.textContent = todayApplications;
+    if (waitingEl) waitingEl.textContent = statusWaiting;
+    if (inProgressEl) inProgressEl.textContent = statusInProgress;
+    if (doneEl) doneEl.textContent = statusDone;
+    if (scheduledEl) scheduledEl.textContent = statusScheduled;
     if (completedEl) completedEl.textContent = completedInstall;
     if (giftEl) giftEl.textContent = totalGiftAmount + '만원';
     if (pendingBadgeEl) {
-        pendingBadgeEl.textContent = pendingApplications;
-        pendingBadgeEl.style.display = pendingApplications > 0 ? 'block' : 'none';
+        pendingBadgeEl.textContent = statusWaiting;
+        pendingBadgeEl.style.display = statusWaiting > 0 ? 'block' : 'none';
     }
 
     // 월별 그래프 업데이트
