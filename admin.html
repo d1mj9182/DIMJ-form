@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="admin.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <!-- Login Screen -->
@@ -110,14 +111,11 @@
                 <div class="stats-grid">
                     <div class="stat-card stat-primary">
                         <div class="stat-icon">
-                            <i class="fas fa-users"></i>
+                            <i class="fas fa-eye"></i>
                         </div>
                         <div class="stat-info">
-                            <p class="stat-label">총 신청</p>
-                            <h3 class="stat-value" id="totalApplications">0</h3>
-                            <span class="stat-change positive">
-                                <i class="fas fa-arrow-up"></i> 12%
-                            </span>
+                            <p class="stat-label">오늘 방문</p>
+                            <h3 class="stat-value" id="todayVisitors">0</h3>
                         </div>
                     </div>
 
@@ -126,39 +124,36 @@
                             <i class="fas fa-calendar-check"></i>
                         </div>
                         <div class="stat-info">
-                            <p class="stat-label">오늘 신청</p>
+                            <p class="stat-label">접수 신청</p>
                             <h3 class="stat-value" id="todayApplications">0</h3>
-                            <span class="stat-change positive">
-                                <i class="fas fa-arrow-up"></i> 8%
-                            </span>
                         </div>
                     </div>
 
                     <div class="stat-card stat-warning">
                         <div class="stat-icon">
-                            <i class="fas fa-clock"></i>
+                            <i class="fas fa-check-circle"></i>
                         </div>
                         <div class="stat-info">
-                            <p class="stat-label">대기 중</p>
-                            <h3 class="stat-value" id="pendingApplications">0</h3>
-                            <span class="stat-change neutral">
-                                <i class="fas fa-minus"></i> 0%
-                            </span>
+                            <p class="stat-label">설치 완료</p>
+                            <h3 class="stat-value" id="completedInstall">0</h3>
                         </div>
                     </div>
 
                     <div class="stat-card stat-info">
                         <div class="stat-icon">
-                            <i class="fas fa-eye"></i>
+                            <i class="fas fa-gift"></i>
                         </div>
                         <div class="stat-info">
-                            <p class="stat-label">오늘 방문</p>
-                            <h3 class="stat-value" id="todayVisitors">0</h3>
-                            <span class="stat-change positive">
-                                <i class="fas fa-arrow-up"></i> 5%
-                            </span>
+                            <p class="stat-label">사은품 지급액</p>
+                            <h3 class="stat-value" id="totalGiftAmount">0만원</h3>
                         </div>
                     </div>
+                </div>
+
+                <!-- Monthly Chart -->
+                <div class="chart-container">
+                    <h2 class="section-title">월별 통계</h2>
+                    <canvas id="monthlyChart" style="max-height: 300px;"></canvas>
                 </div>
 
                 <!-- Quick Actions -->
@@ -273,8 +268,6 @@
                     <button class="tab-btn" onclick="switchContentTab('hero')">히어로 섹션</button>
                     <button class="tab-btn" onclick="switchContentTab('loss')">손해 계산</button>
                     <button class="tab-btn" onclick="switchContentTab('comparison')">요금제 비교</button>
-                    <button class="tab-btn" onclick="switchContentTab('testimonials')">고객 후기</button>
-                    <button class="tab-btn" onclick="switchContentTab('faq')">FAQ</button>
                     <button class="tab-btn" onclick="switchContentTab('fraudWarning')">부정클릭 경고</button>
                 </div>
 

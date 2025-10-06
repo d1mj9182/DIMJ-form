@@ -389,31 +389,153 @@ function formatDateForInput(timestamp) {
 async function updateStats() {
     if (!adminState.isLoggedIn) return;
 
-    const totalApplications = adminState.applications.length;
-
     const today = new Date().toISOString().split('T')[0];
     const todayApplications = adminState.applications.filter(app => {
         const appDate = new Date(app.timestamp).toISOString().split('T')[0];
         return appDate === today;
     }).length;
 
+    const completedInstall = adminState.applications.filter(app =>
+        app.status === '설치완료'
+    ).length;
+
+    const totalGiftAmount = adminState.applications.reduce((sum, app) => {
+        return sum + (app.giftAmount || 0);
+    }, 0);
+
     const pendingApplications = adminState.applications.filter(app =>
         app.status === '상담대기'
     ).length;
 
     // Update stat values
-    const totalEl = document.getElementById('totalApplications');
     const todayEl = document.getElementById('todayApplications');
-    const pendingEl = document.getElementById('pendingApplications');
+    const completedEl = document.getElementById('completedInstall');
+    const giftEl = document.getElementById('totalGiftAmount');
     const pendingBadgeEl = document.getElementById('pendingBadge');
 
-    if (totalEl) totalEl.textContent = totalApplications;
     if (todayEl) todayEl.textContent = todayApplications;
-    if (pendingEl) pendingEl.textContent = pendingApplications;
+    if (completedEl) completedEl.textContent = completedInstall;
+    if (giftEl) giftEl.textContent = totalGiftAmount + '만원';
     if (pendingBadgeEl) {
         pendingBadgeEl.textContent = pendingApplications;
         pendingBadgeEl.style.display = pendingApplications > 0 ? 'block' : 'none';
     }
+
+    // 월별 그래프 업데이트
+    updateMonthlyChart();
+}
+
+// 월별 그래프 생성
+let monthlyChartInstance = null;
+
+function updateMonthlyChart() {
+    const ctx = document.getElementById('monthlyChart');
+    if (!ctx) return;
+
+    // 최근 6개월 데이터 계산
+    const monthlyData = {};
+    const today = new Date();
+
+    for (let i = 5; i >= 0; i--) {
+        const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
+        const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        monthlyData[monthKey] = { applications: 0, completed: 0, giftAmount: 0 };
+    }
+
+    // 신청 데이터 집계
+    adminState.applications.forEach(app => {
+        const appDate = new Date(app.timestamp);
+        const monthKey = `${appDate.getFullYear()}-${String(appDate.getMonth() + 1).padStart(2, '0')}`;
+
+        if (monthlyData[monthKey]) {
+            monthlyData[monthKey].applications++;
+            if (app.status === '설치완료') {
+                monthlyData[monthKey].completed++;
+            }
+            monthlyData[monthKey].giftAmount += (app.giftAmount || 0);
+        }
+    });
+
+    const labels = Object.keys(monthlyData).map(key => {
+        const [year, month] = key.split('-');
+        return `${month}월`;
+    });
+
+    const applicationsData = Object.values(monthlyData).map(d => d.applications);
+    const completedData = Object.values(monthlyData).map(d => d.completed);
+    const giftData = Object.values(monthlyData).map(d => d.giftAmount);
+
+    // 기존 차트 제거
+    if (monthlyChartInstance) {
+        monthlyChartInstance.destroy();
+    }
+
+    // 새 차트 생성
+    monthlyChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: '접수 신청',
+                    data: applicationsData,
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    tension: 0.4
+                },
+                {
+                    label: '설치 완료',
+                    data: completedData,
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    tension: 0.4
+                },
+                {
+                    label: '사은품 지급액 (만원)',
+                    data: giftData,
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                    tension: 0.4,
+                    yAxisID: 'y1'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'top'
+                },
+                title: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                    title: {
+                        display: true,
+                        text: '건수'
+                    }
+                },
+                y1: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    title: {
+                        display: true,
+                        text: '사은품 (만원)'
+                    },
+                    grid: {
+                        drawOnChartArea: false
+                    }
+                }
+            }
+        }
+    });
 }
 
 // Status update
@@ -491,21 +613,23 @@ async function deleteApplication(id) {
     try {
         console.log(`🗑️ 신청서 삭제 시작: ID ${id}`);
 
-        const response = await fetch(`${PROXY_URL}?table=consultations&id=${id}`, {
+        const response = await fetch(`${PROXY_URL}`, {
             method: 'DELETE',
             headers: {
                 'x-api-key': SUPABASE_ANON_KEY,
                 'Content-Type': 'application/json'
-            }
+            },
+            body: JSON.stringify({
+                table: 'consultations',
+                id: id
+            })
         });
 
-        const result = await response.json();
-        console.log('✅ 삭제 응답:', result);
-
-        if (result.success || response.ok) {
+        if (response.ok) {
             alert('신청서가 삭제되었습니다.');
             loadApplications();
         } else {
+            const result = await response.json();
             throw new Error(result.error || '삭제 실패');
         }
 
