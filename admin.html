@@ -462,16 +462,31 @@
                                     <p>이미지를 드래그하거나 클릭하여 업로드</p>
                                     <span>권장 크기: 1920x250px, JPG/PNG</span>
                                 </label>
-                                <div class="image-preview" id="step1MainBannerImagePreview" style="display: none;">
-                                    <img id="step1PreviewImage" src="" alt="미리보기">
-                                    <button class="btn-remove" onclick="removeMainBannerImage('step1')">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
                             </div>
+                            <div class="image-preview-container" id="mainBannerPreview_step1"></div>
                             <div class="toggle-group">
                                 <label class="toggle-switch">
                                     <input type="checkbox" id="step1MainBannerEnabled">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span>배너 활성화</span>
+                            </div>
+                        </div>
+
+                        <div class="banner-section">
+                            <h3>2페이지 메인 배너</h3>
+                            <div class="upload-area">
+                                <input type="file" id="step2MainBannerImageUpload" accept="image/*" onchange="previewMainBannerImage(event, 'step2')" hidden>
+                                <label for="step2MainBannerImageUpload" class="upload-label">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>이미지를 드래그하거나 클릭하여 업로드</p>
+                                    <span>권장 크기: 1920x250px, JPG/PNG</span>
+                                </label>
+                            </div>
+                            <div class="image-preview-container" id="mainBannerPreview_step2"></div>
+                            <div class="toggle-group">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="step2MainBannerEnabled">
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <span>배너 활성화</span>
@@ -488,7 +503,7 @@
                     <!-- Detail Images Tab -->
                     <div class="tab-content" id="detailImagesEditor" style="display: none;">
                         <div class="banner-section">
-                            <h3>상세페이지 이미지 (A4 5장 분량)</h3>
+                            <h3>상세페이지 이미지 1</h3>
                             <div class="upload-area">
                                 <input type="file" id="detailImage1Upload" accept="image/*" onchange="previewDetailImage(event, 1)" hidden>
                                 <label for="detailImage1Upload" class="upload-label">
@@ -496,24 +511,88 @@
                                     <p>이미지를 드래그하거나 클릭하여 업로드</p>
                                     <span>권장 크기: 1050x2970px, JPG/PNG</span>
                                 </label>
-                                <div class="image-preview" id="detailImage1Preview" style="display: none;">
-                                    <img id="detailPreview1" src="" alt="미리보기">
-                                    <button class="btn-remove" onclick="removeDetailImage(1)">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
                             </div>
+                            <div class="image-preview-container" id="detailImagePreview1"></div>
                             <div class="form-group">
                                 <label>이미지 설명 (선택)</label>
                                 <input type="text" id="detailCaption1" placeholder="이미지 설명">
                             </div>
-                            <div class="toggle-group">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="detailImagesEnabled">
-                                    <span class="toggle-slider"></span>
+                        </div>
+
+                        <div class="banner-section">
+                            <h3>상세페이지 이미지 2</h3>
+                            <div class="upload-area">
+                                <input type="file" id="detailImage2Upload" accept="image/*" onchange="previewDetailImage(event, 2)" hidden>
+                                <label for="detailImage2Upload" class="upload-label">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>이미지를 드래그하거나 클릭하여 업로드</p>
+                                    <span>권장 크기: 1050x2970px, JPG/PNG</span>
                                 </label>
-                                <span>상세페이지 활성화</span>
                             </div>
+                            <div class="image-preview-container" id="detailImagePreview2"></div>
+                            <div class="form-group">
+                                <label>이미지 설명 (선택)</label>
+                                <input type="text" id="detailCaption2" placeholder="이미지 설명">
+                            </div>
+                        </div>
+
+                        <div class="banner-section">
+                            <h3>상세페이지 이미지 3</h3>
+                            <div class="upload-area">
+                                <input type="file" id="detailImage3Upload" accept="image/*" onchange="previewDetailImage(event, 3)" hidden>
+                                <label for="detailImage3Upload" class="upload-label">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>이미지를 드래그하거나 클릭하여 업로드</p>
+                                    <span>권장 크기: 1050x2970px, JPG/PNG</span>
+                                </label>
+                            </div>
+                            <div class="image-preview-container" id="detailImagePreview3"></div>
+                            <div class="form-group">
+                                <label>이미지 설명 (선택)</label>
+                                <input type="text" id="detailCaption3" placeholder="이미지 설명">
+                            </div>
+                        </div>
+
+                        <div class="banner-section">
+                            <h3>상세페이지 이미지 4</h3>
+                            <div class="upload-area">
+                                <input type="file" id="detailImage4Upload" accept="image/*" onchange="previewDetailImage(event, 4)" hidden>
+                                <label for="detailImage4Upload" class="upload-label">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>이미지를 드래그하거나 클릭하여 업로드</p>
+                                    <span>권장 크기: 1050x2970px, JPG/PNG</span>
+                                </label>
+                            </div>
+                            <div class="image-preview-container" id="detailImagePreview4"></div>
+                            <div class="form-group">
+                                <label>이미지 설명 (선택)</label>
+                                <input type="text" id="detailCaption4" placeholder="이미지 설명">
+                            </div>
+                        </div>
+
+                        <div class="banner-section">
+                            <h3>상세페이지 이미지 5</h3>
+                            <div class="upload-area">
+                                <input type="file" id="detailImage5Upload" accept="image/*" onchange="previewDetailImage(event, 5)" hidden>
+                                <label for="detailImage5Upload" class="upload-label">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>이미지를 드래그하거나 클릭하여 업로드</p>
+                                    <span>권장 크기: 1050x2970px, JPG/PNG</span>
+                                </label>
+                            </div>
+                            <div class="image-preview-container" id="detailImagePreview5"></div>
+                            <div class="form-group">
+                                <label>이미지 설명 (선택)</label>
+                                <input type="text" id="detailCaption5" placeholder="이미지 설명">
+                            </div>
+                        </div>
+
+                        <div class="toggle-group">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="detailImagesEnabled" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span>상세페이지 활성화</span>
                         </div>
 
                         <div class="editor-actions">

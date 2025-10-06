@@ -894,3 +894,13 @@ function addFAQ() {
 function saveBannerSettings() {
     alert('배너 설정이 저장되었습니다.');
 }
+
+// Save main banner settings
+function saveMainBannerSettings() {
+    alert('메인 배너 설정이 저장되었습니다.');
+}
+
+// Save detail images settings
+function saveDetailImagesSettings() {
+    alert('상세페이지 이미지 설정이 저장되었습니다.');
+}
