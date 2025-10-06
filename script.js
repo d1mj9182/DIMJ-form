@@ -86,35 +86,31 @@ async function loadBannersFromAdmin() {
         console.error('Step2 배너 DB 로드 에러:', error);
     }
 
-    // Load Detail Page Images (1-5) - localStorage 먼저 표시
+    // Load Detail Page Images (1-5) - localStorage에서 즉시 동기 로드
     let detailImagesLoaded = 0;
     const detailPlaceholder = document.getElementById('detailImagesPlaceholder');
 
-    console.log('🖼️ 상세이미지 로드 시작...');
+    // 즉시 동기적으로 로드 (기다리지 않음)
+    for (let i = 1; i <= 5; i++) {
+        const detailLocalData = localStorage.getItem(`detailImage${i}`);
+        const detailImgContainer = document.getElementById(`detailImage${i}Container`);
 
-    // 먼저 localStorage에서 즉시 로드 (동기적으로 빠르게)
-    requestAnimationFrame(() => {
-        for (let i = 1; i <= 5; i++) {
-            const detailLocalData = localStorage.getItem(`detailImage${i}`);
-            const detailImgContainer = document.getElementById(`detailImage${i}Container`);
+        if (detailLocalData && detailImgContainer) {
+            const img = document.createElement('img');
+            img.src = detailLocalData;
+            img.alt = `상세페이지 이미지 ${i}`;
+            img.style.cssText = 'width: 100%; max-width: 100%; height: auto; display: block; margin: 0;';
 
-            if (detailLocalData && detailImgContainer) {
-                const img = new Image();
-                img.src = detailLocalData;
-                img.alt = `상세페이지 이미지 ${i}`;
-                img.style.cssText = 'width: 100%; max-width: 100%; height: auto; display: block; margin: 0;';
-
-                detailImgContainer.appendChild(img);
-                detailImgContainer.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; width: 100% !important; max-width: 100% !important;';
-                detailImagesLoaded++;
-                console.log(`⚡ 상세이미지 ${i} localStorage 즉시 로드`);
-            }
+            detailImgContainer.innerHTML = '';
+            detailImgContainer.appendChild(img);
+            detailImgContainer.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; width: 100% !important; max-width: 100% !important;';
+            detailImagesLoaded++;
         }
+    }
 
-        if (detailImagesLoaded > 0 && detailPlaceholder) {
-            detailPlaceholder.style.display = 'none';
-        }
-    });
+    if (detailImagesLoaded > 0 && detailPlaceholder) {
+        detailPlaceholder.style.display = 'none';
+    }
 
     // 백그라운드에서 DB 최신 데이터 가져오기 (병렬 처리)
     const dbPromises = [];
