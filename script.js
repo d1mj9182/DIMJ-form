@@ -5,59 +5,93 @@ window.currentStep = currentStep;
 // API Configuration
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXd6dnlyb2RwZG1mZ2xzcXF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIzMjUzMzEsImV4cCI6MjA0NzkwMTMzMX0.MkFZj8gNdkZT7xE9ysD1fkzN3bfOh5CtpOEtQGUCqY4';
 
-// Load banners from admin localStorage
-function loadBannersFromAdmin() {
-    console.log('🎨 배너 로딩 시작...');
-    console.log('📦 localStorage 키:', Object.keys(localStorage).filter(k => k.includes('Banner') || k.includes('Image')));
+// Load banners from Supabase DB (DB 우선, localStorage 폴백)
+async function loadBannersFromAdmin() {
+    console.log('🎨 배너 로딩 시작 (DB 우선)...');
+
+    const PROXY_URL = 'https://dimj-form-proxy.vercel.app/api/supabase';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXd6dnlyb2RwZG1mZ2xzcXF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIzMjUzMzEsImV4cCI6MjA0NzkwMTMzMX0.MkFZj8gNdkZT7xE9ysD1fkzN3bfOh5CtpOEtQGUCqY4';
 
     // Load Step 1 Main Banner
-    const step1BannerData = localStorage.getItem('mainBannerImage_step1');
-    console.log('Step1 배너 데이터:', step1BannerData ? '존재 (' + step1BannerData.substring(0, 50) + '...)' : '없음');
+    try {
+        const response = await fetch(`${PROXY_URL}?table=admin_settings&key=main_banner_step1`, {
+            headers: { 'x-api-key': SUPABASE_ANON_KEY }
+        });
+        const result = await response.json();
 
-    if (step1BannerData) {
-        const step1BannerImg = document.getElementById('step1BannerImage');
-        const step1Placeholder = document.getElementById('step1BannerPlaceholder');
-
-        console.log('Step1 배너 요소:', step1BannerImg ? '찾음' : '없음');
-        console.log('Step1 플레이스홀더:', step1Placeholder ? '찾음' : '없음');
-
-        if (step1BannerImg) {
-            step1BannerImg.src = step1BannerData;
-            step1BannerImg.style.display = 'block';
-            step1BannerImg.style.width = '100%';
-            step1BannerImg.style.height = 'auto';
-            if (step1Placeholder) {
-                step1Placeholder.style.display = 'none';
-            }
-            console.log('✅ Step1 메인 배너 로드 완료');
+        let step1BannerData = null;
+        if (result.success && result.data && result.data.length > 0) {
+            step1BannerData = result.data[0].setting_value || result.data[0].설정값;
+            console.log('✅ Step1 배너 DB에서 로드');
+        } else {
+            step1BannerData = localStorage.getItem('mainBannerImage_step1');
+            console.log('⚠️ Step1 배너 localStorage에서 로드');
         }
-    } else {
-        console.log('⚠️ Step1 메인 배너 데이터 없음');
+
+        if (step1BannerData) {
+            const step1BannerImg = document.getElementById('step1BannerImage');
+            const step1Placeholder = document.getElementById('step1BannerPlaceholder');
+            if (step1BannerImg) {
+                step1BannerImg.src = step1BannerData;
+                step1BannerImg.style.display = 'block';
+                step1BannerImg.style.width = '100%';
+                step1BannerImg.style.height = 'auto';
+                if (step1Placeholder) step1Placeholder.style.display = 'none';
+            }
+        }
+    } catch (error) {
+        console.error('Step1 배너 로드 에러:', error);
+        const step1BannerData = localStorage.getItem('mainBannerImage_step1');
+        if (step1BannerData) {
+            const step1BannerImg = document.getElementById('step1BannerImage');
+            const step1Placeholder = document.getElementById('step1BannerPlaceholder');
+            if (step1BannerImg) {
+                step1BannerImg.src = step1BannerData;
+                step1BannerImg.style.display = 'block';
+                if (step1Placeholder) step1Placeholder.style.display = 'none';
+            }
+        }
     }
 
     // Load Step 2 Main Banner
-    const step2BannerData = localStorage.getItem('mainBannerImage_step2');
-    console.log('Step2 배너 데이터:', step2BannerData ? '존재 (' + step2BannerData.substring(0, 50) + '...)' : '없음');
+    try {
+        const response = await fetch(`${PROXY_URL}?table=admin_settings&key=main_banner_step2`, {
+            headers: { 'x-api-key': SUPABASE_ANON_KEY }
+        });
+        const result = await response.json();
 
-    if (step2BannerData) {
-        const step2BannerImg = document.getElementById('step2BannerImage');
-        const step2Placeholder = document.getElementById('step2BannerPlaceholder');
-
-        console.log('Step2 배너 요소:', step2BannerImg ? '찾음' : '없음');
-        console.log('Step2 플레이스홀더:', step2Placeholder ? '찾음' : '없음');
-
-        if (step2BannerImg) {
-            step2BannerImg.src = step2BannerData;
-            step2BannerImg.style.display = 'block';
-            step2BannerImg.style.width = '100%';
-            step2BannerImg.style.height = 'auto';
-            if (step2Placeholder) {
-                step2Placeholder.style.display = 'none';
-            }
-            console.log('✅ Step2 메인 배너 로드 완료');
+        let step2BannerData = null;
+        if (result.success && result.data && result.data.length > 0) {
+            step2BannerData = result.data[0].setting_value || result.data[0].설정값;
+            console.log('✅ Step2 배너 DB에서 로드');
+        } else {
+            step2BannerData = localStorage.getItem('mainBannerImage_step2');
+            console.log('⚠️ Step2 배너 localStorage에서 로드');
         }
-    } else {
-        console.log('⚠️ Step2 메인 배너 데이터 없음');
+
+        if (step2BannerData) {
+            const step2BannerImg = document.getElementById('step2BannerImage');
+            const step2Placeholder = document.getElementById('step2BannerPlaceholder');
+            if (step2BannerImg) {
+                step2BannerImg.src = step2BannerData;
+                step2BannerImg.style.display = 'block';
+                step2BannerImg.style.width = '100%';
+                step2BannerImg.style.height = 'auto';
+                if (step2Placeholder) step2Placeholder.style.display = 'none';
+            }
+        }
+    } catch (error) {
+        console.error('Step2 배너 로드 에러:', error);
+        const step2BannerData = localStorage.getItem('mainBannerImage_step2');
+        if (step2BannerData) {
+            const step2BannerImg = document.getElementById('step2BannerImage');
+            const step2Placeholder = document.getElementById('step2BannerPlaceholder');
+            if (step2BannerImg) {
+                step2BannerImg.src = step2BannerData;
+                step2BannerImg.style.display = 'block';
+                if (step2Placeholder) step2Placeholder.style.display = 'none';
+            }
+        }
     }
 
     // Load Detail Page Images (1-5)
@@ -65,18 +99,39 @@ function loadBannersFromAdmin() {
     const detailPlaceholder = document.getElementById('detailImagesPlaceholder');
 
     for (let i = 1; i <= 5; i++) {
-        const detailImageData = localStorage.getItem(`detailImage${i}`);
-        console.log(`상세이미지 ${i} 데이터:`, detailImageData ? '존재' : '없음');
+        try {
+            const response = await fetch(`${PROXY_URL}?table=admin_settings&key=detail_image_${i}`, {
+                headers: { 'x-api-key': SUPABASE_ANON_KEY }
+            });
+            const result = await response.json();
 
-        if (detailImageData) {
-            const detailImgContainer = document.getElementById(`detailImage${i}Container`);
-            console.log(`상세이미지 ${i} 컨테이너:`, detailImgContainer ? '찾음' : '없음');
+            let detailImageData = null;
+            if (result.success && result.data && result.data.length > 0) {
+                detailImageData = result.data[0].setting_value || result.data[0].설정값;
+                console.log(`✅ 상세이미지 ${i} DB에서 로드`);
+            } else {
+                detailImageData = localStorage.getItem(`detailImage${i}`);
+                console.log(`⚠️ 상세이미지 ${i} localStorage에서 로드`);
+            }
 
-            if (detailImgContainer) {
-                detailImgContainer.innerHTML = `<img src="${detailImageData}" alt="상세페이지 이미지 ${i}" style="width: 100%; height: auto; display: block; margin-bottom: 1rem;">`;
-                detailImgContainer.style.display = 'block';
-                detailImagesLoaded++;
-                console.log(`✅ 상세페이지 이미지 ${i} 로드 완료`);
+            if (detailImageData) {
+                const detailImgContainer = document.getElementById(`detailImage${i}Container`);
+                if (detailImgContainer) {
+                    detailImgContainer.innerHTML = `<img src="${detailImageData}" alt="상세페이지 이미지 ${i}" style="width: 100%; height: auto; display: block; margin-bottom: 1rem;">`;
+                    detailImgContainer.style.display = 'block';
+                    detailImagesLoaded++;
+                }
+            }
+        } catch (error) {
+            console.error(`상세이미지 ${i} 로드 에러:`, error);
+            const detailImageData = localStorage.getItem(`detailImage${i}`);
+            if (detailImageData) {
+                const detailImgContainer = document.getElementById(`detailImage${i}Container`);
+                if (detailImgContainer) {
+                    detailImgContainer.innerHTML = `<img src="${detailImageData}" alt="상세페이지 이미지 ${i}" style="width: 100%; height: auto; display: block; margin-bottom: 1rem;">`;
+                    detailImgContainer.style.display = 'block';
+                    detailImagesLoaded++;
+                }
             }
         }
     }
@@ -84,7 +139,7 @@ function loadBannersFromAdmin() {
     // 상세 이미지가 하나라도 있으면 placeholder 숨김
     if (detailImagesLoaded > 0 && detailPlaceholder) {
         detailPlaceholder.style.display = 'none';
-        console.log(`✅ ${detailImagesLoaded}개 상세이미지 로드됨, placeholder 숨김`);
+        console.log(`✅ ${detailImagesLoaded}개 상세이미지 로드됨`);
     }
 
     console.log('🎨 배너 로딩 완료');

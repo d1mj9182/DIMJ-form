@@ -636,16 +636,42 @@ function switchBannerTab(tabName) {
 }
 
 // Main Banner Image Upload (Step 1)
-function previewMainBannerImage(event, step) {
+async function previewMainBannerImage(event, step) {
     const file = event.target.files[0];
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = async function(e) {
         const imageData = e.target.result;
 
-        // Save to localStorage
+        // Save to localStorage (백업용)
         localStorage.setItem(`mainBannerImage_${step}`, imageData);
+
+        // Save to Supabase DB
+        try {
+            const response = await fetch(`${PROXY_URL}?table=admin_settings`, {
+                method: 'POST',
+                headers: {
+                    'x-api-key': SUPABASE_ANON_KEY,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    설정키: `main_banner_${step}`,
+                    설정값: imageData,
+                    설정타입: 'image'
+                })
+            });
+
+            const result = await response.json();
+            console.log('배너 DB 저장 결과:', result);
+
+            if (!result.success && !response.ok) {
+                throw new Error('DB 저장 실패');
+            }
+        } catch (error) {
+            console.error('배너 DB 저장 에러:', error);
+            alert('이미지는 업로드되었으나 DB 저장에 실패했습니다. localStorage에만 저장됩니다.');
+        }
 
         // Update preview
         const previewContainer = document.getElementById(`mainBannerPreview_${step}`);
@@ -659,6 +685,11 @@ function previewMainBannerImage(event, step) {
         }
 
         alert('메인 배너 이미지가 업로드되었습니다.');
+
+        // 메인 폼 새로고침
+        if (window.opener && !window.opener.closed) {
+            window.opener.location.reload();
+        }
     };
 
     reader.readAsDataURL(file);
@@ -683,16 +714,42 @@ function removeMainBannerImage(step) {
 }
 
 // Detail Page Images Upload
-function previewDetailImage(event, imageNumber) {
+async function previewDetailImage(event, imageNumber) {
     const file = event.target.files[0];
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = async function(e) {
         const imageData = e.target.result;
 
-        // Save to localStorage
+        // Save to localStorage (백업용)
         localStorage.setItem(`detailImage${imageNumber}`, imageData);
+
+        // Save to Supabase DB
+        try {
+            const response = await fetch(`${PROXY_URL}?table=admin_settings`, {
+                method: 'POST',
+                headers: {
+                    'x-api-key': SUPABASE_ANON_KEY,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    설정키: `detail_image_${imageNumber}`,
+                    설정값: imageData,
+                    설정타입: 'image'
+                })
+            });
+
+            const result = await response.json();
+            console.log(`상세이미지 ${imageNumber} DB 저장 결과:`, result);
+
+            if (!result.success && !response.ok) {
+                throw new Error('DB 저장 실패');
+            }
+        } catch (error) {
+            console.error(`상세이미지 ${imageNumber} DB 저장 에러:`, error);
+            alert('이미지는 업로드되었으나 DB 저장에 실패했습니다. localStorage에만 저장됩니다.');
+        }
 
         // Update preview
         const previewContainer = document.getElementById(`detailImagePreview${imageNumber}`);
@@ -706,6 +763,11 @@ function previewDetailImage(event, imageNumber) {
         }
 
         alert(`상세페이지 이미지 ${imageNumber}가 업로드되었습니다.`);
+
+        // 메인 폼 새로고침
+        if (window.opener && !window.opener.closed) {
+            window.opener.location.reload();
+        }
     };
 
     reader.readAsDataURL(file);
@@ -923,37 +985,109 @@ function saveDetailImagesSettings() {
     }
 }
 
-// Load banners to admin (기존 업로드된 이미지 표시)
-function loadBannersToAdmin() {
-    console.log('어드민에 배너 로드 중...');
+// Load banners to admin (DB에서 로드)
+async function loadBannersToAdmin() {
+    console.log('어드민에 배너 로드 중 (DB 우선)...');
 
-    // Load Step 1 & 2 Main Banners
+    // Load Step 1 & 2 Main Banners from DB
     for (let step of ['step1', 'step2']) {
-        const imageData = localStorage.getItem(`mainBannerImage_${step}`);
-        const previewContainer = document.getElementById(`mainBannerPreview_${step}`);
+        try {
+            const response = await fetch(`${PROXY_URL}?table=admin_settings&key=main_banner_${step}`, {
+                method: 'GET',
+                headers: {
+                    'x-api-key': SUPABASE_ANON_KEY
+                }
+            });
 
-        if (imageData && previewContainer) {
-            previewContainer.innerHTML = `
-                <img src="${imageData}" class="preview-image" alt="Main Banner Preview" style="max-width: 100%; border-radius: 8px; margin-top: 1rem;">
-                <button class="btn btn-remove" onclick="removeMainBannerImage('${step}')" style="margin-top: 1rem;">
-                    <i class="fas fa-trash"></i> 이미지 제거
-                </button>
-            `;
+            const result = await response.json();
+            let imageData = null;
+
+            if (result.success && result.data && result.data.length > 0) {
+                imageData = result.data[0].setting_value || result.data[0].설정값;
+                console.log(`DB에서 ${step} 배너 로드 성공`);
+            } else {
+                // DB에 없으면 localStorage에서 가져오기
+                imageData = localStorage.getItem(`mainBannerImage_${step}`);
+                console.log(`localStorage에서 ${step} 배너 로드`);
+            }
+
+            if (imageData) {
+                const previewContainer = document.getElementById(`mainBannerPreview_${step}`);
+                if (previewContainer) {
+                    previewContainer.innerHTML = `
+                        <img src="${imageData}" class="preview-image" alt="Main Banner Preview" style="max-width: 100%; border-radius: 8px; margin-top: 1rem;">
+                        <button class="btn btn-remove" onclick="removeMainBannerImage('${step}')" style="margin-top: 1rem;">
+                            <i class="fas fa-trash"></i> 이미지 제거
+                        </button>
+                    `;
+                }
+            }
+        } catch (error) {
+            console.error(`${step} 배너 로드 에러:`, error);
+            // 에러 시 localStorage 폴백
+            const imageData = localStorage.getItem(`mainBannerImage_${step}`);
+            if (imageData) {
+                const previewContainer = document.getElementById(`mainBannerPreview_${step}`);
+                if (previewContainer) {
+                    previewContainer.innerHTML = `
+                        <img src="${imageData}" class="preview-image" alt="Main Banner Preview" style="max-width: 100%; border-radius: 8px; margin-top: 1rem;">
+                        <button class="btn btn-remove" onclick="removeMainBannerImage('${step}')" style="margin-top: 1rem;">
+                            <i class="fas fa-trash"></i> 이미지 제거
+                        </button>
+                    `;
+                }
+            }
         }
     }
 
-    // Load Detail Images
+    // Load Detail Images from DB
     for (let i = 1; i <= 5; i++) {
-        const imageData = localStorage.getItem(`detailImage${i}`);
-        const previewContainer = document.getElementById(`detailImagePreview${i}`);
+        try {
+            const response = await fetch(`${PROXY_URL}?table=admin_settings&key=detail_image_${i}`, {
+                method: 'GET',
+                headers: {
+                    'x-api-key': SUPABASE_ANON_KEY
+                }
+            });
 
-        if (imageData && previewContainer) {
-            previewContainer.innerHTML = `
-                <img src="${imageData}" class="preview-image" alt="Detail Image ${i}" style="max-width: 100%; border-radius: 8px; margin-top: 1rem;">
-                <button class="btn btn-remove" onclick="removeDetailImage(${i})" style="margin-top: 1rem;">
-                    <i class="fas fa-trash"></i> 이미지 제거
-                </button>
-            `;
+            const result = await response.json();
+            let imageData = null;
+
+            if (result.success && result.data && result.data.length > 0) {
+                imageData = result.data[0].setting_value || result.data[0].설정값;
+                console.log(`DB에서 상세이미지 ${i} 로드 성공`);
+            } else {
+                // DB에 없으면 localStorage에서 가져오기
+                imageData = localStorage.getItem(`detailImage${i}`);
+                console.log(`localStorage에서 상세이미지 ${i} 로드`);
+            }
+
+            if (imageData) {
+                const previewContainer = document.getElementById(`detailImagePreview${i}`);
+                if (previewContainer) {
+                    previewContainer.innerHTML = `
+                        <img src="${imageData}" class="preview-image" alt="Detail Image ${i}" style="max-width: 100%; border-radius: 8px; margin-top: 1rem;">
+                        <button class="btn btn-remove" onclick="removeDetailImage(${i})" style="margin-top: 1rem;">
+                            <i class="fas fa-trash"></i> 이미지 제거
+                        </button>
+                    `;
+                }
+            }
+        } catch (error) {
+            console.error(`상세이미지 ${i} 로드 에러:`, error);
+            // 에러 시 localStorage 폴백
+            const imageData = localStorage.getItem(`detailImage${i}`);
+            if (imageData) {
+                const previewContainer = document.getElementById(`detailImagePreview${i}`);
+                if (previewContainer) {
+                    previewContainer.innerHTML = `
+                        <img src="${imageData}" class="preview-image" alt="Detail Image ${i}" style="max-width: 100%; border-radius: 8px; margin-top: 1rem;">
+                        <button class="btn btn-remove" onclick="removeDetailImage(${i})" style="margin-top: 1rem;">
+                            <i class="fas fa-trash"></i> 이미지 제거
+                        </button>
+                    `;
+                }
+            }
         }
     }
 }
