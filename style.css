@@ -3320,11 +3320,11 @@ button.telecom-btn.selected:nth-child(6):hover {
     /* CTA 버튼 완전 재설계 */
     .cta-button {
         width: 100% !important;
-        min-height: 55px !important;
-        padding: 1rem !important;
-        font-size: 1.1rem !important;
+        min-height: 120px !important;
+        padding: 2.5rem 4rem !important;
+        font-size: 2.5rem !important;
         font-weight: 700 !important;
-        border-radius: 0.75rem !important;
+        border-radius: 1rem !important;
         margin-top: 1.5rem !important;
         display: flex !important;
         align-items: center !important;
@@ -3334,18 +3334,18 @@ button.telecom-btn.selected:nth-child(6):hover {
         cursor: pointer !important;
         transition: all 0.3s ease !important;
         box-sizing: border-box !important;
-        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%) !important;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%) !important;
         color: white !important;
-        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3) !important;
+        box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4), 0 6px 20px rgba(118, 75, 162, 0.3) !important;
     }
-    
+
     .cta-button:hover {
-        transform: translateY(-3px) !important;
-        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4) !important;
+        transform: scale(1.05) !important;
+        box-shadow: 0 15px 50px rgba(102, 126, 234, 0.5), 0 10px 30px rgba(118, 75, 162, 0.4) !important;
     }
-    
+
     .cta-button:active {
-        transform: translateY(-1px) !important;
+        transform: scale(1.03) !important;
     }
     
     /* 진행률 표시기 모바일 */
@@ -3489,11 +3489,11 @@ button.telecom-btn.selected:nth-child(6):hover {
         padding: 0.75rem 0.875rem !important;
         font-size: 0.9rem !important;
     }
-    
+
     .cta-button {
-        min-height: 52px !important;
-        padding: 0.875rem !important;
-        font-size: 1rem !important;
+        min-height: 120px !important;
+        padding: 2.5rem 4rem !important;
+        font-size: 2.5rem !important;
         margin-top: 1.25rem !important;
     }
     
@@ -4546,9 +4546,9 @@ div#step2 div#step2MainBanner {
     .cta-button {
         width: calc(100% - 0.5rem) !important;
         margin: 0.25rem !important;
-        padding: 0.8rem !important;
-        font-size: 0.95rem !important;
-        min-height: 45px !important;
+        padding: 2.5rem 4rem !important;
+        font-size: 2.5rem !important;
+        min-height: 120px !important;
     }
     
     /* 모바일 글자 깨짐 방지 및 가독성 개선 */
