@@ -12,26 +12,29 @@ async function loadBannersFromAdmin() {
     const PROXY_URL = 'https://dimj-form-proxy.vercel.app/api/supabase';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXd6dnlyb2RwZG1mZ2xzcXF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIzMjUzMzEsImV4cCI6MjA0NzkwMTMzMX0.MkFZj8gNdkZT7xE9ysD1fkzN3bfOh5CtpOEtQGUCqY4';
 
-    // Load Step 1 Main Banner
+    // Load Step 1 Main Banner - localStorage 먼저 표시
+    const step1LocalData = localStorage.getItem('mainBannerImage_step1');
+    const step1BannerImg = document.getElementById('step1BannerImage');
+    const step1Placeholder = document.getElementById('step1BannerPlaceholder');
+
+    if (step1LocalData && step1BannerImg) {
+        step1BannerImg.src = step1LocalData;
+        step1BannerImg.style.display = 'block';
+        step1BannerImg.style.width = '100%';
+        step1BannerImg.style.height = 'auto';
+        if (step1Placeholder) step1Placeholder.style.display = 'none';
+        console.log('⚡ Step1 배너 localStorage 즉시 로드');
+    }
+
+    // DB에서 최신 데이터 가져오기 (백그라운드)
     try {
         const response = await fetch(`${PROXY_URL}?table=admin_settings&key=main_banner_step1`, {
             headers: { 'x-api-key': SUPABASE_ANON_KEY }
         });
         const result = await response.json();
 
-        let step1BannerData = null;
-        // 프록시 서버는 배열을 직접 반환
         if (Array.isArray(result) && result.length > 0) {
-            step1BannerData = result[0].setting_value;
-            console.log('✅ Step1 배너 DB에서 로드');
-        } else {
-            step1BannerData = localStorage.getItem('mainBannerImage_step1');
-            console.log('⚠️ Step1 배너 localStorage에서 로드');
-        }
-
-        if (step1BannerData) {
-            const step1BannerImg = document.getElementById('step1BannerImage');
-            const step1Placeholder = document.getElementById('step1BannerPlaceholder');
+            const step1BannerData = result[0].setting_value;
             if (step1BannerImg) {
                 step1BannerImg.src = step1BannerData;
                 step1BannerImg.style.display = 'block';
@@ -39,41 +42,36 @@ async function loadBannersFromAdmin() {
                 step1BannerImg.style.height = 'auto';
                 if (step1Placeholder) step1Placeholder.style.display = 'none';
             }
+            localStorage.setItem('mainBannerImage_step1', step1BannerData);
+            console.log('✅ Step1 배너 DB에서 업데이트');
         }
     } catch (error) {
-        console.error('Step1 배너 로드 에러:', error);
-        const step1BannerData = localStorage.getItem('mainBannerImage_step1');
-        if (step1BannerData) {
-            const step1BannerImg = document.getElementById('step1BannerImage');
-            const step1Placeholder = document.getElementById('step1BannerPlaceholder');
-            if (step1BannerImg) {
-                step1BannerImg.src = step1BannerData;
-                step1BannerImg.style.display = 'block';
-                if (step1Placeholder) step1Placeholder.style.display = 'none';
-            }
-        }
+        console.error('Step1 배너 DB 로드 에러:', error);
     }
 
-    // Load Step 2 Main Banner
+    // Load Step 2 Main Banner - localStorage 먼저 표시
+    const step2LocalData = localStorage.getItem('mainBannerImage_step2');
+    const step2BannerImg = document.getElementById('step2BannerImage');
+    const step2Placeholder = document.getElementById('step2BannerPlaceholder');
+
+    if (step2LocalData && step2BannerImg) {
+        step2BannerImg.src = step2LocalData;
+        step2BannerImg.style.display = 'block';
+        step2BannerImg.style.width = '100%';
+        step2BannerImg.style.height = 'auto';
+        if (step2Placeholder) step2Placeholder.style.display = 'none';
+        console.log('⚡ Step2 배너 localStorage 즉시 로드');
+    }
+
+    // DB에서 최신 데이터 가져오기 (백그라운드)
     try {
         const response = await fetch(`${PROXY_URL}?table=admin_settings&key=main_banner_step2`, {
             headers: { 'x-api-key': SUPABASE_ANON_KEY }
         });
         const result = await response.json();
 
-        let step2BannerData = null;
-        // 프록시 서버는 배열을 직접 반환
         if (Array.isArray(result) && result.length > 0) {
-            step2BannerData = result[0].setting_value;
-            console.log('✅ Step2 배너 DB에서 로드');
-        } else {
-            step2BannerData = localStorage.getItem('mainBannerImage_step2');
-            console.log('⚠️ Step2 배너 localStorage에서 로드');
-        }
-
-        if (step2BannerData) {
-            const step2BannerImg = document.getElementById('step2BannerImage');
-            const step2Placeholder = document.getElementById('step2BannerPlaceholder');
+            const step2BannerData = result[0].setting_value;
             if (step2BannerImg) {
                 step2BannerImg.src = step2BannerData;
                 step2BannerImg.style.display = 'block';
@@ -81,84 +79,59 @@ async function loadBannersFromAdmin() {
                 step2BannerImg.style.height = 'auto';
                 if (step2Placeholder) step2Placeholder.style.display = 'none';
             }
+            localStorage.setItem('mainBannerImage_step2', step2BannerData);
+            console.log('✅ Step2 배너 DB에서 업데이트');
         }
     } catch (error) {
-        console.error('Step2 배너 로드 에러:', error);
-        const step2BannerData = localStorage.getItem('mainBannerImage_step2');
-        if (step2BannerData) {
-            const step2BannerImg = document.getElementById('step2BannerImage');
-            const step2Placeholder = document.getElementById('step2BannerPlaceholder');
-            if (step2BannerImg) {
-                step2BannerImg.src = step2BannerData;
-                step2BannerImg.style.display = 'block';
-                if (step2Placeholder) step2Placeholder.style.display = 'none';
-            }
-        }
+        console.error('Step2 배너 DB 로드 에러:', error);
     }
 
-    // Load Detail Page Images (1-5)
+    // Load Detail Page Images (1-5) - localStorage 먼저 표시
     let detailImagesLoaded = 0;
     const detailPlaceholder = document.getElementById('detailImagesPlaceholder');
 
     console.log('🖼️ 상세이미지 로드 시작...');
-    console.log('📍 detailImagesPlaceholder:', detailPlaceholder ? '찾음' : '없음');
 
+    // 먼저 localStorage에서 즉시 로드
+    for (let i = 1; i <= 5; i++) {
+        const detailLocalData = localStorage.getItem(`detailImage${i}`);
+        const detailImgContainer = document.getElementById(`detailImage${i}Container`);
+
+        if (detailLocalData && detailImgContainer) {
+            detailImgContainer.innerHTML = `<img src="${detailLocalData}" alt="상세페이지 이미지 ${i}" style="width: 100%; max-width: 100%; height: auto; display: block; margin: 0;">`;
+            detailImgContainer.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; width: 100% !important; max-width: 100% !important;';
+            detailImagesLoaded++;
+            console.log(`⚡ 상세이미지 ${i} localStorage 즉시 로드`);
+        }
+    }
+
+    if (detailImagesLoaded > 0 && detailPlaceholder) {
+        detailPlaceholder.style.display = 'none';
+    }
+
+    // 백그라운드에서 DB 최신 데이터 가져오기
     for (let i = 1; i <= 5; i++) {
         try {
-            const url = `${PROXY_URL}?table=admin_settings&key=detail_image_${i}`;
-            console.log(`🔍 상세이미지 ${i} 요청 URL:`, url);
-
-            const response = await fetch(url, {
+            const response = await fetch(`${PROXY_URL}?table=admin_settings&key=detail_image_${i}`, {
                 headers: { 'x-api-key': SUPABASE_ANON_KEY }
             });
             const result = await response.json();
 
-            console.log(`📦 상세이미지 ${i} DB 응답:`, result);
-
-            let detailImageData = null;
-            // 프록시 서버는 배열을 직접 반환
             if (Array.isArray(result) && result.length > 0) {
-                detailImageData = result[0].setting_value;
-                console.log(`✅ 상세이미지 ${i} DB에서 로드 성공`);
-            } else {
-                detailImageData = localStorage.getItem(`detailImage${i}`);
-                console.log(`⚠️ 상세이미지 ${i} localStorage에서 로드 (${detailImageData ? '있음' : '없음'})`);
-            }
-
-            const detailImgContainer = document.getElementById(`detailImage${i}Container`);
-            console.log(`📍 상세이미지 ${i} 컨테이너:`, detailImgContainer ? '찾음' : '없음');
-
-            if (detailImageData && detailImgContainer) {
-                detailImgContainer.innerHTML = `<img src="${detailImageData}" alt="상세페이지 이미지 ${i}" style="width: 100%; max-width: 100%; height: auto; display: block; margin: 0;">`;
-                detailImgContainer.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; width: 100% !important; max-width: 100% !important;';
-                detailImagesLoaded++;
-                console.log(`✅ 상세이미지 ${i} 표시 완료`);
-            } else if (detailImageData && !detailImgContainer) {
-                console.error(`❌ 상세이미지 ${i} 데이터는 있지만 컨테이너 없음!`);
-            } else if (!detailImageData) {
-                console.log(`⚠️ 상세이미지 ${i} 데이터 없음`);
-            }
-        } catch (error) {
-            console.error(`❌ 상세이미지 ${i} 로드 에러:`, error);
-            const detailImageData = localStorage.getItem(`detailImage${i}`);
-            if (detailImageData) {
+                const detailImageData = result[0].setting_value;
                 const detailImgContainer = document.getElementById(`detailImage${i}Container`);
+
                 if (detailImgContainer) {
                     detailImgContainer.innerHTML = `<img src="${detailImageData}" alt="상세페이지 이미지 ${i}" style="width: 100%; max-width: 100%; height: auto; display: block; margin: 0;">`;
                     detailImgContainer.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; width: 100% !important; max-width: 100% !important;';
-                    detailImagesLoaded++;
-                    console.log(`✅ 상세이미지 ${i} localStorage 폴백 성공`);
+                    if (detailPlaceholder) detailPlaceholder.style.display = 'none';
                 }
+                localStorage.setItem(`detailImage${i}`, detailImageData);
+                console.log(`✅ 상세이미지 ${i} DB에서 업데이트`);
             }
+        } catch (error) {
+            console.error(`❌ 상세이미지 ${i} DB 로드 에러:`, error);
         }
-    }
-
-    // 상세 이미지가 하나라도 있으면 placeholder 숨김
-    if (detailImagesLoaded > 0 && detailPlaceholder) {
-        detailPlaceholder.style.display = 'none';
-        console.log(`✅ ${detailImagesLoaded}개 상세이미지 로드됨, placeholder 숨김`);
-    } else {
-        console.log(`⚠️ 로드된 상세이미지 없음, placeholder 유지`);
     }
 
     console.log('🎨 배너 로딩 완료');
