@@ -575,6 +575,7 @@ function updateMonthlyChart() {
                     ticks: {
                         beginAtZero: true,
                         stepSize: 5,
+                        max: 10000,
                         callback: function(value) {
                             return value + '개';
                         }
