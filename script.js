@@ -130,7 +130,7 @@ async function loadBannersFromAdmin() {
 
             if (detailImageData && detailImgContainer) {
                 detailImgContainer.innerHTML = `<img src="${detailImageData}" alt="상세페이지 이미지 ${i}" style="width: 100%; height: auto; display: block; margin-bottom: 1rem;">`;
-                detailImgContainer.style.display = 'block';
+                detailImgContainer.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important;';
                 detailImagesLoaded++;
                 console.log(`✅ 상세이미지 ${i} 표시 완료`);
             } else if (detailImageData && !detailImgContainer) {
@@ -145,7 +145,7 @@ async function loadBannersFromAdmin() {
                 const detailImgContainer = document.getElementById(`detailImage${i}Container`);
                 if (detailImgContainer) {
                     detailImgContainer.innerHTML = `<img src="${detailImageData}" alt="상세페이지 이미지 ${i}" style="width: 100%; height: auto; display: block; margin-bottom: 1rem;">`;
-                    detailImgContainer.style.display = 'block';
+                    detailImgContainer.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important;';
                     detailImagesLoaded++;
                     console.log(`✅ 상세이미지 ${i} localStorage 폴백 성공`);
                 }
@@ -2014,70 +2014,9 @@ function hideMainBanners() {
 
 // Load detail images content from admin settings
 function loadDetailImagesContent() {
-    const savedContent = localStorage.getItem('detailPageContent');
-    if (!savedContent) {
-        // Show placeholder even if no saved content
-        showDetailImagesPlaceholder();
-        return;
-    }
-    
-    try {
-        const content = JSON.parse(savedContent);
-        if (content.detailImages && content.detailImages.enabled !== false) {
-            const detailImagesSection = document.getElementById('detailImagesSection');
-            const detailImagesGrid = document.getElementById('detailImagesGrid');
-            
-            if (detailImagesSection && detailImagesGrid) {
-                // Check if we have the detail image
-                let hasImages = false;
-                let imagesHTML = '';
-                
-                const imageData = content.detailImages.image1;
-                if (imageData && imageData.imageData) {
-                    hasImages = true;
-                    imagesHTML = `
-                        <div class="detail-image-single">
-                            <img src="${imageData.imageData}" alt="상세페이지" loading="lazy" style="width: 100%; height: auto; max-width: 1050px; margin: 0 auto; display: block;">
-                            ${imageData.caption ? `<p class="image-caption" style="text-align: center; margin-top: 1rem; color: #64748b;">${imageData.caption}</p>` : ''}
-                        </div>
-                    `;
-                }
-                
-                if (hasImages) {
-                    detailImagesGrid.innerHTML = imagesHTML;
-                    detailImagesSection.style.display = 'block';
-                    
-                    // Hide placeholder
-                    const placeholder = document.getElementById('detailImagesPlaceholder');
-                    if (placeholder) placeholder.style.display = 'none';
-                    
-                    console.log('Detail images section loaded with single A4 image');
-                } else {
-                    // Show placeholder
-                    detailImagesSection.style.display = 'block';
-                    const placeholder = document.getElementById('detailImagesPlaceholder');
-                    if (placeholder) placeholder.style.display = 'flex';
-                    
-                    detailImagesGrid.innerHTML = `
-                        <div class="detail-images-placeholder" id="detailImagesPlaceholder">
-                            <div class="placeholder-content">
-                                <i class="fas fa-images"></i>
-                                <h4>A4 5장 분량 상세페이지를 추가해주세요</h4>
-                                <p>권장 사이즈: <strong>1050 × 2970px (A4 5장 세로 연결)</strong></p>
-                                <p>JPG/PNG 형식, 1개 파일로 업로드</p>
-                                <a href="admin.html" class="admin-link-btn">관리자 페이지로 이동</a>
-                            </div>
-                        </div>
-                    `;
-                }
-            }
-        } else {
-            showDetailImagesPlaceholder();
-        }
-    } catch (error) {
-        console.error('Error loading detail images content:', error);
-        showDetailImagesPlaceholder();
-    }
+    // 이 함수는 더 이상 detailImagesGrid를 덮어쓰지 않음
+    // loadBannersFromAdmin()에서 이미 상세 이미지를 로드했으므로 아무것도 하지 않음
+    console.log('loadDetailImagesContent 호출됨 - loadBannersFromAdmin에서 이미 처리됨');
 }
 
 function showDetailImagesPlaceholder() {
