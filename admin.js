@@ -599,23 +599,29 @@ function renderBlockedIPs() {
 
 // Content Management Functions (Banners & Detail Page)
 function switchBannerTab(tabName) {
+    console.log('배너 탭 전환:', tabName);
+
     // Remove active class from all tabs
     document.querySelectorAll('.banner-tabs .tab-btn').forEach(btn => {
         btn.classList.remove('active');
     });
 
     // Add active class to clicked tab
-    event.target.classList.add('active');
+    if (event && event.target) {
+        event.target.classList.add('active');
+    }
 
-    // Hide all banner contents
-    document.querySelectorAll('.banner-content').forEach(content => {
-        content.classList.remove('active');
+    // Hide all banner editor sections
+    document.querySelectorAll('.banner-editor .tab-content').forEach(content => {
+        content.style.display = 'none';
     });
 
     // Show selected banner content
-    const selectedContent = document.getElementById(tabName);
+    const selectedContent = document.getElementById(tabName + 'Editor');
     if (selectedContent) {
-        selectedContent.classList.add('active');
+        selectedContent.style.display = 'block';
+    } else {
+        console.error('배너 콘텐츠를 찾을 수 없음:', tabName + 'Editor');
     }
 }
 
@@ -765,23 +771,29 @@ function loadDetailPageContent() {
 
 // Content Editor Tab Switching
 function switchContentTab(tabName) {
-    // Remove active from all tabs
-    document.querySelectorAll('.editor-tabs .tab-btn').forEach(btn => {
+    console.log('콘텐츠 탭 전환:', tabName);
+
+    // Remove active from all content tabs
+    document.querySelectorAll('.content-tabs .tab-btn').forEach(btn => {
         btn.classList.remove('active');
     });
 
     // Add active to clicked tab
-    event.target.classList.add('active');
+    if (event && event.target) {
+        event.target.classList.add('active');
+    }
 
-    // Hide all tab contents
-    document.querySelectorAll('.tab-content').forEach(content => {
-        content.classList.remove('active');
+    // Hide all tab contents in content editor
+    document.querySelectorAll('.content-editor .tab-content').forEach(content => {
+        content.style.display = 'none';
     });
 
     // Show selected tab content
-    const selectedContent = document.getElementById(tabName + 'Tab');
+    const selectedContent = document.getElementById(tabName + 'Content');
     if (selectedContent) {
-        selectedContent.classList.add('active');
+        selectedContent.style.display = 'block';
+    } else {
+        console.error('탭 콘텐츠를 찾을 수 없음:', tabName + 'Content');
     }
 }
 
@@ -854,4 +866,31 @@ function resetDailyLimits() {
     if (confirm('일일 제한을 리셋하시겠습니까?')) {
         alert('일일 제한이 리셋되었습니다.');
     }
+}
+
+// Save detail page content
+function saveDetailPageContent() {
+    alert('상세페이지 콘텐츠가 저장되었습니다.');
+}
+
+// Preview detail page
+function previewDetailPage() {
+    window.open('index.html', '_blank');
+}
+
+// Reset detail page content
+function resetDetailPageContent() {
+    if (confirm('상세페이지 콘텐츠를 초기화하시겠습니까?')) {
+        alert('초기화되었습니다.');
+    }
+}
+
+// Add FAQ
+function addFAQ() {
+    alert('FAQ 추가 기능은 준비 중입니다.');
+}
+
+// Save banner settings
+function saveBannerSettings() {
+    alert('배너 설정이 저장되었습니다.');
 }

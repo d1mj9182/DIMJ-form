@@ -448,7 +448,6 @@
                 <div class="banner-tabs">
                     <button class="tab-btn active" onclick="switchBannerTab('mainBanner')">메인 배너</button>
                     <button class="tab-btn" onclick="switchBannerTab('detailImages')">상세페이지</button>
-                    <button class="tab-btn" onclick="switchBannerTab('step2Banner')">Step2 배너</button>
                 </div>
 
                 <div class="banner-editor">
@@ -473,31 +472,6 @@
                             <div class="toggle-group">
                                 <label class="toggle-switch">
                                     <input type="checkbox" id="step1MainBannerEnabled">
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <span>배너 활성화</span>
-                            </div>
-                        </div>
-
-                        <div class="banner-section">
-                            <h3>2페이지 메인 배너</h3>
-                            <div class="upload-area">
-                                <input type="file" id="step2MainBannerImageUpload" accept="image/*" onchange="previewMainBannerImage(event, 'step2')" hidden>
-                                <label for="step2MainBannerImageUpload" class="upload-label">
-                                    <i class="fas fa-cloud-upload-alt"></i>
-                                    <p>이미지를 드래그하거나 클릭하여 업로드</p>
-                                    <span>권장 크기: 1920x250px, JPG/PNG</span>
-                                </label>
-                                <div class="image-preview" id="step2MainBannerImagePreview" style="display: none;">
-                                    <img id="step2PreviewImage" src="" alt="미리보기">
-                                    <button class="btn-remove" onclick="removeMainBannerImage('step2')">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="toggle-group">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="step2MainBannerEnabled">
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <span>배너 활성화</span>
@@ -549,51 +523,6 @@
                         </div>
                     </div>
 
-                    <!-- Step2 Banner Tab -->
-                    <div class="tab-content" id="step2BannerEditor" style="display: none;">
-                        <div class="banner-section">
-                            <h3>Step2 배너 설정</h3>
-                            <div class="form-group">
-                                <label>배너 제목</label>
-                                <input type="text" id="bannerTitle" placeholder="🎯 실시간 상담 현황">
-                            </div>
-                            <div class="form-group">
-                                <label>배너 설명</label>
-                                <textarea id="bannerDescription" rows="3" placeholder="지금 이 순간에도 많은 고객님들이 최고의 혜택을 받고 계십니다!"></textarea>
-                            </div>
-                            <div class="upload-area">
-                                <input type="file" id="bannerImageUpload" accept="image/*" onchange="previewBannerImage(event)" hidden>
-                                <label for="bannerImageUpload" class="upload-label">
-                                    <i class="fas fa-cloud-upload-alt"></i>
-                                    <p>이미지를 드래그하거나 클릭하여 업로드</p>
-                                    <span>권장 크기: 1200x300px, JPG/PNG</span>
-                                </label>
-                                <div class="image-preview" id="bannerImagePreview" style="display: none;">
-                                    <img id="previewImage" src="" alt="미리보기">
-                                    <button class="btn-remove" onclick="removeBannerImage()">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>배너 링크 (선택)</label>
-                                <input type="url" id="bannerLink" placeholder="https://example.com">
-                            </div>
-                            <div class="toggle-group">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="bannerEnabled" checked>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <span>배너 활성화</span>
-                            </div>
-                        </div>
-
-                        <div class="editor-actions">
-                            <button class="btn-primary" onclick="saveBannerSettings()">
-                                <i class="fas fa-save"></i> 저장
-                            </button>
-                        </div>
-                    </div>
                 </div>
             </div>
 
