@@ -3322,11 +3322,11 @@ button.telecom-btn.selected:nth-child(6):hover {
     /* CTA 버튼 완전 재설계 */
     .cta-button {
         width: 100% !important;
-        min-height: 120px !important;
-        padding: 2.5rem 4rem !important;
-        font-size: 2.5rem !important;
+        min-height: 70px !important;
+        padding: 1.2rem 2rem !important;
+        font-size: 1rem !important;
         font-weight: 700 !important;
-        border-radius: 1rem !important;
+        border-radius: 0.75rem !important;
         margin-top: 1.5rem !important;
         display: flex !important;
         align-items: center !important;
@@ -3493,9 +3493,9 @@ button.telecom-btn.selected:nth-child(6):hover {
     }
 
     .cta-button {
-        min-height: 120px !important;
-        padding: 2.5rem 4rem !important;
-        font-size: 2.5rem !important;
+        min-height: 65px !important;
+        padding: 1rem 1.5rem !important;
+        font-size: 0.95rem !important;
         margin-top: 1.25rem !important;
     }
     
@@ -4144,16 +4144,27 @@ button.telecom-btn.selected:nth-child(6):hover {
     justify-content: center;
 }
 
-/* 2페이지 배너 - 부모 컨테이너 벗어나기 */
+/* 2페이지 배너 - 모든 여백 완전 제거 */
 #step2 .banner-container,
-#step2MainBanner.banner-container {
+#step2MainBanner.banner-container,
+#step2MainBanner,
+#step2 #step2MainBanner,
+div#step2 .banner-container,
+div#step2 div#step2MainBanner,
+div#step2MainBanner.banner-container {
     width: 100% !important;
     max-width: 100% !important;
-    margin: 0 auto 2rem auto !important;
+    margin: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
     padding: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
     background: transparent !important;
     overflow: hidden !important;
     box-sizing: border-box !important;
+    line-height: 0 !important;
+    border: none !important;
 }
 
 /* 2페이지 배너만 여백 제거 */
@@ -4161,30 +4172,31 @@ button.telecom-btn.selected:nth-child(6):hover {
     margin-bottom: 0 !important;
 }
 
-#step2 .banner-container,
-#step2MainBanner,
-#step2 #step2MainBanner,
-div#step2 .banner-container,
-div#step2 div#step2MainBanner {
-    margin: 0 !important;
-    padding: 0 !important;
-    background: transparent !important;
-    line-height: 0 !important;
-}
-
 #step2 .banner-inner,
-#step2MainBanner .banner-inner {
+#step2MainBanner .banner-inner,
+div#step2MainBanner .banner-inner {
     margin: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
     padding: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
     line-height: 0 !important;
 }
 
 #step2 .banner-container img,
-#step2MainBanner img {
+#step2MainBanner img,
+div#step2MainBanner img,
+#step2BannerImage {
     display: block !important;
     margin: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
     padding: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
     vertical-align: top !important;
+    width: 100% !important;
 }
 
 /* 내부 래퍼 */
@@ -4549,9 +4561,9 @@ div#step2 div#step2MainBanner {
     .cta-button {
         width: calc(100% - 0.5rem) !important;
         margin: 0.25rem !important;
-        padding: 2.5rem 4rem !important;
-        font-size: 2.5rem !important;
-        min-height: 120px !important;
+        padding: 1rem 1.5rem !important;
+        font-size: 0.9rem !important;
+        min-height: 60px !important;
     }
     
     /* 모바일 글자 깨짐 방지 및 가독성 개선 */
