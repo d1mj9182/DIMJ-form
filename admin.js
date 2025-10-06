@@ -483,7 +483,26 @@ function updateMonthlyChart() {
 
     const applicationsData = Object.values(monthlyData).map(d => d.applications);
     const completedData = Object.values(monthlyData).map(d => d.completed);
-    const giftData = Object.values(monthlyData).map(d => d.giftAmount);
+    const doneData = [];
+
+    // 상담완료 데이터 계산
+    adminState.applications.forEach(app => {
+        const appDate = new Date(app.timestamp);
+        const monthKey = `${appDate.getFullYear()}-${String(appDate.getMonth() + 1).padStart(2, '0')}`;
+
+        if (monthlyData[monthKey]) {
+            if (!monthlyData[monthKey].done) {
+                monthlyData[monthKey].done = 0;
+            }
+            if (app.status === '상담완료') {
+                monthlyData[monthKey].done++;
+            }
+        }
+    });
+
+    Object.values(monthlyData).forEach(d => {
+        doneData.push(d.done || 0);
+    });
 
     // 기존 차트 제거
     if (monthlyChartInstance) {
@@ -511,12 +530,11 @@ function updateMonthlyChart() {
                     tension: 0.4
                 },
                 {
-                    label: '사은품 지급액 (만원)',
-                    data: giftData,
+                    label: '상담 완료',
+                    data: doneData,
                     borderColor: '#f59e0b',
                     backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                    tension: 0.4,
-                    yAxisID: 'y1'
+                    tension: 0.4
                 }
             ]
         },
@@ -538,11 +556,7 @@ function updateMonthlyChart() {
                                 label += ': ';
                             }
                             if (context.parsed.y !== null) {
-                                if (context.dataset.label === '사은품 지급액 (만원)') {
-                                    label += context.parsed.y.toLocaleString() + '만원';
-                                } else {
-                                    label += context.parsed.y + '건';
-                                }
+                                label += context.parsed.y + '개';
                             }
                             return label;
                         }
@@ -556,29 +570,14 @@ function updateMonthlyChart() {
                     position: 'left',
                     title: {
                         display: true,
-                        text: '건수'
-                    },
-                    ticks: {
-                        beginAtZero: true
-                    }
-                },
-                y1: {
-                    type: 'linear',
-                    display: true,
-                    position: 'right',
-                    title: {
-                        display: true,
-                        text: '사은품 (만원)'
+                        text: '개수'
                     },
                     ticks: {
                         beginAtZero: true,
-                        stepSize: 3000000,
+                        stepSize: 5,
                         callback: function(value) {
-                            return value.toLocaleString() + '만';
+                            return value + '개';
                         }
-                    },
-                    grid: {
-                        drawOnChartArea: false
                     }
                 }
             }
