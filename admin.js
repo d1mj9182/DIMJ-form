@@ -283,11 +283,15 @@ async function loadApplications() {
             filteredApps = filteredApps.filter(app => app.status === statusValue);
         }
 
-        if (dateValue) {
+        // 전체 상태일 때는 날짜 필터 무시
+        if (dateValue && statusValue !== '') {
             filteredApps = filteredApps.filter(app => {
                 const appDate = new Date(app.timestamp).toISOString().split('T')[0];
                 return appDate === dateValue;
             });
+        } else if (dateValue && statusValue === '') {
+            // 전체 상태에서는 날짜 필터 적용하지 않음
+            console.log('전체 상태 선택 시 날짜 필터 무시');
         }
 
         // 최신순 정렬
@@ -334,9 +338,18 @@ function renderApplicationsTable(applications) {
             <td>${formatDate(app.timestamp)}</td>
             <td>${app.ip ? app.ip.substring(0, 15) : '-'}</td>
             <td>
-                <span class="status-badge ${app.status === '상담대기' ? 'status-pending' : app.status === '상담중' ? 'status-processing' : 'status-completed'}">
-                    ${app.status || '상담대기'}
-                </span>
+                <select class="status-select" onchange="updateApplicationStatus('${app.id}', this.value)" data-original="${app.status || '상담대기'}">
+                    <option value="상담대기" ${app.status === '상담대기' ? 'selected' : ''}>상담대기</option>
+                    <option value="상담중" ${app.status === '상담중' ? 'selected' : ''}>상담중</option>
+                    <option value="상담완료" ${app.status === '상담완료' ? 'selected' : ''}>상담완료</option>
+                    <option value="설치예약" ${app.status === '설치예약' ? 'selected' : ''}>설치예약</option>
+                    <option value="설치완료" ${app.status === '설치완료' ? 'selected' : ''}>설치완료</option>
+                </select>
+            </td>
+            <td>
+                <input type="number" class="gift-amount-input" value="${app.giftAmount || 0}"
+                       onchange="updateGiftAmount('${app.id}', this.value)"
+                       style="width: 80px; padding: 4px; text-align: right;" min="0" step="10000">원
             </td>
             <td class="table-actions">
                 <button class="btn-icon" onclick="viewApplication('${app.id}')" title="상세보기">
@@ -924,6 +937,74 @@ function goToMainPage() {
 // Filter applications
 function filterApplications() {
     loadApplications();
+}
+
+// Update application status
+async function updateApplicationStatus(id, newStatus) {
+    if (!confirm(`상태를 "${newStatus}"(으)로 변경하시겠습니까?`)) {
+        loadApplications(); // 취소 시 원래 값으로 되돌리기
+        return;
+    }
+
+    try {
+        const response = await fetch(`${PROXY_URL}`, {
+            method: 'PATCH',
+            headers: {
+                'x-api-key': SUPABASE_ANON_KEY,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                table: 'consultations',
+                id: id,
+                status: newStatus
+            })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert('상태가 업데이트되었습니다.');
+            loadApplications();
+        } else {
+            throw new Error(result.error || '상태 업데이트 실패');
+        }
+    } catch (error) {
+        console.error('상태 업데이트 에러:', error);
+        alert(`상태 업데이트 실패: ${error.message}`);
+        loadApplications(); // 실패 시 원래 값으로 되돌리기
+    }
+}
+
+// Update gift amount
+async function updateGiftAmount(id, newAmount) {
+    try {
+        const amount = parseInt(newAmount) || 0;
+
+        const response = await fetch(`${PROXY_URL}`, {
+            method: 'PATCH',
+            headers: {
+                'x-api-key': SUPABASE_ANON_KEY,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                table: 'consultations',
+                id: id,
+                gift_amount: amount
+            })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            console.log('사은품 금액 업데이트 완료:', amount);
+        } else {
+            throw new Error(result.error || '사은품 금액 업데이트 실패');
+        }
+    } catch (error) {
+        console.error('사은품 금액 업데이트 에러:', error);
+        alert(`사은품 금액 업데이트 실패: ${error.message}`);
+        loadApplications();
+    }
 }
 
 // Export data

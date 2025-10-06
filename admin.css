@@ -514,10 +514,25 @@ body {
     margin-bottom: 1.25rem;
 }
 
-.action-buttons {
+.action-buttons,
+.action-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 1rem;
+}
+
+@media (max-width: 1200px) {
+    .action-buttons,
+    .action-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .action-buttons,
+    .action-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .action-btn {
@@ -744,6 +759,35 @@ body {
 .status-completed {
     background: #d1fae5;
     color: #059669;
+}
+
+.status-select {
+    padding: 0.375rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    background: white;
+    cursor: pointer;
+    min-width: 100px;
+}
+
+.status-select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.gift-amount-input {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    font-size: 0.875rem;
+}
+
+.gift-amount-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .table-actions {
