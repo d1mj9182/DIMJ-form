@@ -859,9 +859,9 @@ body {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
     color: white;
     border: none;
-    padding: 1.25rem 2rem;
-    border-radius: 0.75rem;
-    font-size: 1.25rem;
+    padding: 2.5rem 4rem;
+    border-radius: 1rem;
+    font-size: 2.5rem;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -873,14 +873,14 @@ body {
     position: relative;
     overflow: hidden;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    min-height: 60px;
+    min-height: 120px;
 }
 
 /* 데스크탑 전용 CTA 버튼 크기 조정 제거 */
 @media (min-width: 769px) {
     .cta-button {
-        padding: 1.25rem 2rem;
-        font-size: 1.25rem;
+        padding: 2.5rem 4rem;
+        font-size: 2.5rem;
     }
 }
 
