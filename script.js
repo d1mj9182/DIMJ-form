@@ -129,8 +129,8 @@ async function loadBannersFromAdmin() {
             console.log(`📍 상세이미지 ${i} 컨테이너:`, detailImgContainer ? '찾음' : '없음');
 
             if (detailImageData && detailImgContainer) {
-                detailImgContainer.innerHTML = `<img src="${detailImageData}" alt="상세페이지 이미지 ${i}" style="width: 100%; height: auto; display: block; margin-bottom: 1rem;">`;
-                detailImgContainer.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important;';
+                detailImgContainer.innerHTML = `<img src="${detailImageData}" alt="상세페이지 이미지 ${i}" style="width: 100%; max-width: 100%; height: auto; display: block; margin: 0;">`;
+                detailImgContainer.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; width: 100% !important; max-width: 100% !important;';
                 detailImagesLoaded++;
                 console.log(`✅ 상세이미지 ${i} 표시 완료`);
             } else if (detailImageData && !detailImgContainer) {
@@ -144,8 +144,8 @@ async function loadBannersFromAdmin() {
             if (detailImageData) {
                 const detailImgContainer = document.getElementById(`detailImage${i}Container`);
                 if (detailImgContainer) {
-                    detailImgContainer.innerHTML = `<img src="${detailImageData}" alt="상세페이지 이미지 ${i}" style="width: 100%; height: auto; display: block; margin-bottom: 1rem;">`;
-                    detailImgContainer.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important;';
+                    detailImgContainer.innerHTML = `<img src="${detailImageData}" alt="상세페이지 이미지 ${i}" style="width: 100%; max-width: 100%; height: auto; display: block; margin: 0;">`;
+                    detailImgContainer.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; width: 100% !important; max-width: 100% !important;';
                     detailImagesLoaded++;
                     console.log(`✅ 상세이미지 ${i} localStorage 폴백 성공`);
                 }
@@ -1953,52 +1953,9 @@ function showDefaultBanner() {
 
 // Load main banners content from admin settings
 function loadMainBannersContent() {
-    const savedContent = localStorage.getItem('detailPageContent');
-    if (!savedContent) {
-        // Hide banners if no saved content
-        hideMainBanners();
-        return;
-    }
-    
-    try {
-        const content = JSON.parse(savedContent);
-        if (content.mainBanners) {
-            ['step1', 'step2'].forEach(stepName => {
-                const bannerData = content.mainBanners[stepName];
-                const bannerElement = document.getElementById(`${stepName}MainBanner`);
-                const imageElement = document.getElementById(`${stepName}BannerImage`);
-                
-                if (bannerElement && imageElement && bannerData && bannerData.imageData) {
-                    // Set banner image
-                    imageElement.src = bannerData.imageData;
-                    imageElement.style.display = 'block';
-
-                    // 인라인 스타일 강제 제거
-                    bannerElement.removeAttribute('style');
-                    const bannerInner = bannerElement.querySelector('.banner-inner');
-                    if (bannerInner) bannerInner.removeAttribute('style');
-
-                    // Hide placeholder and show image
-                    const placeholder = document.getElementById(`${stepName}BannerPlaceholder`);
-                    if (placeholder) placeholder.style.display = 'none';
-
-                    console.log(`${stepName} main banner loaded with image`);
-                } else if (bannerElement) {
-                    // No image, show placeholder
-                    const imageElement = document.getElementById(`${stepName}BannerImage`);
-                    const placeholder = document.getElementById(`${stepName}BannerPlaceholder`);
-                    
-                    if (imageElement) imageElement.style.display = 'none';
-                    if (placeholder) placeholder.style.display = 'flex';
-                }
-            });
-        } else {
-            hideMainBanners();
-        }
-    } catch (error) {
-        console.error('Error loading main banners content:', error);
-        hideMainBanners();
-    }
+    // 이 함수는 더 이상 배너를 덮어쓰지 않음
+    // loadBannersFromAdmin()에서 이미 배너를 로드했으므로 아무것도 하지 않음
+    console.log('loadMainBannersContent 호출됨 - loadBannersFromAdmin에서 이미 처리됨');
 }
 
 function hideMainBanners() {
