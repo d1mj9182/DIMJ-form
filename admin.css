@@ -778,13 +778,15 @@ body {
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-.gift-amount-input {
+.gift-amount-input,
+.date-input {
     border: 1px solid #e2e8f0;
     border-radius: 4px;
     font-size: 0.875rem;
 }
 
-.gift-amount-input:focus {
+.gift-amount-input:focus,
+.date-input:focus {
     outline: none;
     border-color: #667eea;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);

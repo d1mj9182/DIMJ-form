@@ -327,15 +327,20 @@ function renderApplicationsTable(applications) {
         return;
     }
 
-    tbody.innerHTML = applications.map(app => `
+    tbody.innerHTML = applications.map((app, index) => `
         <tr>
             <td><input type="checkbox"></td>
+            <td><strong>${index + 1}</strong></td>
             <td>${app.id}</td>
             <td>${app.name}</td>
             <td>${app.phone}</td>
             <td>${app.service}</td>
             <td>${app.provider || '-'}</td>
-            <td>${formatDate(app.timestamp)}</td>
+            <td>
+                <input type="datetime-local" class="date-input" value="${formatDateForInput(app.timestamp)}"
+                       onchange="updateApplicationDate('${app.id}', this.value)"
+                       style="padding: 4px; font-size: 0.875rem;">
+            </td>
             <td>${app.ip ? app.ip.substring(0, 15) : '-'}</td>
             <td>
                 <select class="status-select" onchange="updateApplicationStatus('${app.id}', this.value)" data-original="${app.status || '상담대기'}">
@@ -352,12 +357,6 @@ function renderApplicationsTable(applications) {
                        style="width: 80px; padding: 4px; text-align: right;" min="0" step="10000">원
             </td>
             <td class="table-actions">
-                <button class="btn-icon" onclick="viewApplication('${app.id}')" title="상세보기">
-                    <i class="fas fa-eye"></i>
-                </button>
-                <button class="btn-icon" onclick="editApplication('${app.id}')" title="수정">
-                    <i class="fas fa-edit"></i>
-                </button>
                 <button class="btn-icon danger" onclick="deleteApplication('${app.id}')" title="삭제">
                     <i class="fas fa-trash"></i>
                 </button>
@@ -374,6 +373,16 @@ function formatDate(timestamp) {
         hour: '2-digit',
         minute: '2-digit'
     });
+}
+
+function formatDateForInput(timestamp) {
+    const date = new Date(timestamp);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
 // Update stats
@@ -1003,6 +1012,39 @@ async function updateGiftAmount(id, newAmount) {
     } catch (error) {
         console.error('사은품 금액 업데이트 에러:', error);
         alert(`사은품 금액 업데이트 실패: ${error.message}`);
+        loadApplications();
+    }
+}
+
+// Update application date
+async function updateApplicationDate(id, newDate) {
+    try {
+        const isoDate = new Date(newDate).toISOString();
+
+        const response = await fetch(`${PROXY_URL}`, {
+            method: 'PATCH',
+            headers: {
+                'x-api-key': SUPABASE_ANON_KEY,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                table: 'consultations',
+                id: id,
+                created_at: isoDate
+            })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            console.log('날짜 업데이트 완료:', isoDate);
+            loadApplications();
+        } else {
+            throw new Error(result.error || '날짜 업데이트 실패');
+        }
+    } catch (error) {
+        console.error('날짜 업데이트 에러:', error);
+        alert(`날짜 업데이트 실패: ${error.message}`);
         loadApplications();
     }
 }
