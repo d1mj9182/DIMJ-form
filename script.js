@@ -92,22 +92,29 @@ async function loadBannersFromAdmin() {
 
     console.log('🖼️ 상세이미지 로드 시작...');
 
-    // 먼저 localStorage에서 즉시 로드
-    for (let i = 1; i <= 5; i++) {
-        const detailLocalData = localStorage.getItem(`detailImage${i}`);
-        const detailImgContainer = document.getElementById(`detailImage${i}Container`);
+    // 먼저 localStorage에서 즉시 로드 (동기적으로 빠르게)
+    requestAnimationFrame(() => {
+        for (let i = 1; i <= 5; i++) {
+            const detailLocalData = localStorage.getItem(`detailImage${i}`);
+            const detailImgContainer = document.getElementById(`detailImage${i}Container`);
 
-        if (detailLocalData && detailImgContainer) {
-            detailImgContainer.innerHTML = `<img src="${detailLocalData}" alt="상세페이지 이미지 ${i}" style="width: 100%; max-width: 100%; height: auto; display: block; margin: 0;">`;
-            detailImgContainer.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; width: 100% !important; max-width: 100% !important;';
-            detailImagesLoaded++;
-            console.log(`⚡ 상세이미지 ${i} localStorage 즉시 로드`);
+            if (detailLocalData && detailImgContainer) {
+                const img = new Image();
+                img.src = detailLocalData;
+                img.alt = `상세페이지 이미지 ${i}`;
+                img.style.cssText = 'width: 100%; max-width: 100%; height: auto; display: block; margin: 0;';
+
+                detailImgContainer.appendChild(img);
+                detailImgContainer.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; width: 100% !important; max-width: 100% !important;';
+                detailImagesLoaded++;
+                console.log(`⚡ 상세이미지 ${i} localStorage 즉시 로드`);
+            }
         }
-    }
 
-    if (detailImagesLoaded > 0 && detailPlaceholder) {
-        detailPlaceholder.style.display = 'none';
-    }
+        if (detailImagesLoaded > 0 && detailPlaceholder) {
+            detailPlaceholder.style.display = 'none';
+        }
+    });
 
     // 백그라운드에서 DB 최신 데이터 가져오기 (병렬 처리)
     const dbPromises = [];
