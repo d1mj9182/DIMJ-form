@@ -6,6 +6,47 @@
     <title>당일민족 - 인터넷·TV·가전렌탈 성지</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+    // 즉시 localStorage에서 이미지 로드 (HTML 파싱 전 실행)
+    window.addEventListener('DOMContentLoaded', function() {
+        // Step 1 Main Banner
+        const step1Data = localStorage.getItem('mainBannerImage_step1');
+        if (step1Data) {
+            const img = document.getElementById('step1BannerImage');
+            const ph = document.getElementById('step1BannerPlaceholder');
+            if (img) { img.src = step1Data; img.style.display = 'block'; img.style.width = '100%'; img.style.height = 'auto'; }
+            if (ph) ph.style.display = 'none';
+        }
+
+        // Step 2 Main Banner
+        const step2Data = localStorage.getItem('mainBannerImage_step2');
+        if (step2Data) {
+            const img = document.getElementById('step2BannerImage');
+            const ph = document.getElementById('step2BannerPlaceholder');
+            if (img) { img.src = step2Data; img.style.display = 'block'; img.style.width = '100%'; img.style.height = 'auto'; }
+            if (ph) ph.style.display = 'none';
+        }
+
+        // Detail Images
+        let loaded = 0;
+        const ph = document.getElementById('detailImagesPlaceholder');
+        for (let i = 1; i <= 5; i++) {
+            const data = localStorage.getItem('detailImage' + i);
+            const container = document.getElementById('detailImage' + i + 'Container');
+            if (data && container) {
+                const img = document.createElement('img');
+                img.src = data;
+                img.alt = '상세페이지 이미지 ' + i;
+                img.style.cssText = 'width: 100%; max-width: 100%; height: auto; display: block; margin: 0;';
+                container.innerHTML = '';
+                container.appendChild(img);
+                container.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; width: 100% !important; max-width: 100% !important;';
+                loaded++;
+            }
+        }
+        if (loaded > 0 && ph) ph.style.display = 'none';
+    });
+    </script>
 </head>
 <body>
     <div class="container">
