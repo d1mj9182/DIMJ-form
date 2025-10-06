@@ -21,7 +21,8 @@ let adminState = {
     currentPage: 'dashboard',
     currentPaginationPage: 1,
     itemsPerPage: 10,
-    filteredApplications: []
+    filteredApplications: [],
+    loginHistory: []
 };
 
 // Utility Functions
@@ -88,6 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
     checkLoginStatus();
     setupEventListeners();
     loadBlockedIPs();
+    loadLoginHistory();
 });
 
 // Event listeners
@@ -203,6 +205,8 @@ function navigateToPage(pageName) {
     } else if (pageName === 'banners') {
         // 배너 페이지 로드 시 기존 업로드된 이미지 표시
         setTimeout(loadBannersToAdmin, 100);
+    } else if (pageName === 'security') {
+        renderLoginHistory();
     }
 }
 
@@ -218,41 +222,135 @@ async function handleLogin(e) {
     }
 
     const password = document.getElementById('adminPassword').value;
-    console.log('입력된 비밀번호:', password);
-    console.log('설정된 비밀번호:', ADMIN_CONFIG.password);
-    console.log('비밀번호 일치:', password === ADMIN_CONFIG.password);
 
-    if (password === ADMIN_CONFIG.password) {
-        adminState.isLoggedIn = true;
-        adminState.loginTime = Date.now();
-        adminState.loginAttempts = 0;
-        adminState.lastFailedLogin = null;
+    // Get user IP
+    getUserIP().then(ipAddress => {
+        if (password === ADMIN_CONFIG.password) {
+            adminState.isLoggedIn = true;
+            adminState.loginTime = Date.now();
+            adminState.loginAttempts = 0;
+            adminState.lastFailedLogin = null;
 
-        // Save login state
-        sessionStorage.setItem('adminAuth', JSON.stringify({
-            loginTime: adminState.loginTime,
-            isLoggedIn: true
-        }));
+            // Save login state
+            sessionStorage.setItem('adminAuth', JSON.stringify({
+                loginTime: adminState.loginTime,
+                isLoggedIn: true
+            }));
 
-        showAdminPanel();
-        navigateToPage('dashboard');
-        loadApplications();
-        updateStats();
-    } else {
-        adminState.loginAttempts++;
-        adminState.lastFailedLogin = Date.now();
+            // Record successful login
+            recordLoginAttempt(ipAddress, true);
 
-        const remainingAttempts = ADMIN_CONFIG.maxLoginAttempts - adminState.loginAttempts;
-
-        if (remainingAttempts > 0) {
-            alert(`잘못된 비밀번호입니다. ${remainingAttempts}번 더 시도할 수 있습니다.`);
+            showAdminPanel();
+            navigateToPage('dashboard');
+            loadApplications();
+            updateStats();
         } else {
-            alert('너무 많은 로그인 시도로 인해 15분간 잠겨있습니다.');
-        }
+            // Record failed login
+            recordLoginAttempt(ipAddress, false);
 
-        document.getElementById('adminPassword').value = '';
+            adminState.loginAttempts++;
+            adminState.lastFailedLogin = Date.now();
+
+            const remainingAttempts = ADMIN_CONFIG.maxLoginAttempts - adminState.loginAttempts;
+
+            if (remainingAttempts > 0) {
+                showToast('error', '로그인 실패', `잘못된 비밀번호입니다. ${remainingAttempts}번 더 시도할 수 있습니다.`);
+            } else {
+                showToast('error', '계정 잠김', '너무 많은 로그인 시도로 인해 15분간 잠겨있습니다.');
+            }
+
+            document.getElementById('adminPassword').value = '';
+        }
+    });
+}
+
+// Get user IP address
+async function getUserIP() {
+    try {
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        return data.ip;
+    } catch (error) {
+        console.error('IP 조회 실패:', error);
+        return 'Unknown';
     }
 }
+
+// Record login attempt
+function recordLoginAttempt(ipAddress, isSuccess) {
+    const now = new Date();
+    const loginRecord = {
+        timestamp: now.toISOString(),
+        date: now.toLocaleDateString('ko-KR'),
+        time: now.toLocaleTimeString('ko-KR'),
+        ip: ipAddress,
+        status: isSuccess ? '성공' : '실패',
+        browser: navigator.userAgent.split(' ').pop().split('/')[0] || 'Unknown'
+    };
+
+    // Load existing history
+    let history = JSON.parse(localStorage.getItem('adminLoginHistory') || '[]');
+
+    // Add new record at the beginning
+    history.unshift(loginRecord);
+
+    // Keep only last 100 records
+    if (history.length > 100) {
+        history = history.slice(0, 100);
+    }
+
+    // Save to localStorage (persistent)
+    localStorage.setItem('adminLoginHistory', JSON.stringify(history));
+
+    adminState.loginHistory = history;
+
+    // Render if on security page
+    if (adminState.currentPage === 'security') {
+        renderLoginHistory();
+    }
+}
+
+// Load login history
+function loadLoginHistory() {
+    const history = JSON.parse(localStorage.getItem('adminLoginHistory') || '[]');
+    adminState.loginHistory = history;
+}
+
+// Render login history table
+function renderLoginHistory() {
+    const tbody = document.getElementById('loginHistoryTableBody');
+    if (!tbody) return;
+
+    const history = adminState.loginHistory;
+
+    if (history.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" style="text-align: center; color: #64748b; padding: 2rem;">
+                    로그인 기록이 없습니다.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    tbody.innerHTML = history.map((record, index) => `
+        <tr>
+            <td><strong>${index + 1}</strong></td>
+            <td>${record.date}</td>
+            <td>${record.time}</td>
+            <td>${record.ip}</td>
+            <td>
+                <span class="status-badge ${record.status === '성공' ? 'status-success' : 'status-error'}">
+                    ${record.status === '성공' ? '<i class="fas fa-check-circle"></i>' : '<i class="fas fa-times-circle"></i>'}
+                    ${record.status}
+                </span>
+            </td>
+            <td>${record.browser}</td>
+        </tr>
+    `).join('');
+}
+
 
 function isLockedOut() {
     return adminState.loginAttempts >= ADMIN_CONFIG.maxLoginAttempts &&
