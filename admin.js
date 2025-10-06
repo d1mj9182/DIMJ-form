@@ -43,9 +43,29 @@ function setupEventListeners() {
             const page = this.getAttribute('data-page');
             if (page) {
                 navigateToPage(page);
+                // Close mobile menu after navigation
+                closeMobileMenu();
             }
         });
     });
+
+    // Mobile menu toggle
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const sidebar = document.getElementById('sidebar');
+
+    if (mobileMenuToggle) {
+        mobileMenuToggle.addEventListener('click', function() {
+            sidebar?.classList.toggle('active');
+            sidebarOverlay?.classList.toggle('active');
+        });
+    }
+
+    if (sidebarOverlay) {
+        sidebarOverlay.addEventListener('click', function() {
+            closeMobileMenu();
+        });
+    }
 
     const statusFilter = document.getElementById('statusFilter');
     const dateFilter = document.getElementById('dateFilter');
@@ -59,19 +79,35 @@ function setupEventListeners() {
     }
 }
 
+// Close mobile menu
+function closeMobileMenu() {
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    sidebar?.classList.remove('active');
+    sidebarOverlay?.classList.remove('active');
+}
+
 // Page navigation
 function navigateToPage(pageName) {
+    console.log('네비게이션:', pageName);
+
     // Update navigation active state
     document.querySelectorAll('.nav-item').forEach(item => {
         item.classList.remove('active');
     });
-    document.querySelector(`[data-page="${pageName}"]`)?.classList.add('active');
+    const activeNav = document.querySelector(`[data-page="${pageName}"]`);
+    if (activeNav) {
+        activeNav.classList.add('active');
+    }
 
-    // Update page visibility
-    document.querySelectorAll('.page').forEach(page => {
-        page.classList.remove('active');
+    // Update page visibility - HTML에서는 page-content 클래스 사용
+    document.querySelectorAll('.page-content').forEach(page => {
+        page.style.display = 'none';
     });
-    document.getElementById(pageName + 'Page')?.classList.add('active');
+    const targetPage = document.getElementById(pageName + 'Page');
+    if (targetPage) {
+        targetPage.style.display = 'block';
+    }
 
     // Update page title
     const titles = {
@@ -93,6 +129,7 @@ function navigateToPage(pageName) {
         loadApplications();
     } else if (pageName === 'dashboard') {
         updateStats();
+        loadRecentApplications();
     } else if (pageName === 'content') {
         loadDetailPageContent();
     }
@@ -752,4 +789,69 @@ function switchContentTab(tabName) {
 function saveContent() {
     alert('콘텐츠가 저장되었습니다.');
     // Content saving logic would go here
+}
+
+// Load recent applications for dashboard
+function loadRecentApplications() {
+    const activityList = document.getElementById('recentActivity');
+    if (!activityList || adminState.applications.length === 0) return;
+
+    // Get last 5 applications
+    const recentApps = adminState.applications.slice(0, 5);
+
+    activityList.innerHTML = recentApps.map(app => `
+        <div class="activity-item">
+            <div class="activity-icon">
+                <i class="fas fa-user-plus"></i>
+            </div>
+            <div class="activity-content">
+                <p class="activity-text">${app.name}님이 ${app.service} 신청</p>
+                <span class="activity-time">${getTimeAgo(app.timestamp)}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Get time ago text
+function getTimeAgo(timestamp) {
+    const now = new Date();
+    const past = new Date(timestamp);
+    const diffMs = now - past;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return '방금 전';
+    if (diffMins < 60) return `${diffMins}분 전`;
+    if (diffHours < 24) return `${diffHours}시간 전`;
+    return `${diffDays}일 전`;
+}
+
+// Go to main page
+function goToMainPage() {
+    window.open('index.html', '_blank');
+}
+
+// Filter applications
+function filterApplications() {
+    loadApplications();
+}
+
+// Export data
+function exportData() {
+    exportToExcel();
+}
+
+// Clear old data
+function clearOldData() {
+    if (confirm('30일 이상 지난 데이터를 삭제하시겠습니까?')) {
+        alert('오래된 데이터 정리 기능은 준비 중입니다.');
+    }
+}
+
+// Reset daily limits
+function resetDailyLimits() {
+    if (confirm('일일 제한을 리셋하시겠습니까?')) {
+        alert('일일 제한이 리셋되었습니다.');
+    }
 }
