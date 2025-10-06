@@ -416,7 +416,7 @@ async function updateStats() {
     ).length;
 
     const totalGiftAmount = adminState.applications.reduce((sum, app) => {
-        return sum + (app.giftAmount || 0);
+        return sum + (parseInt(app.giftAmount) || 0);
     }, 0);
 
     // Update stat values
@@ -435,7 +435,7 @@ async function updateStats() {
     if (doneEl) doneEl.textContent = statusDone;
     if (scheduledEl) scheduledEl.textContent = statusScheduled;
     if (completedEl) completedEl.textContent = completedInstall;
-    if (giftEl) giftEl.textContent = totalGiftAmount + '만원';
+    if (giftEl) giftEl.textContent = totalGiftAmount.toLocaleString() + '만원';
     if (pendingBadgeEl) {
         pendingBadgeEl.textContent = statusWaiting;
         pendingBadgeEl.style.display = statusWaiting > 0 ? 'block' : 'none';
@@ -472,7 +472,7 @@ function updateMonthlyChart() {
             if (app.status === '설치완료') {
                 monthlyData[monthKey].completed++;
             }
-            monthlyData[monthKey].giftAmount += (app.giftAmount || 0);
+            monthlyData[monthKey].giftAmount += (parseInt(app.giftAmount) || 0);
         }
     });
 
@@ -529,6 +529,24 @@ function updateMonthlyChart() {
                 },
                 title: {
                     display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                if (context.dataset.label === '사은품 지급액 (만원)') {
+                                    label += context.parsed.y.toLocaleString() + '만원';
+                                } else {
+                                    label += context.parsed.y + '건';
+                                }
+                            }
+                            return label;
+                        }
+                    }
                 }
             },
             scales: {
@@ -539,6 +557,9 @@ function updateMonthlyChart() {
                     title: {
                         display: true,
                         text: '건수'
+                    },
+                    ticks: {
+                        beginAtZero: true
                     }
                 },
                 y1: {
@@ -548,6 +569,13 @@ function updateMonthlyChart() {
                     title: {
                         display: true,
                         text: '사은품 (만원)'
+                    },
+                    ticks: {
+                        beginAtZero: true,
+                        stepSize: 3000000,
+                        callback: function(value) {
+                            return value.toLocaleString() + '만';
+                        }
                     },
                     grid: {
                         drawOnChartArea: false
