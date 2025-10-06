@@ -109,30 +109,38 @@ async function loadBannersFromAdmin() {
         detailPlaceholder.style.display = 'none';
     }
 
-    // 백그라운드에서 DB 최신 데이터 가져오기
+    // 백그라운드에서 DB 최신 데이터 가져오기 (병렬 처리)
+    const dbPromises = [];
     for (let i = 1; i <= 5; i++) {
-        try {
-            const response = await fetch(`${PROXY_URL}?table=admin_settings&key=detail_image_${i}`, {
+        dbPromises.push(
+            fetch(`${PROXY_URL}?table=admin_settings&key=detail_image_${i}`, {
                 headers: { 'x-api-key': SUPABASE_ANON_KEY }
-            });
-            const result = await response.json();
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (Array.isArray(result) && result.length > 0) {
+                    const detailImageData = result[0].setting_value;
+                    const detailImgContainer = document.getElementById(`detailImage${i}Container`);
 
-            if (Array.isArray(result) && result.length > 0) {
-                const detailImageData = result[0].setting_value;
-                const detailImgContainer = document.getElementById(`detailImage${i}Container`);
-
-                if (detailImgContainer) {
-                    detailImgContainer.innerHTML = `<img src="${detailImageData}" alt="상세페이지 이미지 ${i}" style="width: 100%; max-width: 100%; height: auto; display: block; margin: 0;">`;
-                    detailImgContainer.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; width: 100% !important; max-width: 100% !important;';
-                    if (detailPlaceholder) detailPlaceholder.style.display = 'none';
+                    if (detailImgContainer) {
+                        detailImgContainer.innerHTML = `<img src="${detailImageData}" alt="상세페이지 이미지 ${i}" style="width: 100%; max-width: 100%; height: auto; display: block; margin: 0;">`;
+                        detailImgContainer.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; width: 100% !important; max-width: 100% !important;';
+                        if (detailPlaceholder) detailPlaceholder.style.display = 'none';
+                    }
+                    localStorage.setItem(`detailImage${i}`, detailImageData);
+                    console.log(`✅ 상세이미지 ${i} DB에서 업데이트`);
                 }
-                localStorage.setItem(`detailImage${i}`, detailImageData);
-                console.log(`✅ 상세이미지 ${i} DB에서 업데이트`);
-            }
-        } catch (error) {
-            console.error(`❌ 상세이미지 ${i} DB 로드 에러:`, error);
-        }
+            })
+            .catch(error => {
+                console.error(`❌ 상세이미지 ${i} DB 로드 에러:`, error);
+            })
+        );
     }
+
+    // 모든 DB 요청 완료 대기 (백그라운드)
+    Promise.all(dbPromises).then(() => {
+        console.log('✅ 모든 상세이미지 DB 업데이트 완료');
+    });
 
     console.log('🎨 배너 로딩 완료');
 }
