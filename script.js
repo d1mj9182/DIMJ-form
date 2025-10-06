@@ -5,28 +5,71 @@ window.currentStep = currentStep;
 // API Configuration
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXd6dnlyb2RwZG1mZ2xzcXF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIzMjUzMzEsImV4cCI6MjA0NzkwMTMzMX0.MkFZj8gNdkZT7xE9ysD1fkzN3bfOh5CtpOEtQGUCqY4';
 
-// Load banners from Supabase DB (DB 우선, localStorage 폴백)
-async function loadBannersFromAdmin() {
-    console.log('🎨 배너 로딩 시작 (DB 우선)...');
+// 즉시 localStorage에서 배너와 상세페이지 로드 (동기)
+function loadImagesFromLocalStorageSync() {
+    // Step 1 Main Banner
+    const step1LocalData = localStorage.getItem('mainBannerImage_step1');
+    if (step1LocalData) {
+        const step1BannerImg = document.getElementById('step1BannerImage');
+        const step1Placeholder = document.getElementById('step1BannerPlaceholder');
+        if (step1BannerImg) {
+            step1BannerImg.src = step1LocalData;
+            step1BannerImg.style.display = 'block';
+            step1BannerImg.style.width = '100%';
+            step1BannerImg.style.height = 'auto';
+            if (step1Placeholder) step1Placeholder.style.display = 'none';
+        }
+    }
 
+    // Step 2 Main Banner
+    const step2LocalData = localStorage.getItem('mainBannerImage_step2');
+    if (step2LocalData) {
+        const step2BannerImg = document.getElementById('step2BannerImage');
+        const step2Placeholder = document.getElementById('step2BannerPlaceholder');
+        if (step2BannerImg) {
+            step2BannerImg.src = step2LocalData;
+            step2BannerImg.style.display = 'block';
+            step2BannerImg.style.width = '100%';
+            step2BannerImg.style.height = 'auto';
+            if (step2Placeholder) step2Placeholder.style.display = 'none';
+        }
+    }
+
+    // Detail Page Images (1-5)
+    let detailImagesLoaded = 0;
+    const detailPlaceholder = document.getElementById('detailImagesPlaceholder');
+
+    for (let i = 1; i <= 5; i++) {
+        const detailLocalData = localStorage.getItem(`detailImage${i}`);
+        const detailImgContainer = document.getElementById(`detailImage${i}Container`);
+
+        if (detailLocalData && detailImgContainer) {
+            const img = document.createElement('img');
+            img.src = detailLocalData;
+            img.alt = `상세페이지 이미지 ${i}`;
+            img.style.cssText = 'width: 100%; max-width: 100%; height: auto; display: block; margin: 0;';
+
+            detailImgContainer.innerHTML = '';
+            detailImgContainer.appendChild(img);
+            detailImgContainer.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; width: 100% !important; max-width: 100% !important;';
+            detailImagesLoaded++;
+        }
+    }
+
+    if (detailImagesLoaded > 0 && detailPlaceholder) {
+        detailPlaceholder.style.display = 'none';
+    }
+}
+
+// Load banners from Supabase DB (백그라운드 업데이트만)
+async function loadBannersFromAdmin() {
     const PROXY_URL = 'https://dimj-form-proxy.vercel.app/api/supabase';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXd6dnlyb2RwZG1mZ2xzcXF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIzMjUzMzEsImV4cCI6MjA0NzkwMTMzMX0.MkFZj8gNdkZT7xE9ysD1fkzN3bfOh5CtpOEtQGUCqY4';
 
-    // Load Step 1 Main Banner - localStorage 먼저 표시
-    const step1LocalData = localStorage.getItem('mainBannerImage_step1');
     const step1BannerImg = document.getElementById('step1BannerImage');
     const step1Placeholder = document.getElementById('step1BannerPlaceholder');
 
-    if (step1LocalData && step1BannerImg) {
-        step1BannerImg.src = step1LocalData;
-        step1BannerImg.style.display = 'block';
-        step1BannerImg.style.width = '100%';
-        step1BannerImg.style.height = 'auto';
-        if (step1Placeholder) step1Placeholder.style.display = 'none';
-        console.log('⚡ Step1 배너 localStorage 즉시 로드');
-    }
-
-    // DB에서 최신 데이터 가져오기 (백그라운드)
+    // DB에서 최신 데이터 가져오기
     try {
         const response = await fetch(`${PROXY_URL}?table=admin_settings&key=main_banner_step1`, {
             headers: { 'x-api-key': SUPABASE_ANON_KEY }
@@ -49,21 +92,11 @@ async function loadBannersFromAdmin() {
         console.error('Step1 배너 DB 로드 에러:', error);
     }
 
-    // Load Step 2 Main Banner - localStorage 먼저 표시
-    const step2LocalData = localStorage.getItem('mainBannerImage_step2');
+    // Load Step 2 Main Banner
     const step2BannerImg = document.getElementById('step2BannerImage');
     const step2Placeholder = document.getElementById('step2BannerPlaceholder');
 
-    if (step2LocalData && step2BannerImg) {
-        step2BannerImg.src = step2LocalData;
-        step2BannerImg.style.display = 'block';
-        step2BannerImg.style.width = '100%';
-        step2BannerImg.style.height = 'auto';
-        if (step2Placeholder) step2Placeholder.style.display = 'none';
-        console.log('⚡ Step2 배너 localStorage 즉시 로드');
-    }
-
-    // DB에서 최신 데이터 가져오기 (백그라운드)
+    // DB에서 최신 데이터 가져오기
     try {
         const response = await fetch(`${PROXY_URL}?table=admin_settings&key=main_banner_step2`, {
             headers: { 'x-api-key': SUPABASE_ANON_KEY }
@@ -86,33 +119,8 @@ async function loadBannersFromAdmin() {
         console.error('Step2 배너 DB 로드 에러:', error);
     }
 
-    // Load Detail Page Images (1-5) - localStorage에서 즉시 동기 로드
-    let detailImagesLoaded = 0;
+    // Load Detail Page Images (1-5) - DB에서 업데이트 (병렬 처리)
     const detailPlaceholder = document.getElementById('detailImagesPlaceholder');
-
-    // 즉시 동기적으로 로드 (기다리지 않음)
-    for (let i = 1; i <= 5; i++) {
-        const detailLocalData = localStorage.getItem(`detailImage${i}`);
-        const detailImgContainer = document.getElementById(`detailImage${i}Container`);
-
-        if (detailLocalData && detailImgContainer) {
-            const img = document.createElement('img');
-            img.src = detailLocalData;
-            img.alt = `상세페이지 이미지 ${i}`;
-            img.style.cssText = 'width: 100%; max-width: 100%; height: auto; display: block; margin: 0;';
-
-            detailImgContainer.innerHTML = '';
-            detailImgContainer.appendChild(img);
-            detailImgContainer.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; width: 100% !important; max-width: 100% !important;';
-            detailImagesLoaded++;
-        }
-    }
-
-    if (detailImagesLoaded > 0 && detailPlaceholder) {
-        detailPlaceholder.style.display = 'none';
-    }
-
-    // 백그라운드에서 DB 최신 데이터 가져오기 (병렬 처리)
     const dbPromises = [];
     for (let i = 1; i <= 5; i++) {
         dbPromises.push(
@@ -505,11 +513,14 @@ window.addEventListener('load', adjustDesktopStatusWidth);
 window.addEventListener('resize', adjustDesktopStatusWidth);
 
 // Initialize the application
-document.addEventListener('DOMContentLoaded', async function() {
+document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM Content Loaded - Initializing application');
 
-    // Load banners from localStorage
-    await loadBannersFromAdmin();
+    // 즉시 localStorage에서 이미지 로드 (동기 - 딜레이 없음)
+    loadImagesFromLocalStorageSync();
+
+    // 백그라운드에서 DB 업데이트 (비동기 - 기다리지 않음)
+    loadBannersFromAdmin();
 
     // Check URL hash for direct step access
     checkURLHash();
