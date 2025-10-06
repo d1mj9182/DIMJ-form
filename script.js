@@ -5,6 +5,60 @@ window.currentStep = currentStep;
 // API Configuration
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXd6dnlyb2RwZG1mZ2xzcXF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIzMjUzMzEsImV4cCI6MjA0NzkwMTMzMX0.MkFZj8gNdkZT7xE9ysD1fkzN3bfOh5CtpOEtQGUCqY4';
 
+// Load banners from admin localStorage
+function loadBannersFromAdmin() {
+    console.log('배너 로딩 시작...');
+
+    // Load Step 1 Main Banner
+    const step1BannerData = localStorage.getItem('mainBannerImage_step1');
+    if (step1BannerData) {
+        const step1BannerImg = document.getElementById('step1BannerImage');
+        const step1Placeholder = document.getElementById('step1BannerPlaceholder');
+
+        if (step1BannerImg) {
+            step1BannerImg.src = step1BannerData;
+            step1BannerImg.style.display = 'block';
+            if (step1Placeholder) {
+                step1Placeholder.style.display = 'none';
+            }
+            console.log('✅ Step1 메인 배너 로드 완료');
+        }
+    } else {
+        console.log('⚠️ Step1 메인 배너 없음');
+    }
+
+    // Load Step 2 Main Banner
+    const step2BannerData = localStorage.getItem('mainBannerImage_step2');
+    if (step2BannerData) {
+        const step2BannerImg = document.getElementById('step2BannerImage');
+        const step2Placeholder = document.getElementById('step2BannerPlaceholder');
+
+        if (step2BannerImg) {
+            step2BannerImg.src = step2BannerData;
+            step2BannerImg.style.display = 'block';
+            if (step2Placeholder) {
+                step2Placeholder.style.display = 'none';
+            }
+            console.log('✅ Step2 메인 배너 로드 완료');
+        }
+    } else {
+        console.log('⚠️ Step2 메인 배너 없음');
+    }
+
+    // Load Detail Page Images (1-5)
+    for (let i = 1; i <= 5; i++) {
+        const detailImageData = localStorage.getItem(`detailImage${i}`);
+        if (detailImageData) {
+            // 상세페이지 이미지가 있으면 표시할 위치 찾기
+            const detailImgContainer = document.getElementById(`detailImage${i}Container`);
+            if (detailImgContainer) {
+                detailImgContainer.innerHTML = `<img src="${detailImageData}" alt="상세페이지 이미지 ${i}" style="width: 100%; height: auto;">`;
+                console.log(`✅ 상세페이지 이미지 ${i} 로드 완료`);
+            }
+        }
+    }
+}
+
 // Simple nextStep function - defined early to ensure it's available
 function nextStep() {
     console.log('nextStep function called, currentStep:', currentStep);
@@ -364,7 +418,10 @@ window.addEventListener('resize', adjustDesktopStatusWidth);
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM Content Loaded - Initializing application');
-    
+
+    // Load banners from localStorage
+    loadBannersFromAdmin();
+
     // Check URL hash for direct step access
     checkURLHash();
     trackVisitor();
