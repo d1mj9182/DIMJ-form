@@ -218,6 +218,9 @@ async function handleLogin(e) {
     }
 
     const password = document.getElementById('adminPassword').value;
+    console.log('입력된 비밀번호:', password);
+    console.log('설정된 비밀번호:', ADMIN_CONFIG.password);
+    console.log('비밀번호 일치:', password === ADMIN_CONFIG.password);
 
     if (password === ADMIN_CONFIG.password) {
         adminState.isLoggedIn = true;
