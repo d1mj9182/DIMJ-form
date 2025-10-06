@@ -98,32 +98,45 @@ async function loadBannersFromAdmin() {
     let detailImagesLoaded = 0;
     const detailPlaceholder = document.getElementById('detailImagesPlaceholder');
 
+    console.log('🖼️ 상세이미지 로드 시작...');
+    console.log('📍 detailImagesPlaceholder:', detailPlaceholder ? '찾음' : '없음');
+
     for (let i = 1; i <= 5; i++) {
         try {
-            const response = await fetch(`${PROXY_URL}?table=admin_settings&key=detail_image_${i}`, {
+            const url = `${PROXY_URL}?table=admin_settings&key=detail_image_${i}`;
+            console.log(`🔍 상세이미지 ${i} 요청 URL:`, url);
+
+            const response = await fetch(url, {
                 headers: { 'x-api-key': SUPABASE_ANON_KEY }
             });
             const result = await response.json();
 
+            console.log(`📦 상세이미지 ${i} DB 응답:`, result);
+
             let detailImageData = null;
             if (result.success && result.data && result.data.length > 0) {
                 detailImageData = result.data[0].setting_value || result.data[0].설정값;
-                console.log(`✅ 상세이미지 ${i} DB에서 로드`);
+                console.log(`✅ 상세이미지 ${i} DB에서 로드 성공 (${detailImageData ? detailImageData.substring(0, 50) : 'null'}...)`);
             } else {
                 detailImageData = localStorage.getItem(`detailImage${i}`);
-                console.log(`⚠️ 상세이미지 ${i} localStorage에서 로드`);
+                console.log(`⚠️ 상세이미지 ${i} localStorage에서 로드 (${detailImageData ? '있음' : '없음'})`);
             }
 
-            if (detailImageData) {
-                const detailImgContainer = document.getElementById(`detailImage${i}Container`);
-                if (detailImgContainer) {
-                    detailImgContainer.innerHTML = `<img src="${detailImageData}" alt="상세페이지 이미지 ${i}" style="width: 100%; height: auto; display: block; margin-bottom: 1rem;">`;
-                    detailImgContainer.style.display = 'block';
-                    detailImagesLoaded++;
-                }
+            const detailImgContainer = document.getElementById(`detailImage${i}Container`);
+            console.log(`📍 상세이미지 ${i} 컨테이너:`, detailImgContainer ? '찾음' : '없음');
+
+            if (detailImageData && detailImgContainer) {
+                detailImgContainer.innerHTML = `<img src="${detailImageData}" alt="상세페이지 이미지 ${i}" style="width: 100%; height: auto; display: block; margin-bottom: 1rem;">`;
+                detailImgContainer.style.display = 'block';
+                detailImagesLoaded++;
+                console.log(`✅ 상세이미지 ${i} 표시 완료`);
+            } else if (detailImageData && !detailImgContainer) {
+                console.error(`❌ 상세이미지 ${i} 데이터는 있지만 컨테이너 없음!`);
+            } else if (!detailImageData) {
+                console.log(`⚠️ 상세이미지 ${i} 데이터 없음`);
             }
         } catch (error) {
-            console.error(`상세이미지 ${i} 로드 에러:`, error);
+            console.error(`❌ 상세이미지 ${i} 로드 에러:`, error);
             const detailImageData = localStorage.getItem(`detailImage${i}`);
             if (detailImageData) {
                 const detailImgContainer = document.getElementById(`detailImage${i}Container`);
@@ -131,6 +144,7 @@ async function loadBannersFromAdmin() {
                     detailImgContainer.innerHTML = `<img src="${detailImageData}" alt="상세페이지 이미지 ${i}" style="width: 100%; height: auto; display: block; margin-bottom: 1rem;">`;
                     detailImgContainer.style.display = 'block';
                     detailImagesLoaded++;
+                    console.log(`✅ 상세이미지 ${i} localStorage 폴백 성공`);
                 }
             }
         }
@@ -139,7 +153,9 @@ async function loadBannersFromAdmin() {
     // 상세 이미지가 하나라도 있으면 placeholder 숨김
     if (detailImagesLoaded > 0 && detailPlaceholder) {
         detailPlaceholder.style.display = 'none';
-        console.log(`✅ ${detailImagesLoaded}개 상세이미지 로드됨`);
+        console.log(`✅ ${detailImagesLoaded}개 상세이미지 로드됨, placeholder 숨김`);
+    } else {
+        console.log(`⚠️ 로드된 상세이미지 없음, placeholder 유지`);
     }
 
     console.log('🎨 배너 로딩 완료');
