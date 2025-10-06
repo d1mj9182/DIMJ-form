@@ -1471,7 +1471,7 @@ async function submitToSupabase(data) {
             preferred_time: data.preference || '빠른 시간에 연락드립니다',
             privacy_agreed: true,
             status: data.status || '상담대기',
-            gift_amount: 70, // 기본 사은품 70만원
+            gift_amount: 0, // 기본 사은품 0원 (관리자가 수동 지정)
             ip_address: antiSpam.userIP || 'Unknown'
         };
 
