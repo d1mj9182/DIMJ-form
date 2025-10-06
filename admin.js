@@ -744,9 +744,12 @@ async function previewDetailImage(event, imageNumber) {
 
             const result = await response.json();
             console.log(`상세이미지 ${imageNumber} DB 저장 결과:`, result);
+            console.log(`📦 저장된 데이터 확인:`, result.data ? result.data[0] : 'No data');
 
             if (!result.success && !response.ok) {
                 throw new Error('DB 저장 실패');
+            } else if (result.success) {
+                console.log(`✅ 상세이미지 ${imageNumber} DB 저장 성공!`);
             }
         } catch (error) {
             console.error(`상세이미지 ${imageNumber} DB 저장 에러:`, error);

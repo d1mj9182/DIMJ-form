@@ -521,11 +521,11 @@ window.addEventListener('load', adjustDesktopStatusWidth);
 window.addEventListener('resize', adjustDesktopStatusWidth);
 
 // Initialize the application
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     console.log('DOM Content Loaded - Initializing application');
 
     // Load banners from localStorage
-    loadBannersFromAdmin();
+    await loadBannersFromAdmin();
 
     // Check URL hash for direct step access
     checkURLHash();
