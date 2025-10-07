@@ -1,10 +1,14 @@
 // Admin configuration
 const ADMIN_CONFIG = {
-    password: 'aszx1004!', // 관리자 초기 패스워드
     sessionTimeout: 30 * 60 * 1000, // 30 minutes
-    maxLoginAttempts: 5,
-    lockoutTime: 15 * 60 * 1000 // 15 minutes
+    maxLoginAttempts: 999999, // 로그인 시도 제한 해제
+    lockoutTime: 0 // 잠금 시간 없음
 };
+
+// API Configuration
+const PROXY_URL = 'https://dimj-form-proxy.vercel.app/api/supabase';
+const SUPABASE_URL = 'https://tmqwzvyrodpdmfglsqqw.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXd6dnlyb2RwZG1mZ2xzcXF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIzMjUzMzEsImV4cCI6MjA0NzkwMTMzMX0.MkFZj8gNdkZT7xE9ysD1fkzN3bfOh5CtpOEtQGUCqY4';
 
 // Admin state
 let adminState = {
@@ -42,10 +46,69 @@ function setupEventListeners() {
     // }
 }
 
+// Hash password using SHA-256
+async function hashPassword(password) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return hashHex;
+}
+
+// Verify password against Supabase (checks both master_password and admin_password)
+async function verifyPassword(inputPassword) {
+    try {
+        const hashedInput = await hashPassword(inputPassword);
+
+        // 마스터 패스워드 체크
+        const masterResponse = await fetch(`${PROXY_URL}?table=admin_settings&key=master_password`, {
+            method: 'GET',
+            headers: {
+                'x-api-key': SUPABASE_ANON_KEY,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const masterResult = await masterResponse.json();
+        if (masterResult.success && masterResult.data && masterResult.data.length > 0) {
+            const masterHash = masterResult.data[0].setting_value || masterResult.data[0].설정값;
+            if (hashedInput === masterHash) {
+                return true;
+            }
+        }
+
+        // 일반 패스워드 체크
+        const response = await fetch(`${PROXY_URL}?table=admin_settings&key=admin_password`, {
+            method: 'GET',
+            headers: {
+                'x-api-key': SUPABASE_ANON_KEY,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const result = await response.json();
+
+        if (result.success && result.data && result.data.length > 0) {
+            // 가장 최신 패스워드 사용 (배열의 마지막)
+            const latestPassword = result.data[result.data.length - 1];
+            const storedHash = latestPassword.setting_value || latestPassword.설정값;
+            return hashedInput === storedHash;
+        }
+
+        // Supabase에 패스워드가 없으면 로그인 실패
+        console.error('Supabase에 admin_password가 설정되지 않았습니다.');
+        return false;
+    } catch (error) {
+        console.error('비밀번호 확인 실패:', error);
+        return false;
+    }
+}
+
 // Login handling
 async function handleLogin(e) {
     e.preventDefault();
-    
+
     // Check if locked out
     if (isLockedOut()) {
         const remainingTime = Math.ceil((ADMIN_CONFIG.lockoutTime - (Date.now() - adminState.lastFailedLogin)) / 1000 / 60);
@@ -54,34 +117,36 @@ async function handleLogin(e) {
     }
 
     const password = document.getElementById('adminPassword').value;
-    
-    if (password === ADMIN_CONFIG.password) {
+
+    const isValid = await verifyPassword(password);
+
+    if (isValid) {
         adminState.isLoggedIn = true;
         adminState.loginTime = Date.now();
         adminState.loginAttempts = 0;
         adminState.lastFailedLogin = null;
-        
+
         // Save login state
         sessionStorage.setItem('adminAuth', JSON.stringify({
             loginTime: adminState.loginTime,
             isLoggedIn: true
         }));
-        
+
         showAdminPanel();
         loadApplications();
         updateStats();
     } else {
         adminState.loginAttempts++;
         adminState.lastFailedLogin = Date.now();
-        
+
         const remainingAttempts = ADMIN_CONFIG.maxLoginAttempts - adminState.loginAttempts;
-        
+
         if (remainingAttempts > 0) {
             alert(`잘못된 비밀번호입니다. ${remainingAttempts}번 더 시도할 수 있습니다.`);
         } else {
             alert('너무 많은 로그인 시도로 인해 15분간 잠겨있습니다.');
         }
-        
+
         document.getElementById('adminPassword').value = '';
     }
 }

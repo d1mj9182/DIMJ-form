@@ -220,17 +220,29 @@ async function hashPassword(password) {
     return hashHex;
 }
 
-// Verify password against Supabase with master password fallback
+// Verify password against Supabase (checks both master_password and admin_password)
 async function verifyPassword(inputPassword) {
     try {
         const hashedInput = await hashPassword(inputPassword);
 
-        // 마스터 패스워드 체크 (aszx1004!)
-        const masterPasswordHash = 'c13a476df42544739655d76d6c1f1bbc6cb9974cd0db4f475c4fe9b0d7570f7d';
-        if (hashedInput === masterPasswordHash) {
-            return true;
+        // 마스터 패스워드 체크
+        const masterResponse = await fetch(`${PROXY_URL}?table=admin_settings&key=master_password`, {
+            method: 'GET',
+            headers: {
+                'x-api-key': SUPABASE_ANON_KEY,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const masterResult = await masterResponse.json();
+        if (masterResult.success && masterResult.data && masterResult.data.length > 0) {
+            const masterHash = masterResult.data[0].setting_value || masterResult.data[0].설정값;
+            if (hashedInput === masterHash) {
+                return true;
+            }
         }
 
+        // 일반 패스워드 체크
         const response = await fetch(`${PROXY_URL}?table=admin_settings&key=admin_password`, {
             method: 'GET',
             headers: {
