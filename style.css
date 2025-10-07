@@ -4223,9 +4223,9 @@ button.telecom-btn.selected:nth-child(6):hover {
         font-size: 0.7rem !important;
     }
 
-    /* 뒤로가기 버튼 아래 여백 제거 */
+    /* 뒤로가기 버튼 아래 여백 추가 */
     #step2 .back-button-container {
-        margin-bottom: 0 !important;
+        margin-bottom: 1rem !important;
         padding-bottom: 0 !important;
     }
 
