@@ -4186,22 +4186,27 @@ button.telecom-btn.selected:nth-child(6):hover {
     position: absolute !important;
 }
 
-/* 데스크톱 */
+/* 1페이지 배너 - 원래대로 */
+#step1 .banner-container img {
+    height: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
+}
+
+/* 2페이지 배너 - 데스크톱 */
 @media (min-width: 769px) {
-    .banner-container img,
     #step2MainBanner img {
-        min-height: 400px !important;
-        max-height: 500px !important;
+        min-height: 350px !important;
+        max-height: 450px !important;
         object-fit: cover !important;
     }
 }
 
-/* 모바일 */
+/* 2페이지 배너 - 모바일 */
 @media (max-width: 768px) {
-    .banner-container img,
     #step2MainBanner img {
-        min-height: 300px !important;
-        max-height: 400px !important;
+        min-height: 250px !important;
+        max-height: 350px !important;
         object-fit: cover !important;
     }
 }
