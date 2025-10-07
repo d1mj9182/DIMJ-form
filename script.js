@@ -2920,10 +2920,9 @@ async function verifySettingsPassword() {
             const storedHash = result[result.length - 1].setting_value;
 
             if (hashedInput === storedHash) {
-                // 패스워드 일치 - 설정 화면으로 이동
+                // 패스워드 일치 - 어드민페이지로 이동
                 closeSettingsModal();
-                alert('설정 화면 접근 성공! (구체적인 설정 화면은 추가 구현 필요)');
-                // TODO: 여기에 설정 화면 표시 로직 추가
+                window.location.href = 'admin.html';
             } else {
                 errorDiv.textContent = '패스워드가 올바르지 않습니다.';
                 errorDiv.style.display = 'block';
