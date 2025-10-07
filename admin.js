@@ -220,7 +220,7 @@ async function hashPassword(password) {
     return hashHex;
 }
 
-// Verify password against Supabase
+// Verify password against Supabase only (no default password in code)
 async function verifyPassword(inputPassword) {
     try {
         const hashedInput = await hashPassword(inputPassword);
@@ -236,34 +236,14 @@ async function verifyPassword(inputPassword) {
         const result = await response.json();
 
         if (result.success && result.data && result.data.length > 0) {
-            const storedHash = result.data[0].setting_value || result.data[0].설정값;
+            // 가장 최신 패스워드 사용 (배열의 마지막)
+            const latestPassword = result.data[result.data.length - 1];
+            const storedHash = latestPassword.setting_value || latestPassword.설정값;
             return hashedInput === storedHash;
         }
 
-        // Fallback: 초기 설정이 없으면 기본 비밀번호로 로그인 허용 및 DB 저장
-        if (!result.data || result.data.length === 0) {
-            const defaultPassword = 'aszx1004!';
-            const defaultHash = await hashPassword(defaultPassword);
-
-            if (hashedInput === defaultHash) {
-                // Save to DB
-                await fetch(`${PROXY_URL}`, {
-                    method: 'POST',
-                    headers: {
-                        'x-api-key': SUPABASE_ANON_KEY,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        table: 'admin_settings',
-                        setting_key: 'admin_password',
-                        setting_value: defaultHash,
-                        setting_type: 'password'
-                    })
-                });
-                return true;
-            }
-        }
-
+        // Supabase에 패스워드가 없으면 로그인 실패
+        console.error('Supabase에 admin_password가 설정되지 않았습니다.');
         return false;
     } catch (error) {
         console.error('비밀번호 확인 실패:', error);
