@@ -4202,12 +4202,64 @@ button.telecom-btn.selected:nth-child(6):hover {
     }
 }
 
-/* 2페이지 배너 - 모바일 */
+/* ========================================
+   2페이지 배너 - 모바일 전용 여백 제거
+   ======================================== */
 @media (max-width: 768px) {
+    /* 뒤로가기 버튼 아래 여백 제거 */
+    #step2 .back-button-container {
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+    }
+
+    /* 배너 컨테이너 완전 초기화 */
+    #step2MainBanner.banner-container,
+    #step2MainBanner.banner-container * {
+        all: unset !important;
+        display: block !important;
+    }
+
+    #step2MainBanner.banner-container {
+        width: 100% !important;
+        line-height: 0 !important;
+    }
+
+    /* placeholder 완전 숨김 */
+    #step2MainBanner .banner-placeholder,
+    #step2MainBanner .banner-placeholder * {
+        display: none !important;
+        height: 0 !important;
+        overflow: hidden !important;
+        position: absolute !important;
+        visibility: hidden !important;
+    }
+
+    /* 배너 위아래 여백 제거 */
+    #step2MainBanner {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        background: none !important;
+    }
+
+    /* 실시간 상담 현황 위 여백 제거 */
+    #step2 .status-board {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+
+    /* 배너 이미지만 표시 */
     #step2MainBanner img {
+        display: block !important;
+        width: 100% !important;
         min-height: 250px !important;
         max-height: 350px !important;
         object-fit: cover !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        line-height: 0 !important;
+        vertical-align: top !important;
     }
 }
 
