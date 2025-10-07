@@ -499,6 +499,93 @@ async function changePassword() {
     }
 }
 
+// Change settings password function
+async function changeSettingsPassword() {
+    const currentPassword = document.getElementById('currentSettingsPassword').value;
+    const newPassword = document.getElementById('newSettingsPassword').value;
+    const confirmPassword = document.getElementById('confirmSettingsPassword').value;
+
+    // Validation
+    if (!currentPassword || !newPassword || !confirmPassword) {
+        showToast('warning', '입력 필요', '모든 필드를 입력해주세요.');
+        return;
+    }
+
+    if (newPassword !== confirmPassword) {
+        showToast('error', '비밀번호 불일치', '새 비밀번호가 일치하지 않습니다.');
+        return;
+    }
+
+    if (newPassword.length < 4) {
+        showToast('warning', '비밀번호 약함', '비밀번호는 최소 4자 이상이어야 합니다.');
+        return;
+    }
+
+    showLoading();
+
+    try {
+        // Verify current settings password
+        const currentHash = await hashPassword(currentPassword);
+
+        const checkResponse = await fetch(`${PROXY_URL}?table=admin_settings&key=settings_password`, {
+            method: 'GET',
+            headers: {
+                'x-api-key': SUPABASE_ANON_KEY,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const currentData = await checkResponse.json();
+
+        if (Array.isArray(currentData) && currentData.length > 0) {
+            const storedHash = currentData[currentData.length - 1].setting_value;
+            if (currentHash !== storedHash) {
+                hideLoading();
+                showToast('error', '인증 실패', '현재 설정 패스워드가 올바르지 않습니다.');
+                return;
+            }
+        } else {
+            hideLoading();
+            showToast('error', '설정 패스워드 없음', '설정 패스워드가 등록되지 않았습니다. 관리자에게 문의하세요.');
+            return;
+        }
+
+        // Hash new password
+        const newHash = await hashPassword(newPassword);
+
+        // Update in Supabase
+        const response = await fetch(`${PROXY_URL}`, {
+            method: 'PATCH',
+            headers: {
+                'x-api-key': SUPABASE_ANON_KEY,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                table: 'admin_settings',
+                setting_key: 'settings_password',
+                setting_value: newHash
+            })
+        });
+
+        hideLoading();
+
+        if (response.ok) {
+            showToast('success', '설정 패스워드 변경 완료', '설정 패스워드가 성공적으로 변경되었습니다.');
+
+            // Clear inputs
+            document.getElementById('currentSettingsPassword').value = '';
+            document.getElementById('newSettingsPassword').value = '';
+            document.getElementById('confirmSettingsPassword').value = '';
+        } else {
+            throw new Error('설정 패스워드 업데이트 실패');
+        }
+    } catch (error) {
+        hideLoading();
+        console.error('설정 패스워드 변경 에러:', error);
+        showToast('error', '변경 실패', '설정 패스워드 변경에 실패했습니다.');
+    }
+}
+
 function isLockedOut() {
     return adminState.loginAttempts >= ADMIN_CONFIG.maxLoginAttempts &&
            adminState.lastFailedLogin &&
