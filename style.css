@@ -4780,7 +4780,7 @@ button.fraud-prevention-btn {
 .fraud-warning-header {
     background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
     color: white;
-    padding: 1.5rem;
+    padding: 1rem 1.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -4788,7 +4788,18 @@ button.fraud-prevention-btn {
 
 .fraud-warning-header h2 {
     margin: 0;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
+}
+
+.fraud-warning-header .modal-close-btn {
+    font-size: 1.8rem;
+    color: white;
+    opacity: 0.9;
+}
+
+.fraud-warning-header .modal-close-btn:hover {
+    opacity: 1;
+    color: white;
 }
 
 .fraud-warning-body {
