@@ -2872,3 +2872,82 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// Settings Password Modal Functions
+function openSettingsModal() {
+    document.getElementById('settingsPasswordModal').style.display = 'flex';
+    document.getElementById('settingsPasswordInput').value = '';
+    document.getElementById('settingsPasswordError').style.display = 'none';
+}
+
+function closeSettingsModal() {
+    document.getElementById('settingsPasswordModal').style.display = 'none';
+}
+
+async function hashPassword(password) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return hashHex;
+}
+
+async function verifySettingsPassword() {
+    const passwordInput = document.getElementById('settingsPasswordInput');
+    const errorDiv = document.getElementById('settingsPasswordError');
+    const password = passwordInput.value;
+
+    if (!password) {
+        errorDiv.textContent = '패스워드를 입력하세요.';
+        errorDiv.style.display = 'block';
+        return;
+    }
+
+    try {
+        const hashedInput = await hashPassword(password);
+
+        const response = await fetch('https://dimj-form-proxy.vercel.app/api/supabase?table=admin_settings&key=settings_password', {
+            method: 'GET',
+            headers: {
+                'x-api-key': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXd6dnlyb2RwZG1mZ2xzcXF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIzMjUzMzEsImV4cCI6MjA0NzkwMTMzMX0.MkFZj8gNdkZT7xE9ysD1fkzN3bfOh5CtpOEtQGUCqY4',
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const result = await response.json();
+
+        if (Array.isArray(result) && result.length > 0) {
+            const storedHash = result[result.length - 1].setting_value;
+
+            if (hashedInput === storedHash) {
+                // 패스워드 일치 - 설정 화면으로 이동
+                closeSettingsModal();
+                alert('설정 화면 접근 성공! (구체적인 설정 화면은 추가 구현 필요)');
+                // TODO: 여기에 설정 화면 표시 로직 추가
+            } else {
+                errorDiv.textContent = '패스워드가 올바르지 않습니다.';
+                errorDiv.style.display = 'block';
+            }
+        } else {
+            errorDiv.textContent = '설정 패스워드가 등록되지 않았습니다.';
+            errorDiv.style.display = 'block';
+        }
+    } catch (error) {
+        console.error('패스워드 검증 오류:', error);
+        errorDiv.textContent = '오류가 발생했습니다. 다시 시도해주세요.';
+        errorDiv.style.display = 'block';
+    }
+}
+
+// Enter 키로 패스워드 확인
+document.addEventListener('DOMContentLoaded', function() {
+    const passwordInput = document.getElementById('settingsPasswordInput');
+    if (passwordInput) {
+        passwordInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                verifySettingsPassword();
+            }
+        });
+    }
+});
+

@@ -587,6 +587,9 @@
             <p class="copyright">© 2025 당일민족</p>
             <p class="copyright-reserved">All rights reserved.</p>
             <div class="admin-link">
+                <button onclick="openSettingsModal()" title="설정" style="background: none; border: none; color: #fff; cursor: pointer; font-size: 1.2rem; margin-right: 10px;">
+                    <i class="fas fa-sliders-h"></i>
+                </button>
                 <a href="admin.html" title="관리자 페이지">
                     <i class="fas fa-cog"></i>
                 </a>
@@ -663,6 +666,26 @@
             </div>
             <div class="fraud-warning-footer">
                 <button type="button" class="modal-confirm-btn" onclick="closeFraudWarning()">
+                    확인
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Password Modal -->
+    <div class="modal-overlay" id="settingsPasswordModal" style="display: none;">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="privacy-modal-header">
+                <h3><i class="fas fa-lock"></i> 설정 패스워드</h3>
+                <button type="button" class="modal-close-btn" onclick="closeSettingsModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 2rem;">
+                <p style="margin-bottom: 1rem; color: #666;">설정 화면에 접근하려면 패스워드를 입력하세요.</p>
+                <input type="password" id="settingsPasswordInput" placeholder="패스워드 입력" style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; margin-bottom: 1rem;">
+                <div id="settingsPasswordError" style="color: #ff4444; margin-bottom: 1rem; display: none;"></div>
+                <button type="button" class="modal-confirm-btn" onclick="verifySettingsPassword()" style="width: 100%; padding: 0.75rem; background: #4F46E5; color: white; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer;">
                     확인
                 </button>
             </div>
