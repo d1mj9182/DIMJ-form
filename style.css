@@ -4213,14 +4213,14 @@ button.telecom-btn.selected:nth-child(6):hover {
    2페이지 배너 - 모바일 전용 여백 제거
    ======================================== */
 @media (max-width: 768px) {
-    /* 뒤로가기 버튼 크기 원래대로 */
+    /* 뒤로가기 버튼 크기 축소 */
     #step2 .back-button {
-        padding: 0.5rem 1rem !important;
-        font-size: 0.875rem !important;
+        padding: 0.4rem 0.8rem !important;
+        font-size: 0.8rem !important;
     }
 
     #step2 .back-button i {
-        font-size: 0.75rem !important;
+        font-size: 0.7rem !important;
     }
 
     /* 뒤로가기 버튼 아래 여백 제거 */
