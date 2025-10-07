@@ -7,6 +7,7 @@ const ADMIN_CONFIG = {
 
 // API Configuration
 const PROXY_URL = 'https://dimj-form-proxy.vercel.app/api/supabase';
+const SUPABASE_URL = 'https://tmqwzvyrodpdmfglsqqw.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXd6dnlyb2RwZG1mZ2xzcXF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIzMjUzMzEsImV4cCI6MjA0NzkwMTMzMX0.MkFZj8gNdkZT7xE9ysD1fkzN3bfOh5CtpOEtQGUCqY4';
 
 // Admin state
@@ -1634,32 +1635,45 @@ async function updateGiftAmount(id, newAmount) {
 // Update application date
 async function updateApplicationDate(id, newDate) {
     try {
-        const isoDate = new Date(newDate).toISOString();
+        // datetime-local 형식을 TIMESTAMP로 변환 (타임존 없이)
+        const dateObj = new Date(newDate);
+        const year = dateObj.getFullYear();
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        const hours = String(dateObj.getHours()).padStart(2, '0');
+        const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+        const seconds = String(dateObj.getSeconds()).padStart(2, '0');
 
-        const response = await fetch(`${PROXY_URL}`, {
+        // TIMESTAMP 형식: YYYY-MM-DD HH:MM:SS
+        const timestampValue = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+        console.log('날짜 업데이트 시도:', { id, timestampValue });
+
+        // Supabase REST API 직접 호출
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/consultations?id=eq.${id}`, {
             method: 'PATCH',
             headers: {
-                'x-api-key': SUPABASE_ANON_KEY,
-                'Content-Type': 'application/json'
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'return=representation'
             },
             body: JSON.stringify({
-                table: 'consultations',
-                id: id,
-                created_at: isoDate
+                created_at: timestampValue
             })
         });
 
-        const result = await response.json();
-
         if (response.ok) {
-            console.log('날짜 업데이트 완료:', isoDate);
+            console.log('날짜 업데이트 완료:', timestampValue);
+            showToast('날짜가 성공적으로 업데이트되었습니다.', 'success');
             loadApplications();
         } else {
-            throw new Error(result.error || '날짜 업데이트 실패');
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || `HTTP ${response.status}: 날짜 업데이트 실패`);
         }
     } catch (error) {
         console.error('날짜 업데이트 에러:', error);
-        alert(`날짜 업데이트 실패: ${error.message}`);
+        alert(`날짜 업데이트 실패: ${error.message}\n\n프록시 서버 확인이 필요할 수 있습니다.`);
         loadApplications();
     }
 }
