@@ -75,8 +75,8 @@ async function verifyPassword(inputPassword) {
         const masterResult = await masterResponse.json();
         console.log('마스터 패스워드 응답:', masterResult);
 
-        if (masterResult.success && masterResult.data && masterResult.data.length > 0) {
-            const masterHash = masterResult.data[0].setting_value || masterResult.data[0].설정값;
+        if (Array.isArray(masterResult) && masterResult.length > 0) {
+            const masterHash = masterResult[0].setting_value || masterResult[0].설정값;
             console.log('저장된 마스터 패스워드 해시:', masterHash);
             if (hashedInput === masterHash) {
                 console.log('마스터 패스워드 일치!');
@@ -96,9 +96,9 @@ async function verifyPassword(inputPassword) {
         const result = await response.json();
         console.log('일반 패스워드 응답:', result);
 
-        if (result.success && result.data && result.data.length > 0) {
+        if (Array.isArray(result) && result.length > 0) {
             // 가장 최신 패스워드 사용 (배열의 마지막)
-            const latestPassword = result.data[result.data.length - 1];
+            const latestPassword = result[result.length - 1];
             const storedHash = latestPassword.setting_value || latestPassword.설정값;
             console.log('저장된 일반 패스워드 해시:', storedHash);
             if (hashedInput === storedHash) {
