@@ -1649,31 +1649,32 @@ async function updateApplicationDate(id, newDate) {
 
         console.log('날짜 업데이트 시도:', { id, timestampValue });
 
-        // Supabase REST API 직접 호출
-        const response = await fetch(`${SUPABASE_URL}/rest/v1/consultations?id=eq.${id}`, {
+        // 프록시 서버를 통해 업데이트
+        const response = await fetch(`${PROXY_URL}`, {
             method: 'PATCH',
             headers: {
                 'apikey': SUPABASE_ANON_KEY,
-                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-                'Content-Type': 'application/json',
-                'Prefer': 'return=representation'
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
+                table: 'consultations',
+                id: id,
                 created_at: timestampValue
             })
         });
 
-        if (response.ok) {
+        const result = await response.json();
+
+        if (response.ok && result.success) {
             console.log('날짜 업데이트 완료:', timestampValue);
             showToast('날짜가 성공적으로 업데이트되었습니다.', 'success');
             loadApplications();
         } else {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || `HTTP ${response.status}: 날짜 업데이트 실패`);
+            throw new Error(result.error || '날짜 업데이트 실패');
         }
     } catch (error) {
         console.error('날짜 업데이트 에러:', error);
-        alert(`날짜 업데이트 실패: ${error.message}\n\n프록시 서버 확인이 필요할 수 있습니다.`);
+        alert(`날짜 업데이트 실패: ${error.message}`);
         loadApplications();
     }
 }
