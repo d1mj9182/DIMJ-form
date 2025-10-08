@@ -1467,7 +1467,7 @@ async function submitToSupabase(data) {
             phone: data.phone,
             carrier: selectedProvider || '',
             main_service: selectedServices.main || '',
-            other_service: selectedServices.additional.join(', ') || '',
+            other_service: selectedServices.additional || '',
             preferred_time: data.preference || '빠른 시간에 연락드립니다',
             privacy_agreed: true,
             status: data.status || '상담대기',
@@ -1574,7 +1574,7 @@ function getSelectedServices() {
 
     return {
         main: mainService,
-        additional: additionalServices
+        additional: additionalServices.join('+') // + 로 연결
     };
 }
 
