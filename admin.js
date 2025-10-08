@@ -857,9 +857,10 @@ function renderApplicationsTable(applications, startIndex = 0) {
             <td>${app.service}</td>
             <td>${app.provider || '-'}</td>
             <td>
-                <input type="datetime-local" class="date-input" value="${formatDateForInput(app.timestamp)}"
-                       onchange="updateApplicationDate('${app.id}', this.value)"
-                       style="padding: 4px; font-size: 0.875rem;">
+                <button onclick="openDateModal('${app.id}', '${formatDateForInput(app.timestamp)}')"
+                        style="padding: 4px 8px; font-size: 0.875rem; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
+                    ${formatDateTime(app.timestamp)}
+                </button>
             </td>
             <td>${app.ip ? app.ip.substring(0, 15) : '-'}</td>
             <td>
@@ -1725,6 +1726,28 @@ async function updateGiftAmount(id, newAmount) {
         console.error('사은품 금액 업데이트 에러:', error);
         alert(`사은품 금액 업데이트 실패: ${error.message}`);
         loadApplications();
+    }
+}
+
+// Date modal functions
+let currentDateChangeId = null;
+
+function openDateModal(id, currentDate) {
+    currentDateChangeId = id;
+    document.getElementById('dateChangeInput').value = currentDate;
+    document.getElementById('dateChangeModal').style.display = 'flex';
+}
+
+function closeDateModal() {
+    document.getElementById('dateChangeModal').style.display = 'none';
+    currentDateChangeId = null;
+}
+
+function confirmDateChange() {
+    const newDate = document.getElementById('dateChangeInput').value;
+    if (newDate && currentDateChangeId) {
+        updateApplicationDate(currentDateChangeId, newDate);
+        closeDateModal();
     }
 }
 
