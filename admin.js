@@ -859,7 +859,7 @@ function renderApplicationsTable(applications, startIndex = 0) {
             <td>
                 <button onclick="openDateModal('${app.id}', '${formatDateForInput(app.timestamp)}')"
                         style="padding: 4px 8px; font-size: 0.875rem; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
-                    ${formatDateTime(app.timestamp)}
+                    ${new Date(app.timestamp).toLocaleString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
                 </button>
             </td>
             <td>${app.ip ? app.ip.substring(0, 15) : '-'}</td>
