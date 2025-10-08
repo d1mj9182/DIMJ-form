@@ -145,6 +145,14 @@ function setupEventListeners() {
         }, 500));
     }
 
+    // Select all checkbox
+    const selectAllCheckbox = document.getElementById('selectAll');
+    if (selectAllCheckbox) {
+        selectAllCheckbox.addEventListener('change', function() {
+            toggleSelectAll(this.checked);
+        });
+    }
+
     // Set today's date as default
     if (dateFilter) {
         dateFilter.value = new Date().toISOString().split('T')[0];
@@ -2006,4 +2014,12 @@ async function loadBannersToAdmin() {
             }
         }
     }
+}
+
+// Toggle select all checkboxes
+function toggleSelectAll(checked) {
+    const checkboxes = document.querySelectorAll('#applicationsTableBody input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = checked;
+    });
 }
