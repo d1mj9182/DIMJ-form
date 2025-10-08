@@ -2023,3 +2023,68 @@ function toggleSelectAll(checked) {
         checkbox.checked = checked;
     });
 }
+
+// Delete selected applications
+async function deleteSelectedApplications() {
+    const checkboxes = document.querySelectorAll('#applicationsTableBody input[type="checkbox"]:checked');
+
+    if (checkboxes.length === 0) {
+        showToast('warning', '선택 없음', '삭제할 항목을 선택해주세요.');
+        return;
+    }
+
+    const confirmed = confirm(`선택한 ${checkboxes.length}개 항목을 삭제하시겠습니까?`);
+    if (!confirmed) return;
+
+    showLoading();
+
+    let successCount = 0;
+    let failCount = 0;
+
+    for (const checkbox of checkboxes) {
+        const row = checkbox.closest('tr');
+        const idCell = row.querySelector('td:nth-child(3)'); // ID 셀
+        const id = idCell ? idCell.textContent : null;
+
+        if (id) {
+            try {
+                const response = await fetch(`${PROXY_URL}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'x-api-key': SUPABASE_ANON_KEY,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        table: 'consultations',
+                        id: id
+                    })
+                });
+
+                if (response.ok) {
+                    successCount++;
+                } else {
+                    failCount++;
+                }
+            } catch (error) {
+                console.error(`ID ${id} 삭제 실패:`, error);
+                failCount++;
+            }
+        }
+    }
+
+    hideLoading();
+
+    if (successCount > 0) {
+        showToast('success', '삭제 완료', `${successCount}개 항목이 삭제되었습니다.`);
+
+        // Uncheck select all
+        const selectAllCheckbox = document.getElementById('selectAll');
+        if (selectAllCheckbox) selectAllCheckbox.checked = false;
+
+        loadApplications();
+    }
+
+    if (failCount > 0) {
+        showToast('error', '일부 실패', `${failCount}개 항목 삭제에 실패했습니다.`);
+    }
+}
