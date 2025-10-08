@@ -1556,7 +1556,9 @@ async function submitToSupabase(data) {
 
 // 선택된 서비스 수집
 function getSelectedServices() {
-    const mainService = document.querySelector('.main-service-btn.selected')?.textContent.trim() || '';
+    // 주요 서비스: main-service-btn 또는 sub-service-btn 중 선택된 것
+    const mainServiceBtn = document.querySelector('.main-service-grid .telecom-btn.selected');
+    const mainService = mainServiceBtn ? mainServiceBtn.textContent.trim() : '';
     const additionalServices = [];
 
     // 기타 서비스 수집 (가전렌탈, 유심, CCTV)
