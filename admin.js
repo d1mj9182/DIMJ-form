@@ -690,6 +690,14 @@ async function loadApplications() {
         // 필터링 적용
         let filteredApps = applications;
 
+        // 30일 경과 데이터 필터링 (어드민에서만 숨김)
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        filteredApps = filteredApps.filter(app => {
+            const createdAt = new Date(app.timestamp);
+            return createdAt >= thirtyDaysAgo;
+        });
+
         if (statusValue) {
             filteredApps = filteredApps.filter(app => app.status === statusValue);
         }
@@ -831,6 +839,34 @@ function filterAndRenderApplications() {
     renderPaginatedTable();
 }
 
+// 개인정보 암호화 함수 (48시간 경과 시)
+function maskPersonalInfo(app) {
+    const fortyEightHoursAgo = new Date();
+    fortyEightHoursAgo.setHours(fortyEightHoursAgo.getHours() - 48);
+    const createdAt = new Date(app.timestamp);
+
+    // 48시간 경과 여부 확인
+    if (createdAt < fortyEightHoursAgo) {
+        // 이름 마스킹: 홍길동 → 홍*동, 김철수 → 김*수
+        const maskedName = app.name ?
+            (app.name.length === 1 ? app.name[0] + '*' :
+             app.name.length === 2 ? app.name[0] + '*' :
+             app.name[0] + '*'.repeat(app.name.length - 2) + app.name[app.name.length-1]) : '-';
+
+        // 전화번호 마스킹: 010-7171-6361 → 010-****-6361
+        const maskedPhone = app.phone ?
+            String(app.phone).replace(/(\d{3})-(\d{4})-(\d{4})/, "$1-****-$3") : '-';
+
+        return {
+            ...app,
+            name: maskedName,
+            phone: maskedPhone
+        };
+    }
+
+    return app;
+}
+
 function renderApplicationsTable(applications, startIndex = 0) {
     const tbody = document.getElementById('applicationsTableBody');
 
@@ -847,13 +883,17 @@ function renderApplicationsTable(applications, startIndex = 0) {
         return;
     }
 
-    tbody.innerHTML = applications.map((app, index) => `
+    tbody.innerHTML = applications.map((app, index) => {
+        // 48시간 경과 시 개인정보 암호화
+        const displayApp = maskPersonalInfo(app);
+
+        return `
         <tr>
             <td><input type="checkbox"></td>
             <td><strong>${startIndex + index + 1}</strong></td>
-            <td>${app.id}</td>
-            <td>${app.name}</td>
-            <td>${app.phone}</td>
+            <td>${displayApp.id}</td>
+            <td>${displayApp.name}</td>
+            <td>${displayApp.phone}</td>
             <td>${app.service}</td>
             <td>${app.provider || '-'}</td>
             <td>
