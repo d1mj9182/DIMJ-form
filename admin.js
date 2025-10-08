@@ -689,16 +689,19 @@ async function loadApplications() {
             submissionTime: record.created_at
         }));
 
+        // Store all applications for stats (통계용 전체 데이터)
+        adminState.applications = applications;
+
         const statusFilter = document.getElementById('statusFilter');
         const dateFilter = document.getElementById('dateFilter');
 
         const statusValue = statusFilter ? statusFilter.value : '';
         const dateValue = dateFilter ? dateFilter.value : '';
 
-        // 필터링 적용
-        let filteredApps = applications;
+        // 필터링 적용 (테이블 표시용)
+        let filteredApps = [...applications]; // 복사본 생성
 
-        // 30일 경과 데이터 필터링 (어드민에서만 숨김)
+        // 30일 경과 데이터 필터링 (어드민 테이블에서만 숨김, 통계에는 포함)
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
         filteredApps = filteredApps.filter(app => {
@@ -724,7 +727,6 @@ async function loadApplications() {
         // 최신순 정렬
         filteredApps.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
-        adminState.applications = applications; // Store all applications for stats
         adminState.filteredApplications = filteredApps;
         adminState.currentPaginationPage = 1; // Reset to first page
 
