@@ -1749,7 +1749,7 @@ async function updateApplicationDate(id, newDate) {
         const response = await fetch(`${PROXY_URL}`, {
             method: 'PATCH',
             headers: {
-                'apikey': SUPABASE_ANON_KEY,
+                'x-api-key': SUPABASE_ANON_KEY,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
