@@ -887,8 +887,7 @@ function renderApplicationsTable(applications, startIndex = 0) {
         // 48시간 경과 시 개인정보 암호화
         const displayApp = maskPersonalInfo(app);
 
-        return `
-        <tr>
+        return `<tr>
             <td><input type="checkbox"></td>
             <td><strong>${startIndex + index + 1}</strong></td>
             <td>${displayApp.id}</td>
@@ -922,8 +921,8 @@ function renderApplicationsTable(applications, startIndex = 0) {
                     <i class="fas fa-trash"></i>
                 </button>
             </td>
-        </tr>
-    `).join('');
+        </tr>`;
+    }).join('');
 }
 
 function formatDate(timestamp) {
