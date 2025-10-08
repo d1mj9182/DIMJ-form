@@ -1162,12 +1162,12 @@ function updateStatistics(data) {
                 stats.today++;
             }
 
-            // 상태별 집계 (정확한 매칭)
-            if (item.status === '상담대기') stats.waiting++;
-            else if (item.status === '상담중') stats.consulting++;
-            else if (item.status === '상담완료') stats.completed++;
-            else if (item.status === '설치예약') stats.scheduled++;
-            else if (item.status === '설치완료') stats.installed++;
+            // 상태별 집계 (띄어쓰기 있는/없는 버전 모두 지원)
+            if (item.status === '상담대기' || item.status === '상담 대기') stats.waiting++;
+            else if (item.status === '상담중' || item.status === '상담 중') stats.consulting++;
+            else if (item.status === '상담완료' || item.status === '상담 완료') stats.completed++;
+            else if (item.status === '설치예약' || item.status === '설치 예약') stats.scheduled++;
+            else if (item.status === '설치완료' || item.status === '설치 완료') stats.installed++;
 
             // 사은품 합계
             if (item.gift_amount) {
