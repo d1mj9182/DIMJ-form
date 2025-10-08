@@ -691,6 +691,14 @@ async function loadApplications() {
 
         // Store all applications for stats (통계용 전체 데이터)
         adminState.applications = applications;
+        console.log('📊 통계용 전체 데이터:', applications.length, '건');
+        console.log('📊 상태별 데이터:', {
+            상담대기: applications.filter(a => a.status === '상담대기').length,
+            상담중: applications.filter(a => a.status === '상담중').length,
+            상담완료: applications.filter(a => a.status === '상담완료').length,
+            설치예약: applications.filter(a => a.status === '설치예약').length,
+            설치완료: applications.filter(a => a.status === '설치완료').length
+        });
 
         const statusFilter = document.getElementById('statusFilter');
         const dateFilter = document.getElementById('dateFilter');

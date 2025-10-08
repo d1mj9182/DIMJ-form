@@ -856,10 +856,10 @@ async function updateStatistics_DEPRECATED() {
 
                 // 🔥 영문 필드명으로 상태값 매칭
                 const waitingRecords = data.records.filter(record => record.status === '상담대기' || record.status === '상담 대기');
-                const consultingRecords = data.records.filter(record => record.status === '상담 중');
-                const completedRecords = data.records.filter(record => record.status === '상담완료');
-                const reservedRecords = data.records.filter(record => record.status === '설치예약');
-                const installedRecords = data.records.filter(record => record.status === '설치완료');
+                const consultingRecords = data.records.filter(record => record.status === '상담중' || record.status === '상담 중');
+                const completedRecords = data.records.filter(record => record.status === '상담완료' || record.status === '상담 완료');
+                const reservedRecords = data.records.filter(record => record.status === '설치예약' || record.status === '설치 예약');
+                const installedRecords = data.records.filter(record => record.status === '설치완료' || record.status === '설치 완료');
 
                 // 🔥 사은품 총액 계산 - 영문 필드명 사용
                 const totalGiftAmount = data.records.reduce((sum, record) => {
