@@ -1556,9 +1556,14 @@ async function submitToSupabase(data) {
 
 // 선택된 서비스 수집
 function getSelectedServices() {
-    // 주요 서비스: main-service-btn 또는 sub-service-btn 중 선택된 것
-    const mainServiceBtn = document.querySelector('.main-service-grid .telecom-btn.selected');
-    const mainService = mainServiceBtn ? mainServiceBtn.textContent.trim() : '';
+    // 주요 서비스: main-service-grid 내 선택된 모든 버튼 수집
+    const mainServiceButtons = document.querySelectorAll('.main-service-grid .telecom-btn.selected');
+    const mainServices = [];
+    mainServiceButtons.forEach(btn => {
+        mainServices.push(btn.textContent.trim());
+    });
+    const mainService = mainServices.join('·'); // 여러 개 선택시 · 로 연결
+
     const additionalServices = [];
 
     // 기타 서비스 수집 (가전렌탈, 유심, CCTV)
