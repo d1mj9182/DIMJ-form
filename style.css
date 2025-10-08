@@ -4171,6 +4171,15 @@ button.telecom-btn.selected:nth-child(6):hover {
     overflow: hidden !important;
 }
 
+/* 배너 inner 요소도 100% */
+.banner-inner,
+#step2MainBanner .banner-inner {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 0 !important;
+}
+
 /* 배너 내부 요소 모두 초기화 */
 .banner-container *,
 #step2MainBanner * {
