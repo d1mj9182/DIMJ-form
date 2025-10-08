@@ -1063,9 +1063,10 @@ function updateConsultationList(data) {
 
         // 실제 날짜 계산
         const createdDate = new Date(item.created_at);
+        const year = createdDate.getFullYear();
         const month = String(createdDate.getMonth() + 1).padStart(2, '0');
         const day = String(createdDate.getDate()).padStart(2, '0');
-        const displayDate = `${month}/${day}`;  // "09/05" 형태
+        const displayDate = `${year}/${month}/${day}`;  // "2025/09/05" 형태
 
         return `
             <div style="
