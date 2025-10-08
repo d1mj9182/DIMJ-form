@@ -1210,7 +1210,7 @@ function updateStatistics(data) {
     const consultingNowStep1 = document.getElementById('consultingNowStep1');
     const completedConsultationsStep1 = document.getElementById('completedConsultationsStep1');
     const installReservationStep1 = document.getElementById('installReservationStep1');
-    const installationsCompletedStep1 = document.getElementById('installationsCompletedStep1');
+    const onlineConsultantsStep1 = document.getElementById('onlineConsultantsStep1'); // 설치완료
     const cashRewardStep1 = document.getElementById('cashRewardStep1');
 
     if (todayApplicationsStep1) todayApplicationsStep1.textContent = stats.today;
@@ -1218,7 +1218,7 @@ function updateStatistics(data) {
     if (consultingNowStep1) consultingNowStep1.textContent = stats.consulting;
     if (completedConsultationsStep1) completedConsultationsStep1.textContent = stats.completed;
     if (installReservationStep1) installReservationStep1.textContent = stats.scheduled;
-    if (installationsCompletedStep1) installationsCompletedStep1.textContent = stats.installed;
+    if (onlineConsultantsStep1) onlineConsultantsStep1.textContent = stats.installed;
     if (cashRewardStep1) cashRewardStep1.textContent = stats.totalGift + '만원';
 
     console.log('✅ 통계 업데이트 완료:', {
