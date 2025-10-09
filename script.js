@@ -1045,7 +1045,7 @@ function updateConsultationList(data) {
         if (item.phone) {
             const parts = item.phone.split('-');
             if (parts.length === 3) {
-                maskedPhone = `${parts[0]}-${parts[1].substring(0,1)}***-${parts[2]}`;
+                maskedPhone = `${parts[0]}-${parts[1].substring(0,1)}***-${parts[2].substring(0,2)}**`;
             }
         }
 
@@ -2750,7 +2750,7 @@ function displayAutoSlidePage(data, page) {
         if (item.phone) {
             const parts = item.phone.split('-');
             if (parts.length === 3) {
-                maskedPhone = `${parts[0]}-${parts[1].substring(0,1)}***-${parts[2]}`;
+                maskedPhone = `${parts[0]}-${parts[1].substring(0,1)}***-${parts[2].substring(0,2)}**`;
             }
         }
 
