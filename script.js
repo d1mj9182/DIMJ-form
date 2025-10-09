@@ -2648,10 +2648,10 @@ function displayRollingPage() {
 // 최초 1회 즉시 실행
 startAutoRolling();
 
-// 5초마다 자동 롤링
+// 8초마다 자동 롤링
 window.dataInterval = setInterval(() => {
     displayRollingPage();
-}, 5000);
+}, 8000);
 
 // 페이지네이션 변수
 let currentPage = 1;
