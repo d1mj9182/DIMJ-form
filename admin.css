@@ -429,6 +429,10 @@ body {
     grid-column: span 2;
 }
 
+.stat-card.stat-wide .stat-info {
+    text-align: right;
+}
+
 .stat-icon {
     width: 64px;
     height: 64px;
