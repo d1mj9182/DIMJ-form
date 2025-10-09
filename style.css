@@ -1987,6 +1987,11 @@ button.telecom-btn.selected:nth-child(6):hover {
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     z-index: 9999 !important;
     min-height: 60px;
+    /* 카카오톡 인앱 브라우저 대응 */
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .submit-button::before {

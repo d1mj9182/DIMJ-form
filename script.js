@@ -688,8 +688,8 @@ function setupEventListeners() {
             submitButton.style.opacity = '1';
             submitButton.style.pointerEvents = 'auto';
 
-            // 🔥 직접 클릭 이벤트 추가
-            submitButton.addEventListener('click', function(e) {
+            // 🔥 버튼 클릭 핸들러 함수 (카카오톡 인앱 브라우저 대응)
+            const handleButtonClick = function(e) {
                 console.log('🔥🔥🔥 버튼 클릭됨!', e);
                 e.preventDefault();
 
@@ -727,7 +727,11 @@ function setupEventListeners() {
                 } else {
                     alert('이름, 연락처, 개인정보 동의가 필요합니다.');
                 }
-            });
+            };
+
+            // 카카오톡 인앱 브라우저 대응: touchstart와 click 이벤트 모두 등록
+            submitButton.addEventListener('touchstart', handleButtonClick, { passive: false });
+            submitButton.addEventListener('click', handleButtonClick);
 
             console.log('✅ 버튼 강제 활성화 + 클릭 이벤트 추가 완료');
         } else {
