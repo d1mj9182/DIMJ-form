@@ -35,22 +35,24 @@ function loadImagesFromLocalStorageSync() {
         }
     }
 
-    // Detail Page Images (1-5)
-    let detailImagesLoaded = 0;
+    // Detail Page Images (1-5) - 즉시 표시
     const detailPlaceholder = document.getElementById('detailImagesPlaceholder');
 
+    // 상세페이지 섹션을 즉시 표시
+    const detailSection = document.getElementById('detailImagesSection');
+    if (detailSection) {
+        detailSection.style.display = 'block';
+        detailSection.style.opacity = '1';
+        detailSection.style.visibility = 'visible';
+    }
+
+    let detailImagesLoaded = 0;
     for (let i = 1; i <= 5; i++) {
         const detailLocalData = localStorage.getItem(`detailImage${i}`);
         const detailImgContainer = document.getElementById(`detailImage${i}Container`);
 
         if (detailLocalData && detailImgContainer) {
-            const img = document.createElement('img');
-            img.src = detailLocalData;
-            img.alt = `상세페이지 이미지 ${i}`;
-            img.style.cssText = 'width: 100%; max-width: 100%; height: auto; display: block; margin: 0;';
-
-            detailImgContainer.innerHTML = '';
-            detailImgContainer.appendChild(img);
+            detailImgContainer.innerHTML = `<img src="${detailLocalData}" alt="상세페이지 이미지 ${i}" style="width: 100%; max-width: 100%; height: auto; display: block; margin: 0;">`;
             detailImgContainer.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; width: 100% !important; max-width: 100% !important;';
             detailImagesLoaded++;
         }
