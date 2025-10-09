@@ -997,6 +997,23 @@ async function updateStats() {
         return sum + (parseInt(app.giftAmount) || 0);
     }, 0);
 
+    // 년간 통계 계산 (올해 1월 1일부터 현재까지)
+    const thisYear = new Date().getFullYear();
+    const yearStart = new Date(thisYear, 0, 1); // 1월 1일
+
+    const yearlyInstallCompleted = adminState.applications.filter(app => {
+        const appDate = new Date(app.timestamp);
+        return app.status === '설치완료' && appDate >= yearStart;
+    }).length;
+
+    const yearlyGiftAmount = adminState.applications.reduce((sum, app) => {
+        const appDate = new Date(app.timestamp);
+        if (appDate >= yearStart) {
+            return sum + (parseInt(app.giftAmount) || 0);
+        }
+        return sum;
+    }, 0);
+
     // Update stat values
     const todayEl = document.getElementById('todayApplications');
     const waitingEl = document.getElementById('statusWaiting');
@@ -1005,6 +1022,8 @@ async function updateStats() {
     const scheduledEl = document.getElementById('statusScheduled');
     const completedEl = document.getElementById('completedInstall');
     const giftEl = document.getElementById('totalGiftAmount');
+    const yearlyInstallEl = document.getElementById('yearlyInstallCompleted');
+    const yearlyGiftEl = document.getElementById('yearlyGiftAmount');
     const pendingBadgeEl = document.getElementById('pendingBadge');
 
     if (todayEl) todayEl.textContent = todayApplications;
@@ -1014,6 +1033,8 @@ async function updateStats() {
     if (scheduledEl) scheduledEl.textContent = statusScheduled;
     if (completedEl) completedEl.textContent = completedInstall;
     if (giftEl) giftEl.textContent = totalGiftAmount.toLocaleString() + '만원';
+    if (yearlyInstallEl) yearlyInstallEl.textContent = yearlyInstallCompleted;
+    if (yearlyGiftEl) yearlyGiftEl.textContent = yearlyGiftAmount.toLocaleString() + '만원';
     if (pendingBadgeEl) {
         pendingBadgeEl.textContent = statusWaiting;
         pendingBadgeEl.style.display = statusWaiting > 0 ? 'block' : 'none';
