@@ -4769,11 +4769,11 @@ button.fraud-prevention-btn {
 /* 모바일에서만 부정클릭방지 버튼 작고 동그랗게 */
 @media (max-width: 768px) {
     #fraudPreventionBtn {
-        width: 50px !important;
-        height: 50px !important;
+        width: 45px !important;
+        height: 45px !important;
         border-radius: 50% !important;
         padding: 0 !important;
-        font-size: 10px !important;
+        font-size: 9px !important;
         line-height: 1.2 !important;
         text-align: center !important;
     }
