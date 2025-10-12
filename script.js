@@ -2983,16 +2983,6 @@ window.addEventListener('resize', updateFraudButtonTextForMobile);
 
 // 신청접수 버튼 클릭 시 Step 2로 이동
 function goToStep2() {
-    currentStep = 2;
-    window.currentStep = 2;
-    updateProgressBar();
-    updateStepIndicator();
-    showStep(2);
-
-    // 페이지 최상단으로 스크롤
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
+    goToStep(2);
 }
 
