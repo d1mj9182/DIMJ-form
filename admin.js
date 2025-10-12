@@ -1,8 +1,8 @@
 // Admin configuration
 const ADMIN_CONFIG = {
     sessionTimeout: 30 * 60 * 1000, // 30 minutes
-    maxLoginAttempts: 999999, // 로그인 시도 제한 해제
-    lockoutTime: 0 // 잠금 시간 없음
+    maxLoginAttempts: 10, // 10회 실패 시 잠금
+    lockoutTime: 15 * 60 * 1000 // 15분 대기
 };
 
 // API Configuration

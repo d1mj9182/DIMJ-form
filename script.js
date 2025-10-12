@@ -2893,6 +2893,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Settings Password Modal Functions
+let settingsPasswordFailCount = 0;
+
 function openSettingsModal() {
     document.getElementById('settingsPasswordModal').style.display = 'flex';
     document.getElementById('settingsPasswordInput').value = '';
@@ -2941,11 +2943,19 @@ async function verifySettingsPassword() {
 
             if (hashedInput === storedHash) {
                 // 패스워드 일치 - 어드민페이지로 이동
+                settingsPasswordFailCount = 0;
                 closeSettingsModal();
                 window.location.href = 'admin.html';
             } else {
-                errorDiv.textContent = '패스워드가 올바르지 않습니다.';
-                errorDiv.style.display = 'block';
+                settingsPasswordFailCount++;
+                if (settingsPasswordFailCount >= 5) {
+                    alert('⚠️ 관리자 외 출입금지\n\nIP조회중');
+                    closeSettingsModal();
+                    settingsPasswordFailCount = 0;
+                } else {
+                    errorDiv.textContent = `패스워드가 올바르지 않습니다. (${settingsPasswordFailCount}/5)`;
+                    errorDiv.style.display = 'block';
+                }
             }
         } else {
             errorDiv.textContent = '설정 패스워드가 등록되지 않았습니다.';
