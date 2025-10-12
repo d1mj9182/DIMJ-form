@@ -2750,6 +2750,54 @@ button.telecom-btn.selected:nth-child(6):hover {
     }
 }
 
+/* Apply Button (신청접수 버튼) */
+.apply-button {
+    position: fixed;
+    bottom: 7rem;
+    right: 2rem;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #ff4757, #c44569);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(255, 71, 87, 0.4);
+    transition: all 0.3s ease;
+    opacity: 1;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    word-break: keep-all;
+    line-height: 1.3;
+    padding: 5px;
+    text-align: center;
+}
+
+.apply-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 71, 87, 0.5);
+    background: linear-gradient(135deg, #ff3742, #b33653);
+}
+
+.apply-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+}
+
+@media (max-width: 768px) {
+    .apply-button {
+        bottom: 5rem;
+        right: 1rem;
+        width: 55px;
+        height: 55px;
+        font-size: 0.85rem;
+    }
+}
+
 /* Back Button */
 .back-button-container {
     margin-bottom: 1.5rem;
@@ -5169,13 +5217,14 @@ button.fraud-prevention-btn {
         height: 50px !important;
         border-radius: 50% !important;
         padding: 0 !important;
-        font-size: 9px !important;
+        font-size: 11px !important;
         line-height: 1.2 !important;
         text-align: center !important;
         word-break: keep-all !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
+        font-weight: 800 !important;
     }
 }
 

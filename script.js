@@ -2981,3 +2981,18 @@ function updateFraudButtonTextForMobile() {
 // 화면 크기 변경 시에도 버튼 텍스트 업데이트
 window.addEventListener('resize', updateFraudButtonTextForMobile);
 
+// 신청접수 버튼 클릭 시 Step 2로 이동
+function goToStep2() {
+    currentStep = 2;
+    window.currentStep = 2;
+    updateProgressBar();
+    updateStepIndicator();
+    showStep(2);
+
+    // 페이지 최상단으로 스크롤
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
+
