@@ -1882,15 +1882,17 @@ function scrollToTop() {
     });
 }
 
-// Show/Hide Top Button based on scroll position
+// Show/Hide Top Button and Apply Button based on scroll position
 function handleTopButtonVisibility() {
     const topButton = document.getElementById('topButton');
-    if (!topButton) return;
-    
+    const applyButton = document.getElementById('applyButton');
+
     if (window.pageYOffset > 300) {
-        topButton.classList.add('visible');
+        if (topButton) topButton.classList.add('visible');
+        if (applyButton) applyButton.classList.add('visible');
     } else {
-        topButton.classList.remove('visible');
+        if (topButton) topButton.classList.remove('visible');
+        if (applyButton) applyButton.classList.remove('visible');
     }
 }
 
