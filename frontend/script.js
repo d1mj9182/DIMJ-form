@@ -420,6 +420,16 @@ function showStep(step) {
   });
 }
 
+// 모바일에서 부정클릭방지 버튼 텍스트 변경
+function updateFraudButtonTextForMobile() {
+  const fraudBtn = document.getElementById('fraudPreventionBtn');
+  if (fraudBtn && window.innerWidth <= 768) {
+    fraudBtn.textContent = '부정클릭';
+  } else if (fraudBtn) {
+    fraudBtn.textContent = '부정클릭방지';
+  }
+}
+
 // 페이지 진입 시 시작
 document.addEventListener('DOMContentLoaded', () => {
   console.log('🚀 DIMJ-form 초기화 시작');
@@ -435,8 +445,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // 핵심: 단일 타이머 시스템 시작
   startSingleTimer();
 
+  // 모바일 부정클릭방지 버튼 텍스트 변경
+  updateFraudButtonTextForMobile();
+
   console.log('✅ DIMJ-form 초기화 완료');
 });
+
+// 화면 크기 변경 시에도 버튼 텍스트 업데이트
+window.addEventListener('resize', updateFraudButtonTextForMobile);
 
 // 페이지 떠날 때 정리
 window.addEventListener('beforeunload', () => {

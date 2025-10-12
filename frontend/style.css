@@ -4777,17 +4777,8 @@ button.fraud-prevention-btn {
         line-height: 1.2 !important;
         text-align: center !important;
         word-break: keep-all !important;
-    }
-
-    #fraudPreventionBtn::before {
-        content: "부정클릭" !important;
-    }
-
-    #fraudPreventionBtn {
-        font-size: 0 !important;
-    }
-
-    #fraudPreventionBtn::before {
-        font-size: 9px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
 }
