@@ -2963,5 +2963,21 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // 모바일에서 부정클릭방지 버튼 텍스트 변경
+    updateFraudButtonTextForMobile();
 });
+
+// 모바일에서 부정클릭방지 버튼 텍스트 변경
+function updateFraudButtonTextForMobile() {
+    const fraudBtn = document.getElementById('fraudPreventionBtn');
+    if (fraudBtn && window.innerWidth <= 768) {
+        fraudBtn.textContent = '부정클릭';
+    } else if (fraudBtn) {
+        fraudBtn.textContent = '부정클릭방지';
+    }
+}
+
+// 화면 크기 변경 시에도 버튼 텍스트 업데이트
+window.addEventListener('resize', updateFraudButtonTextForMobile);
 
