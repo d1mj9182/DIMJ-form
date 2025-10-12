@@ -2750,6 +2750,56 @@ button.telecom-btn.selected:nth-child(6):hover {
     }
 }
 
+/* Kakao Button (카카오톡 버튼) */
+.kakao-button {
+    position: fixed;
+    bottom: 11.5rem;
+    right: 2rem;
+    width: 50px;
+    height: 50px;
+    background: #FEE500;
+    border: none;
+    border-radius: 50%;
+    color: #3C1E1E;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(254, 229, 0, 0.4);
+    transition: all 0.3s ease;
+    transform: translateY(100px);
+    opacity: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.kakao-button.visible {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.kakao-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(254, 229, 0, 0.6);
+    background: #FFD700;
+}
+
+.kakao-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(254, 229, 0, 0.4);
+}
+
+@media (max-width: 768px) {
+    .kakao-button {
+        bottom: 9rem;
+        right: 1rem;
+        width: 45px;
+        height: 45px;
+        font-size: 1.3rem;
+    }
+}
+
 /* Apply Button (신청접수 버튼) */
 .apply-button {
     position: fixed;

@@ -1882,17 +1882,20 @@ function scrollToTop() {
     });
 }
 
-// Show/Hide Top Button and Apply Button based on scroll position
+// Show/Hide Top Button, Apply Button and Kakao Button based on scroll position
 function handleTopButtonVisibility() {
     const topButton = document.getElementById('topButton');
     const applyButton = document.getElementById('applyButton');
+    const kakaoButton = document.getElementById('kakaoButton');
 
     if (window.pageYOffset > 300) {
         if (topButton) topButton.classList.add('visible');
         if (applyButton) applyButton.classList.add('visible');
+        if (kakaoButton) kakaoButton.classList.add('visible');
     } else {
         if (topButton) topButton.classList.remove('visible');
         if (applyButton) applyButton.classList.remove('visible');
+        if (kakaoButton) kakaoButton.classList.remove('visible');
     }
 }
 
