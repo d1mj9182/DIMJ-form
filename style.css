@@ -3250,7 +3250,11 @@ button.telecom-btn.selected:nth-child(6):hover {
         padding: 2rem !important;
     }
 
-    /* step2만 패딩 0 */
+    /* step2만 패딩 0 - 더 구체적으로 */
+    #step2.step-content {
+        padding: 0 !important;
+    }
+
     #step2 {
         padding: 0 !important;
     }

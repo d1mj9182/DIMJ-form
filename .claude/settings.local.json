@@ -215,7 +215,8 @@
       "Bash(npx supabase:*)",
       "Bash(git log:*)",
       "Bash(git fetch:*)",
-      "Bash(git revert:*)"
+      "Bash(git revert:*)",
+      "Read(//c//**)"
     ],
     "deny": [],
     "ask": []
