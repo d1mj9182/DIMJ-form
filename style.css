@@ -4363,7 +4363,7 @@ button.telecom-btn.selected:nth-child(6):hover {
     /* 2페이지 배너 모바일 설정 */
     #step2MainBanner {
         width: 100% !important;
-        margin: 0 0 1rem 0 !important;
+        margin: 0 !important;
         padding: 0 !important;
         line-height: 0 !important;
         overflow: hidden !important;
@@ -4374,8 +4374,13 @@ button.telecom-btn.selected:nth-child(6):hover {
         width: 100% !important;
         height: auto !important;
         object-fit: contain !important;
-        margin: 0 auto !important;
+        margin: 0 !important;
         padding: 0 !important;
+    }
+
+    /* 실시간 상담 현황판 위 여백 제거 */
+    #step2 .status-board {
+        margin-top: 1rem !important;
     }
 }
 
