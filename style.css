@@ -4894,13 +4894,13 @@ button.fraud-prevention-btn {
 @media (max-width: 768px) {
     .fraud-prevention-btn {
         position: fixed !important;
-        top: -5px !important;
-        right: 2px !important;
+        top: 10px !important;
+        right: 5px !important;
         width: auto !important;
         height: 38px !important;
         font-size: 12px !important;
         padding: 8px 12px !important;
-        z-index: 99999 !important;
+        z-index: 9999999 !important;
         display: flex !important;
         opacity: 1 !important;
         visibility: visible !important;
@@ -5185,8 +5185,8 @@ button.fraud-prevention-btn {
 @media (max-width: 768px) {
     #fraudPreventionBtn {
         position: fixed !important;
-        top: -5px !important;
-        right: 2px !important;
+        top: 10px !important;
+        right: 5px !important;
         width: auto !important;
         height: auto !important;
         border-radius: 19px !important;
@@ -5199,7 +5199,7 @@ button.fraud-prevention-btn {
         align-items: center !important;
         justify-content: center !important;
         font-weight: 800 !important;
-        z-index: 99999 !important;
+        z-index: 9999999 !important;
     }
 }
 
