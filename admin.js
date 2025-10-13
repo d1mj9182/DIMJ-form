@@ -1490,10 +1490,32 @@ async function previewMainBannerImage(event, step) {
     reader.readAsDataURL(file);
 }
 
-function removeMainBannerImage(step) {
+async function removeMainBannerImage(step) {
     if (!confirm('메인 배너 이미지를 제거하시겠습니까?')) return;
 
+    // Remove from localStorage
     localStorage.removeItem(`mainBannerImage_${step}`);
+
+    // Remove from Supabase DB
+    try {
+        const response = await fetch(`${PROXY_URL}`, {
+            method: 'DELETE',
+            headers: {
+                'x-api-key': SUPABASE_ANON_KEY,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                table: 'admin_settings',
+                setting_key: `main_banner_${step}`
+            })
+        });
+
+        if (!response.ok) {
+            console.warn('DB에서 배너 삭제 실패, localStorage만 삭제됨');
+        }
+    } catch (error) {
+        console.error('배너 DB 삭제 에러:', error);
+    }
 
     const previewContainer = document.getElementById(`mainBannerPreview_${step}`);
     if (previewContainer) {
@@ -1506,6 +1528,11 @@ function removeMainBannerImage(step) {
     }
 
     alert('메인 배너 이미지가 제거되었습니다.');
+
+    // 메인 폼 새로고침
+    if (window.opener && !window.opener.closed) {
+        window.opener.location.reload();
+    }
 }
 
 // Detail Page Images Upload
@@ -1572,10 +1599,32 @@ async function previewDetailImage(event, imageNumber) {
     reader.readAsDataURL(file);
 }
 
-function removeDetailImage(imageNumber) {
+async function removeDetailImage(imageNumber) {
     if (!confirm(`상세페이지 이미지 ${imageNumber}를 제거하시겠습니까?`)) return;
 
+    // Remove from localStorage
     localStorage.removeItem(`detailImage${imageNumber}`);
+
+    // Remove from Supabase DB
+    try {
+        const response = await fetch(`${PROXY_URL}`, {
+            method: 'DELETE',
+            headers: {
+                'x-api-key': SUPABASE_ANON_KEY,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                table: 'admin_settings',
+                setting_key: `detail_image_${imageNumber}`
+            })
+        });
+
+        if (!response.ok) {
+            console.warn('DB에서 상세이미지 삭제 실패, localStorage만 삭제됨');
+        }
+    } catch (error) {
+        console.error('상세이미지 DB 삭제 에러:', error);
+    }
 
     const previewContainer = document.getElementById(`detailImagePreview${imageNumber}`);
     if (previewContainer) {
@@ -1588,6 +1637,11 @@ function removeDetailImage(imageNumber) {
     }
 
     alert(`상세페이지 이미지 ${imageNumber}가 제거되었습니다.`);
+
+    // 메인 폼 새로고침
+    if (window.opener && !window.opener.closed) {
+        window.opener.location.reload();
+    }
 }
 
 // Save detail image caption
