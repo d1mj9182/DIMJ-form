@@ -4734,7 +4734,7 @@ button.fraud-prevention-btn {
     position: fixed !important;
     top: 20px !important;
     right: 20px !important;
-    width: 170px !important;
+    width: 85px !important;
     height: 45px !important;
     padding: 10px 20px !important;
     background: linear-gradient(135deg, #ff4757 0%, #ff3742 50%, #c44569 100%) !important;
@@ -4896,7 +4896,7 @@ button.fraud-prevention-btn {
         position: fixed !important;
         top: 10px !important;
         right: 10px !important;
-        width: 150px !important;
+        width: 75px !important;
         height: 38px !important;
         font-size: 12px !important;
         padding: 8px 15px !important;
