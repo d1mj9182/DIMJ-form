@@ -4267,25 +4267,43 @@ button.telecom-btn.selected:nth-child(6):hover {
    1,2페이지 메인배너 - 깔끔하게 통일
    ======================================== */
 
-/* 모든 배너 기본 스타일 초기화 */
-.banner-container,
+/* 1페이지 배너 기본 스타일 */
+.banner-container {
+    width: 100%;
+    margin: 0 0 2rem 0;
+    padding: 0;
+    line-height: 0;
+    overflow: hidden;
+}
+
+.banner-inner {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    line-height: 0;
+}
+
+.banner-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* 2페이지 배너만 부모 컨테이너 넘어서 확장 */
 #step2MainBanner {
-    width: 100vw !important;
-    margin-left: calc(-50vw + 50%) !important;
-    margin-right: calc(-50vw + 50%) !important;
+    width: calc(100% + 4rem) !important;
+    margin-left: -2rem !important;
+    margin-right: -2rem !important;
     margin-bottom: 2rem !important;
     padding: 0 !important;
     line-height: 0 !important;
     overflow: hidden !important;
 }
 
-/* 배너 이미지 스타일 */
-.banner-container img,
 #step2MainBanner img {
     width: 100% !important;
     height: auto !important;
     display: block !important;
-    vertical-align: top !important;
 }
 
 /* Placeholder 완전 숨기기 */
@@ -4519,24 +4537,21 @@ button.telecom-btn.selected:nth-child(6):hover {
     }
 }
 
-/* 데스크톱 전용 - 메인배너 수정 */
+/* 데스크톱 전용 - 2페이지 메인배너만 확장 */
 @media (min-width: 1024px) {
-    .banner-container,
     #step2MainBanner {
-        width: 100vw !important;
-        margin-left: calc(-50vw + 50%) !important;
-        margin-right: calc(-50vw + 50%) !important;
+        width: calc(100% + 4rem) !important;
+        margin-left: -2rem !important;
+        margin-right: -2rem !important;
         margin-bottom: 2rem !important;
         padding: 0 !important;
         line-height: 0 !important;
     }
 
-    .banner-container img,
     #step2MainBanner img {
         width: 100% !important;
         height: auto !important;
         display: block !important;
-        object-fit: cover !important;
     }
 }
 
@@ -4639,11 +4654,11 @@ button.telecom-btn.selected:nth-child(6):hover {
     }
 }
     
-    /* 2페이지 메인배너 - 화면 전체 너비 */
-    #step2MainBanner.banner-container {
-        width: 100vw !important;
-        margin-left: calc(-50vw + 50%) !important;
-        margin-right: calc(-50vw + 50%) !important;
+    /* 2페이지 메인배너 - 모바일 */
+    #step2MainBanner {
+        width: calc(100% + 2rem) !important;
+        margin-left: -1rem !important;
+        margin-right: -1rem !important;
         margin-bottom: 2rem !important;
         padding: 0 !important;
         overflow: hidden !important;
@@ -4653,8 +4668,6 @@ button.telecom-btn.selected:nth-child(6):hover {
     #step2MainBanner img {
         width: 100% !important;
         height: auto !important;
-        max-height: 500px !important;
-        object-fit: cover !important;
         display: block !important;
     }
     
