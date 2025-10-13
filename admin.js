@@ -1458,9 +1458,10 @@ async function previewMainBannerImage(event, step) {
 
             const result = await response.json();
             console.log('배너 DB 저장 결과:', result);
+            console.log('응답 상태:', response.status, response.statusText);
 
-            if (!result.success && !response.ok) {
-                throw new Error('DB 저장 실패');
+            if (!response.ok || (!result.success && result.error)) {
+                throw new Error(result.error || `DB 저장 실패 (${response.status})`);
             }
         } catch (error) {
             console.error('배너 DB 저장 에러:', error);
