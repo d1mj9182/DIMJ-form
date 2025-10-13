@@ -4237,33 +4237,6 @@ button.telecom-btn.selected:nth-child(6):hover {
         margin-left: 0 !important;
         margin-right: 0 !important;
     }
-    
-    /* 2페이지 메인배너 모바일 최적화 - 크게 확대 */
-    #step2MainBanner {
-        width: 100vw !important;
-        height: auto !important;
-        min-height: 300px !important;
-        max-height: 400px !important;
-        margin-left: calc(-50vw + 50%) !important;
-        margin-right: calc(-50vw + 50%) !important;
-        margin-top: 0 !important;
-        margin-bottom: 0 !important;
-        padding: 0 !important;
-        border-radius: 0 !important;
-        background: transparent !important;
-    }
-
-    #step2MainBanner .banner-image-container {
-        height: 100% !important;
-        width: 100% !important;
-        overflow: hidden !important;
-    }
-
-    #step2MainBanner img {
-        width: 100% !important;
-        height: 100% !important;
-        object-fit: cover !important;
-    }
 }
 
 /* 새로운 배너 컨테이너 시스템 - 화면 전체 너비 */
@@ -4303,22 +4276,6 @@ button.telecom-btn.selected:nth-child(6):hover {
     display: block;
 }
 
-/* 2페이지 배너만 부모 컨테이너 넘어서 확장 */
-#step2MainBanner {
-    width: calc(100% + 4rem) !important;
-    margin-left: -2rem !important;
-    margin-right: -2rem !important;
-    margin-bottom: 2rem !important;
-    padding: 0 !important;
-    line-height: 0 !important;
-    overflow: hidden !important;
-}
-
-#step2MainBanner img {
-    width: 100% !important;
-    height: auto !important;
-    display: block !important;
-}
 
 /* Placeholder 완전 숨기기 */
 .banner-placeholder,
@@ -4436,30 +4393,6 @@ button.telecom-btn.selected:nth-child(6):hover {
     position: relative !important;
 }
 
-/* 모바일 - 화면 전체 너비 유지 */
-@media (max-width: 768px) {
-    .banner-container {
-        width: 100vw !important;
-        margin-left: calc(-50vw + 50%) !important;
-        margin-right: calc(-50vw + 50%) !important;
-        margin-bottom: 1rem;
-        padding: 0 !important;
-    }
-
-    .banner-inner img,
-    .banner-container img {
-        min-height: 400px !important;
-    }
-
-    #step2MainBanner {
-        padding: 0 !important;
-        margin-top: 0 !important;
-    }
-
-    #step2MainBanner img {
-        height: auto !important;
-    }
-}
 
 @media (max-width: 480px) {
     .banner-container {
