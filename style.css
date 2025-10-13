@@ -4360,6 +4360,17 @@ button.telecom-btn.selected:nth-child(6):hover {
         padding-bottom: 0 !important;
     }
 
+    /* 2페이지 전체 패딩 제거 */
+    #step2 {
+        padding: 0 !important;
+    }
+
+    /* 뒤로가기 버튼 여백 복구 */
+    #step2 .back-button-container {
+        padding: 0 1rem !important;
+        margin-bottom: 0 !important;
+    }
+
     /* 2페이지 배너 모바일 설정 */
     #step2MainBanner {
         width: 100% !important;
@@ -4378,9 +4389,14 @@ button.telecom-btn.selected:nth-child(6):hover {
         padding: 0 !important;
     }
 
-    /* 실시간 상담 현황판 위 여백 제거 */
+    /* 실시간 상담 현황판 위 여백 */
     #step2 .status-board {
         margin-top: 1rem !important;
+    }
+
+    /* 폼 영역 패딩 복구 */
+    #step2 .form-section {
+        padding: 1rem !important;
     }
 }
 
