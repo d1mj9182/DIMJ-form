@@ -4727,8 +4727,6 @@ button.telecom-btn.selected:nth-child(6):hover {
 /* ===============================
    부정클릭 방지 버튼 스타일 - 강력한 오버라이드
    =============================== */
-#fraudPreventionBtn,
-button#fraudPreventionBtn,
 .fraud-prevention-btn,
 button.fraud-prevention-btn {
     position: fixed !important;
