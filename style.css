@@ -4437,7 +4437,7 @@ button.telecom-btn.selected:nth-child(6):hover {
         margin-left: calc(-50vw + 50%) !important;
         margin-right: calc(-50vw + 50%) !important;
         margin-bottom: 1rem;
-        padding: 5px 0;
+        padding: 0 !important;
     }
 
     .banner-inner img,
@@ -4446,11 +4446,12 @@ button.telecom-btn.selected:nth-child(6):hover {
     }
 
     #step2MainBanner {
-        min-height: 400px !important;
+        padding: 0 !important;
+        margin-top: 0 !important;
     }
 
     #step2MainBanner img {
-        min-height: 400px !important;
+        height: auto !important;
     }
 }
 
