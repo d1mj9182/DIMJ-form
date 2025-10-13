@@ -2550,16 +2550,32 @@ document.addEventListener('keydown', function(e) {
 });
 
 // 부정클릭 방지 기능
-function showFraudWarning() {
+async function showFraudWarning() {
     const modal = document.getElementById('fraudWarningModal');
     const warningText = document.getElementById('fraudWarningText');
-    
-    // localStorage에서 관리자가 설정한 경고문 가져오기
-    const adminContent = JSON.parse(localStorage.getItem('adminContent') || '{}');
-    if (adminContent.fraudWarningMessage) {
-        warningText.textContent = adminContent.fraudWarningMessage;
+
+    // Supabase에서 부정클릭 경고 메시지 가져오기
+    try {
+        const response = await fetch('https://dimj-form-proxy.vercel.app/api/supabase?table=admin_settings&key=fraud_warning_message', {
+            method: 'GET',
+            headers: {
+                'x-api-key': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXd6dnlyb2RwZG1mZ2xzcXF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIzMjUzMzEsImV4cCI6MjA0NzkwMTMzMX0.MkFZj8gNdkZT7xE9ysD1fkzN3bfOh5CtpOEtQGUCqY4',
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const result = await response.json();
+        if (result.success && result.data && result.data.length > 0) {
+            const message = result.data[result.data.length - 1].setting_value;
+            if (message) {
+                warningText.textContent = message;
+            }
+        }
+    } catch (error) {
+        console.error('부정클릭 메시지 로드 실패:', error);
+        // 에러 시 기본 메시지 유지
     }
-    
+
     if (modal) {
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
@@ -2968,6 +2984,47 @@ async function verifySettingsPassword() {
     }
 }
 
+// 히어로 섹션 콘텐츠 로드
+async function loadHeroContent() {
+    try {
+        // 히어로 제목 로드
+        const titleResponse = await fetch('https://dimj-form-proxy.vercel.app/api/supabase?table=admin_settings&key=hero_title', {
+            method: 'GET',
+            headers: {
+                'x-api-key': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXd6dnlyb2RwZG1mZ2xzcXF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIzMjUzMzEsImV4cCI6MjA0NzkwMTMzMX0.MkFZj8gNdkZT7xE9ysD1fkzN3bfOh5CtpOEtQGUCqY4',
+                'Content-Type': 'application/json'
+            }
+        });
+        const titleResult = await titleResponse.json();
+        if (titleResult.success && titleResult.data && titleResult.data.length > 0) {
+            const heroTitle = document.getElementById('heroTitle');
+            const title = titleResult.data[titleResult.data.length - 1].setting_value;
+            if (heroTitle && title) {
+                heroTitle.textContent = title;
+            }
+        }
+
+        // 히어로 부제목 로드
+        const subtitleResponse = await fetch('https://dimj-form-proxy.vercel.app/api/supabase?table=admin_settings&key=hero_subtitle', {
+            method: 'GET',
+            headers: {
+                'x-api-key': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXd6dnlyb2RwZG1mZ2xzcXF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIzMjUzMzEsImV4cCI6MjA0NzkwMTMzMX0.MkFZj8gNdkZT7xE9ysD1fkzN3bfOh5CtpOEtQGUCqY4',
+                'Content-Type': 'application/json'
+            }
+        });
+        const subtitleResult = await subtitleResponse.json();
+        if (subtitleResult.success && subtitleResult.data && subtitleResult.data.length > 0) {
+            const heroSubtitle = document.getElementById('heroSubtitle');
+            const subtitle = subtitleResult.data[subtitleResult.data.length - 1].setting_value;
+            if (heroSubtitle && subtitle) {
+                heroSubtitle.innerHTML = subtitle;
+            }
+        }
+    } catch (error) {
+        console.error('히어로 콘텐츠 로드 실패:', error);
+    }
+}
+
 // Enter 키로 패스워드 확인
 document.addEventListener('DOMContentLoaded', function() {
     const passwordInput = document.getElementById('settingsPasswordInput');
@@ -2981,6 +3038,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 모바일에서 부정클릭방지 버튼 텍스트 변경
     updateFraudButtonTextForMobile();
+
+    // 히어로 섹션 콘텐츠 로드
+    loadHeroContent();
 });
 
 // 모바일에서 부정클릭방지 버튼 텍스트 변경
