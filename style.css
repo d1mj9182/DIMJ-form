@@ -4521,20 +4521,22 @@ button.telecom-btn.selected:nth-child(6):hover {
 
 /* 데스크톱 전용 - 메인배너 수정 */
 @media (min-width: 1024px) {
-    .banner-container {
-        width: 100% !important;
-        max-width: 1920px !important;
-        margin: 0 auto 2rem auto !important;
-        margin-left: auto !important;
-        margin-right: auto !important;
+    .banner-container,
+    #step2MainBanner {
+        width: 100vw !important;
+        margin-left: calc(-50vw + 50%) !important;
+        margin-right: calc(-50vw + 50%) !important;
+        margin-bottom: 2rem !important;
+        padding: 0 !important;
+        line-height: 0 !important;
     }
-    
-    .banner-inner img,
-    .banner-container img {
-        width: 100%;
-        height: auto;
-        max-height: 500px !important;
-        object-fit: contain !important;
+
+    .banner-container img,
+    #step2MainBanner img {
+        width: 100% !important;
+        height: auto !important;
+        display: block !important;
+        object-fit: cover !important;
     }
 }
 
@@ -4639,22 +4641,21 @@ button.telecom-btn.selected:nth-child(6):hover {
     
     /* 2페이지 메인배너 - 화면 전체 너비 */
     #step2MainBanner.banner-container {
-        width: 100% !important;
-        max-width: 100% !important;
-        margin: 0 auto 2rem auto !important;
+        width: 100vw !important;
+        margin-left: calc(-50vw + 50%) !important;
+        margin-right: calc(-50vw + 50%) !important;
+        margin-bottom: 2rem !important;
         padding: 0 !important;
-        background: transparent !important;
         overflow: hidden !important;
-        box-sizing: border-box !important;
+        line-height: 0 !important;
     }
 
-    #step2MainBanner .banner-inner img,
-    #step2MainBanner.banner-container img {
+    #step2MainBanner img {
         width: 100% !important;
         height: auto !important;
         max-height: 500px !important;
-        object-fit: contain !important;
-        object-position: center !important;
+        object-fit: cover !important;
+        display: block !important;
     }
     
     /* 전역 모바일 최적화 - 가로 스크롤 방지 */
