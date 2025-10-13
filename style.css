@@ -4451,11 +4451,13 @@ button.telecom-btn.selected:nth-child(6):hover {
     }
 
     #step2MainBanner {
-        min-height: 400px !important;
+        min-height: auto !important;
     }
 
     #step2MainBanner img {
-        min-height: 400px !important;
+        min-height: auto !important;
+        max-height: 300px !important;
+        object-fit: contain !important;
     }
 }
 
