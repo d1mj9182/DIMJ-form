@@ -4732,20 +4732,20 @@ button#fraudPreventionBtn,
 .fraud-prevention-btn,
 button.fraud-prevention-btn {
     position: fixed !important;
-    top: 20px !important;
+    top: 80px !important;
     right: 20px !important;
-    width: 85px !important;
-    height: 45px !important;
-    padding: 10px 20px !important;
+    width: auto !important;
+    height: auto !important;
+    padding: 8px 12px !important;
     background: linear-gradient(135deg, #ff4757 0%, #ff3742 50%, #c44569 100%) !important;
     color: #ffffff !important;
     border: none !important;
-    border-radius: 25px !important;
+    border-radius: 20px !important;
     cursor: pointer !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 8px !important;
+    gap: 6px !important;
     font-size: 13px !important;
     font-weight: 700 !important;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
