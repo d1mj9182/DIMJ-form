@@ -4373,8 +4373,8 @@ button.telecom-btn.selected:nth-child(6):hover {
         display: block !important;
         width: 100% !important;
         height: auto !important;
-        object-fit: cover !important;
-        margin: 0 !important;
+        object-fit: contain !important;
+        margin: 0 auto !important;
         padding: 0 !important;
     }
 }
