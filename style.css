@@ -4331,12 +4331,12 @@ button.telecom-btn.selected:nth-child(6):hover {
     }
 }
 
-/* 2페이지 배너 - 데스크톱 */
+/* 2페이지 배너 - 데스크톱 높이 제한 제거 */
 @media (min-width: 769px) {
     #step2MainBanner img {
-        min-height: 350px !important;
-        max-height: 450px !important;
-        object-fit: cover !important;
+        height: auto !important;
+        max-height: none !important;
+        object-fit: contain !important;
     }
 }
 
@@ -4654,11 +4654,11 @@ button.telecom-btn.selected:nth-child(6):hover {
     }
 }
     
-    /* 2페이지 메인배너 - 모바일 */
+    /* 2페이지 메인배너 - 모바일 영역 축소 */
     #step2MainBanner {
-        width: calc(100% + 2rem) !important;
-        margin-left: -1rem !important;
-        margin-right: -1rem !important;
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
         margin-bottom: 2rem !important;
         padding: 0 !important;
         overflow: hidden !important;
