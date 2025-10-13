@@ -2984,6 +2984,47 @@ async function verifySettingsPassword() {
     }
 }
 
+// 히어로 섹션 콘텐츠 로드
+async function loadHeroContent() {
+    try {
+        // 히어로 제목 로드
+        const titleResponse = await fetch('https://dimj-form-proxy.vercel.app/api/supabase?table=admin_settings&key=hero_title', {
+            method: 'GET',
+            headers: {
+                'x-api-key': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXd6dnlyb2RwZG1mZ2xzcXF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIzMjUzMzEsImV4cCI6MjA0NzkwMTMzMX0.MkFZj8gNdkZT7xE9ysD1fkzN3bfOh5CtpOEtQGUCqY4',
+                'Content-Type': 'application/json'
+            }
+        });
+        const titleResult = await titleResponse.json();
+        if (titleResult.success && titleResult.data && titleResult.data.length > 0) {
+            const heroTitle = document.getElementById('heroTitle');
+            const title = titleResult.data[titleResult.data.length - 1].setting_value;
+            if (heroTitle && title) {
+                heroTitle.textContent = title;
+            }
+        }
+
+        // 히어로 부제목 로드
+        const subtitleResponse = await fetch('https://dimj-form-proxy.vercel.app/api/supabase?table=admin_settings&key=hero_subtitle', {
+            method: 'GET',
+            headers: {
+                'x-api-key': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXd6dnlyb2RwZG1mZ2xzcXF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIzMjUzMzEsImV4cCI6MjA0NzkwMTMzMX0.MkFZj8gNdkZT7xE9ysD1fkzN3bfOh5CtpOEtQGUCqY4',
+                'Content-Type': 'application/json'
+            }
+        });
+        const subtitleResult = await subtitleResponse.json();
+        if (subtitleResult.success && subtitleResult.data && subtitleResult.data.length > 0) {
+            const heroSubtitle = document.getElementById('heroSubtitle');
+            const subtitle = subtitleResult.data[subtitleResult.data.length - 1].setting_value;
+            if (heroSubtitle && subtitle) {
+                heroSubtitle.innerHTML = subtitle;
+            }
+        }
+    } catch (error) {
+        console.error('히어로 콘텐츠 로드 실패:', error);
+    }
+}
+
 // Enter 키로 패스워드 확인
 document.addEventListener('DOMContentLoaded', function() {
     const passwordInput = document.getElementById('settingsPasswordInput');
@@ -2997,6 +3038,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 모바일에서 부정클릭방지 버튼 텍스트 변경
     updateFraudButtonTextForMobile();
+
+    // 히어로 섹션 콘텐츠 로드
+    loadHeroContent();
 });
 
 // 모바일에서 부정클릭방지 버튼 텍스트 변경
