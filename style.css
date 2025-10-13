@@ -4895,7 +4895,7 @@ button.fraud-prevention-btn {
     .fraud-prevention-btn {
         position: fixed !important;
         top: 5px !important;
-        right: 10px !important;
+        right: 5px !important;
         width: auto !important;
         height: 38px !important;
         font-size: 12px !important;
