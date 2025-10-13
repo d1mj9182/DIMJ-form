@@ -2550,16 +2550,32 @@ document.addEventListener('keydown', function(e) {
 });
 
 // 부정클릭 방지 기능
-function showFraudWarning() {
+async function showFraudWarning() {
     const modal = document.getElementById('fraudWarningModal');
     const warningText = document.getElementById('fraudWarningText');
-    
-    // localStorage에서 관리자가 설정한 경고문 가져오기
-    const adminContent = JSON.parse(localStorage.getItem('adminContent') || '{}');
-    if (adminContent.fraudWarningMessage) {
-        warningText.textContent = adminContent.fraudWarningMessage;
+
+    // Supabase에서 부정클릭 경고 메시지 가져오기
+    try {
+        const response = await fetch('https://dimj-form-proxy.vercel.app/api/supabase?table=admin_settings&key=fraud_warning_message', {
+            method: 'GET',
+            headers: {
+                'x-api-key': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXd6dnlyb2RwZG1mZ2xzcXF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIzMjUzMzEsImV4cCI6MjA0NzkwMTMzMX0.MkFZj8gNdkZT7xE9ysD1fkzN3bfOh5CtpOEtQGUCqY4',
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const result = await response.json();
+        if (result.success && result.data && result.data.length > 0) {
+            const message = result.data[result.data.length - 1].setting_value;
+            if (message) {
+                warningText.textContent = message;
+            }
+        }
+    } catch (error) {
+        console.error('부정클릭 메시지 로드 실패:', error);
+        // 에러 시 기본 메시지 유지
     }
-    
+
     if (modal) {
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
