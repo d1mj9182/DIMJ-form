@@ -4378,6 +4378,8 @@ button.telecom-btn.selected:nth-child(6):hover {
         padding: 0 !important;
         line-height: 0 !important;
         overflow: hidden !important;
+        display: block !important;
+        font-size: 0 !important;
     }
 
     #step2MainBanner img {
@@ -4387,6 +4389,7 @@ button.telecom-btn.selected:nth-child(6):hover {
         object-fit: contain !important;
         margin: 0 !important;
         padding: 0 !important;
+        vertical-align: top !important;
     }
 
     /* 실시간 상담 현황판 위 여백 */
