@@ -4368,24 +4368,18 @@ button.telecom-btn.selected:nth-child(6):hover {
         font-size: 0.7rem !important;
     }
 
-    /* 뒤로가기 버튼 아래 여백 추가 */
-    #step2 .back-button-container {
-        margin-bottom: 1rem !important;
-        padding-bottom: 0 !important;
-    }
-
     /* 2페이지 전체 패딩 제거 */
     #step2 {
         padding: 0 !important;
     }
 
-    /* 뒤로가기 버튼 여백 복구 */
+    /* 뒤로가기 버튼 */
     #step2 .back-button-container {
         padding: 0 1rem !important;
-        margin-bottom: 0 !important;
+        margin-bottom: 1rem !important;
     }
 
-    /* 2페이지 배너 모바일 설정 - 부모 컨테이너 벗어남 */
+    /* 2페이지 메인배너 */
     #step2MainBanner {
         width: 100vw !important;
         margin-left: calc(-50vw + 50%) !important;
@@ -4395,8 +4389,6 @@ button.telecom-btn.selected:nth-child(6):hover {
         padding: 0 !important;
         line-height: 0 !important;
         overflow: hidden !important;
-        display: block !important;
-        font-size: 0 !important;
     }
 
     #step2MainBanner img {
@@ -4406,12 +4398,12 @@ button.telecom-btn.selected:nth-child(6):hover {
         object-fit: contain !important;
         margin: 0 !important;
         padding: 0 !important;
-        vertical-align: top !important;
     }
 
     /* 실시간 상담 현황판 */
     #step2 .status-board {
         margin-top: 0 !important;
+        padding: 2rem 1rem !important;
     }
 
     /* 폼 영역 패딩 복구 */
