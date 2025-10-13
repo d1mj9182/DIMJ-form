@@ -4894,8 +4894,8 @@ button.fraud-prevention-btn {
 @media (max-width: 768px) {
     .fraud-prevention-btn {
         position: fixed !important;
-        top: 5px !important;
-        right: 5px !important;
+        top: -5px !important;
+        right: 2px !important;
         width: auto !important;
         height: 38px !important;
         font-size: 12px !important;
