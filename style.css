@@ -3236,13 +3236,23 @@ button.telecom-btn.selected:nth-child(6):hover {
     .main-content {
         width: 100vw !important;
         max-width: 100vw !important;
-        padding: 2rem !important;
+        padding: 0 !important;
         margin: 0 !important;
         border-radius: 0 !important;
         box-sizing: border-box !important;
         overflow: hidden !important;
         margin-left: calc(-50vw + 50%) !important;
         margin-right: calc(-50vw + 50%) !important;
+    }
+
+    /* step-content에 패딩 추가 */
+    .step-content {
+        padding: 2rem !important;
+    }
+
+    /* step2만 패딩 0 */
+    #step2 {
+        padding: 0 !important;
     }
     
     /* 네비게이션 버튼 완전 수정 */
