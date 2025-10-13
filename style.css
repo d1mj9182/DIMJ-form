@@ -5184,6 +5184,9 @@ button.fraud-prevention-btn {
 /* 모바일에서만 부정클릭방지 버튼 작고 동그랗게 */
 @media (max-width: 768px) {
     #fraudPreventionBtn {
+        position: fixed !important;
+        top: -5px !important;
+        right: 2px !important;
         width: auto !important;
         height: auto !important;
         border-radius: 19px !important;
@@ -5196,6 +5199,7 @@ button.fraud-prevention-btn {
         align-items: center !important;
         justify-content: center !important;
         font-weight: 800 !important;
+        z-index: 99999 !important;
     }
 }
 
