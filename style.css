@@ -4401,9 +4401,9 @@ button.telecom-btn.selected:nth-child(6):hover {
     #step2MainBanner img {
         display: block !important;
         width: 100% !important;
-        min-height: 250px !important;
-        max-height: 350px !important;
-        object-fit: cover !important;
+        height: auto !important;
+        max-height: 250px !important;
+        object-fit: contain !important;
         margin: 0 !important;
         padding: 0 !important;
         line-height: 0 !important;
