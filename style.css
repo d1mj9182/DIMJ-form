@@ -4663,25 +4663,9 @@ button.telecom-btn.selected:nth-child(6):hover {
         text-align: center !important;
     }
 }
-    
-    /* 2페이지 메인배너 - 모바일 영역 축소 */
-    #step2MainBanner {
-        width: 100% !important;
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-        margin-bottom: 2rem !important;
-        padding: 0 !important;
-        overflow: hidden !important;
-        line-height: 0 !important;
-    }
 
-    #step2MainBanner img {
-        width: 100% !important;
-        height: auto !important;
-        display: block !important;
-    }
-    
-    /* 전역 모바일 최적화 - 가로 스크롤 방지 */
+/* 전역 모바일 최적화 - 가로 스크롤 방지 */
+@media (max-width: 768px) {
     body {
         overflow-x: hidden !important;
         max-width: 100vw !important;
