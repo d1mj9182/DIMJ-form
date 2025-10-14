@@ -3025,6 +3025,42 @@ async function loadHeroContent() {
     }
 }
 
+// 메인페이지 콘텐츠 로드
+async function loadMainPageContent() {
+    try {
+        const settings = [
+            { key: 'main_hero_title', elementId: 'mainHeroTitle' },
+            { key: 'main_hero_subtitle', elementId: 'mainHeroSubtitle' },
+            { key: 'main_hero_note', elementId: 'mainHeroNote' }
+        ];
+
+        for (const setting of settings) {
+            try {
+                const response = await fetch(`https://dimj-form-proxy.vercel.app/api/supabase?table=admin_settings&key=${setting.key}`, {
+                    method: 'GET',
+                    headers: {
+                        'x-api-key': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXd6dnlyb2RwZG1mZ2xzcXF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIzMjUzMzEsImV4cCI6MjA0NzkwMTMzMX0.MkFZj8gNdkZT7xE9ysD1fkzN3bfOh5CtpOEtQGUCqY4',
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+                if (result.success && result.data && result.data.length > 0) {
+                    const element = document.getElementById(setting.elementId);
+                    const value = result.data[result.data.length - 1].setting_value;
+                    if (element && value) {
+                        element.textContent = value;
+                    }
+                }
+            } catch (error) {
+                console.error(`${setting.key} 로드 실패:`, error);
+            }
+        }
+    } catch (error) {
+        console.error('메인페이지 콘텐츠 로드 실패:', error);
+    }
+}
+
 // Enter 키로 패스워드 확인
 document.addEventListener('DOMContentLoaded', function() {
     const passwordInput = document.getElementById('settingsPasswordInput');
@@ -3038,6 +3074,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 모바일에서 부정클릭방지 버튼 텍스트 변경
     updateFraudButtonTextForMobile();
+
+    // 메인페이지 콘텐츠 로드
+    loadMainPageContent();
 
     // 히어로 섹션 콘텐츠 로드
     loadHeroContent();

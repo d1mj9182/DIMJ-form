@@ -1750,94 +1750,45 @@ async function saveContent() {
     showLoading();
 
     try {
-        // 부정클릭 경고 메시지 저장
-        const fraudWarningMessage = document.getElementById('fraudWarningMessage');
-        if (fraudWarningMessage) {
-            await fetch(`${PROXY_URL}`, {
-                method: 'POST',
-                headers: {
-                    'x-api-key': SUPABASE_ANON_KEY,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    table: 'admin_settings',
-                    setting_key: 'fraud_warning_message',
-                    setting_value: fraudWarningMessage.value,
-                    setting_type: 'text'
-                })
-            });
-        }
+        const settings = [
+            // 메인 페이지 콘텐츠
+            { id: 'mainHeroTitle', key: 'main_hero_title' },
+            { id: 'mainHeroSubtitle', key: 'main_hero_subtitle' },
+            { id: 'mainHeroNote', key: 'main_hero_note' },
+            { id: 'warningTitle', key: 'warning_title' },
+            { id: 'warningContent', key: 'warning_content' },
+            { id: 'cashRewardAmount', key: 'cash_reward_amount' },
+            { id: 'totalLossAmount', key: 'total_loss_amount' },
 
-        // 메인페이지 콘텐츠 저장
-        const mainPageTitle = document.getElementById('mainPageTitle');
-        const mainPageSubtitle = document.getElementById('mainPageSubtitle');
-        if (mainPageTitle) {
-            await fetch(`${PROXY_URL}`, {
-                method: 'POST',
-                headers: {
-                    'x-api-key': SUPABASE_ANON_KEY,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    table: 'admin_settings',
-                    setting_key: 'main_page_title',
-                    setting_value: mainPageTitle.value,
-                    setting_type: 'text'
-                })
-            });
-        }
-        if (mainPageSubtitle) {
-            await fetch(`${PROXY_URL}`, {
-                method: 'POST',
-                headers: {
-                    'x-api-key': SUPABASE_ANON_KEY,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    table: 'admin_settings',
-                    setting_key: 'main_page_subtitle',
-                    setting_value: mainPageSubtitle.value,
-                    setting_type: 'text'
-                })
-            });
-        }
+            // 히어로 섹션
+            { id: 'heroTitle', key: 'hero_title' },
+            { id: 'heroSubtitle', key: 'hero_subtitle' },
 
-        // 히어로 섹션 저장
-        const heroTitle = document.getElementById('heroTitle');
-        const heroSubtitle = document.getElementById('heroSubtitle');
-        if (heroTitle) {
-            await fetch(`${PROXY_URL}`, {
-                method: 'POST',
-                headers: {
-                    'x-api-key': SUPABASE_ANON_KEY,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    table: 'admin_settings',
-                    setting_key: 'hero_title',
-                    setting_value: heroTitle.value,
-                    setting_type: 'text'
-                })
-            });
-        }
-        if (heroSubtitle) {
-            await fetch(`${PROXY_URL}`, {
-                method: 'POST',
-                headers: {
-                    'x-api-key': SUPABASE_ANON_KEY,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    table: 'admin_settings',
-                    setting_key: 'hero_subtitle',
-                    setting_value: heroSubtitle.value,
-                    setting_type: 'text'
-                })
-            });
+            // 부정클릭 경고
+            { id: 'fraudWarningMessage', key: 'fraud_warning_message' }
+        ];
+
+        for (const setting of settings) {
+            const element = document.getElementById(setting.id);
+            if (element && element.value) {
+                await fetch(`${PROXY_URL}`, {
+                    method: 'POST',
+                    headers: {
+                        'x-api-key': SUPABASE_ANON_KEY,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        table: 'admin_settings',
+                        setting_key: setting.key,
+                        setting_value: element.value,
+                        setting_type: 'text'
+                    })
+                });
+            }
         }
 
         hideLoading();
-        showToast('success', '저장 완료', '콘텐츠가 성공적으로 저장되었습니다.');
+        showToast('success', '저장 완료', '콘텐츠가 수파베이스에 성공적으로 저장되었습니다.');
     } catch (error) {
         hideLoading();
         console.error('콘텐츠 저장 에러:', error);
