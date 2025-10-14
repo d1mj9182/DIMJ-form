@@ -1747,6 +1747,7 @@ function switchContentTab(tabName) {
 
 // Save content
 async function saveContent() {
+    console.log('=== saveContent 함수 시작 ===');
     showLoading();
 
     try {
@@ -1768,10 +1769,15 @@ async function saveContent() {
             { id: 'fraudWarningMessage', key: 'fraud_warning_message' }
         ];
 
+        let savedCount = 0;
         for (const setting of settings) {
             const element = document.getElementById(setting.id);
+            console.log(`확인 중: ${setting.id}`, element ? '찾음' : '없음', element ? `값: ${element.value}` : '');
+
             if (element && element.value) {
-                await fetch(`${PROXY_URL}`, {
+                console.log(`저장 시작: ${setting.key} = ${element.value}`);
+
+                const response = await fetch(`${PROXY_URL}`, {
                     method: 'POST',
                     headers: {
                         'x-api-key': SUPABASE_ANON_KEY,
@@ -1784,11 +1790,19 @@ async function saveContent() {
                         setting_type: 'text'
                     })
                 });
+
+                const result = await response.json();
+                console.log(`저장 결과: ${setting.key}`, result);
+
+                if (result.success) {
+                    savedCount++;
+                }
             }
         }
 
         hideLoading();
-        showToast('success', '저장 완료', '콘텐츠가 수파베이스에 성공적으로 저장되었습니다.');
+        console.log(`=== 총 ${savedCount}개 항목 저장 완료 ===`);
+        showToast('success', '저장 완료', `${savedCount}개 항목이 수파베이스에 성공적으로 저장되었습니다.`);
     } catch (error) {
         hideLoading();
         console.error('콘텐츠 저장 에러:', error);
@@ -2020,6 +2034,7 @@ function resetDailyLimits() {
 
 // Save detail page content
 async function saveDetailPageContent() {
+    console.log('=== saveDetailPageContent 함수 호출됨 ===');
     await saveContent();
 }
 

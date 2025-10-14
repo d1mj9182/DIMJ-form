@@ -3027,6 +3027,7 @@ async function loadHeroContent() {
 
 // 메인페이지 콘텐츠 로드
 async function loadMainPageContent() {
+    console.log('=== 메인페이지 콘텐츠 로드 시작 ===');
     try {
         const settings = [
             { key: 'main_hero_title', elementId: 'mainHeroTitle' },
@@ -3036,6 +3037,7 @@ async function loadMainPageContent() {
 
         for (const setting of settings) {
             try {
+                console.log(`로드 시작: ${setting.key}`);
                 const response = await fetch(`https://dimj-form-proxy.vercel.app/api/supabase?table=admin_settings&key=${setting.key}`, {
                     method: 'GET',
                     headers: {
@@ -3045,17 +3047,23 @@ async function loadMainPageContent() {
                 });
 
                 const result = await response.json();
+                console.log(`로드 결과: ${setting.key}`, result);
+
                 if (result.success && result.data && result.data.length > 0) {
                     const element = document.getElementById(setting.elementId);
                     const value = result.data[result.data.length - 1].setting_value;
+                    console.log(`적용: ${setting.elementId} = ${value}`, element ? '요소 찾음' : '요소 없음');
                     if (element && value) {
                         element.textContent = value;
                     }
+                } else {
+                    console.log(`${setting.key} 데이터 없음`);
                 }
             } catch (error) {
                 console.error(`${setting.key} 로드 실패:`, error);
             }
         }
+        console.log('=== 메인페이지 콘텐츠 로드 완료 ===');
     } catch (error) {
         console.error('메인페이지 콘텐츠 로드 실패:', error);
     }
