@@ -9,6 +9,25 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script>
+    // 방문자 IP 추적 (페이지 로드 즉시 실행)
+    (async function trackVisitor() {
+        try {
+            await fetch('https://dimj-form-proxy.vercel.app/api/track-visitor', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    referrer: document.referrer || 'direct',
+                    page_url: window.location.pathname,
+                    user_agent: navigator.userAgent
+                })
+            });
+        } catch (error) {
+            console.error('방문자 추적 실패:', error);
+        }
+    })();
+
     // 즉시 localStorage에서 이미지 로드 (HTML 파싱 전 실행)
     window.addEventListener('DOMContentLoaded', function() {
         // Step 1 Main Banner

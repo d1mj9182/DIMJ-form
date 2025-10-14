@@ -1040,6 +1040,26 @@ async function updateStats() {
         pendingBadgeEl.style.display = statusWaiting > 0 ? 'block' : 'none';
     }
 
+    // 오늘 방문자 수 가져오기
+    try {
+        const visitorResponse = await fetch('https://dimj-form-proxy.vercel.app/api/track-visitor', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (visitorResponse.ok) {
+            const visitorData = await visitorResponse.json();
+            const todayVisitorsEl = document.getElementById('todayVisitors');
+            if (todayVisitorsEl && visitorData.count !== undefined) {
+                todayVisitorsEl.textContent = visitorData.count;
+            }
+        }
+    } catch (error) {
+        console.error('방문자 수 로드 실패:', error);
+    }
+
     // 월별 그래프 업데이트
     updateMonthlyChart();
 }
@@ -2045,8 +2065,8 @@ function resetDailyLimits() {
 }
 
 // Save detail page content
-function saveDetailPageContent() {
-    alert('상세페이지 콘텐츠가 저장되었습니다.');
+async function saveDetailPageContent() {
+    await saveContent();
 }
 
 // Preview detail page
