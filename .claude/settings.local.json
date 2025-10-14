@@ -218,7 +218,8 @@
       "Bash(git revert:*)",
       "Read(//c//**)",
       "Bash(git remote get-url:*)",
-      "Bash(git rev-parse:*)"
+      "Bash(git rev-parse:*)",
+      "Read(//c/Users/pc/Desktop/DIMJ-form-frontend/**)"
     ],
     "deny": [],
     "ask": []
