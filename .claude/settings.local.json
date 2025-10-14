@@ -216,7 +216,9 @@
       "Bash(git log:*)",
       "Bash(git fetch:*)",
       "Bash(git revert:*)",
-      "Read(//c//**)"
+      "Read(//c//**)",
+      "Bash(git remote get-url:*)",
+      "Bash(git rev-parse:*)"
     ],
     "deny": [],
     "ask": []
