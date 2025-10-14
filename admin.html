@@ -72,6 +72,10 @@
                     <span>신청 관리</span>
                     <span class="badge" id="pendingBadge">0</span>
                 </a>
+                <a href="#visitors" class="nav-item" data-page="visitors">
+                    <i class="fas fa-users"></i>
+                    <span>방문자 추적</span>
+                </a>
                 <a href="#content" class="nav-item" data-page="content">
                     <i class="fas fa-edit"></i>
                     <span>콘텐츠 관리</span>
@@ -678,6 +682,95 @@
                         </div>
                     </div>
 
+                </div>
+            </div>
+
+            <!-- Visitors Page -->
+            <div class="page-content" id="visitorsPage" style="display: none;">
+                <div class="table-header">
+                    <div class="visitor-stats-row">
+                        <div class="visitor-stat-card">
+                            <i class="fas fa-eye"></i>
+                            <div>
+                                <p>오늘 방문</p>
+                                <h3 id="visitorTodayCount">0</h3>
+                            </div>
+                        </div>
+                        <div class="visitor-stat-card">
+                            <i class="fas fa-calendar-week"></i>
+                            <div>
+                                <p>최근 7일</p>
+                                <h3 id="visitorWeekCount">0</h3>
+                            </div>
+                        </div>
+                        <div class="visitor-stat-card suspicious">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <div>
+                                <p>부정클릭 의심</p>
+                                <h3 id="visitorSuspiciousCount">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-header">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="visitorSearchInput" placeholder="IP 주소 검색..." onkeyup="filterVisitors()">
+                    </div>
+                    <div class="filter-group">
+                        <select id="visitorPeriodFilter" onchange="loadVisitors()">
+                            <option value="today">오늘</option>
+                            <option value="yesterday">어제</option>
+                            <option value="week">최근 7일</option>
+                            <option value="month">최근 30일</option>
+                        </select>
+                        <select id="visitorSortFilter" onchange="loadVisitors()">
+                            <option value="count">방문횟수 순</option>
+                            <option value="recent">최근방문 순</option>
+                        </select>
+                        <label style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: #fff3cd; border-radius: 8px; cursor: pointer;">
+                            <input type="checkbox" id="visitorSuspiciousFilter" onchange="loadVisitors()">
+                            <span style="font-size: 0.875rem; color: #856404;">부정클릭 의심만 보기 (5회 이상)</span>
+                        </label>
+                        <button class="btn-refresh" onclick="loadVisitors()">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <div id="visitorSkeletonLoader" class="skeleton-loader" style="display: none;">
+                        <div class="skeleton-row"></div>
+                        <div class="skeleton-row"></div>
+                        <div class="skeleton-row"></div>
+                        <div class="skeleton-row"></div>
+                        <div class="skeleton-row"></div>
+                    </div>
+
+                    <table class="data-table" id="visitorsTable">
+                        <thead>
+                            <tr>
+                                <th>번호</th>
+                                <th>IP 주소</th>
+                                <th>방문횟수</th>
+                                <th>최초 방문</th>
+                                <th>최근 방문</th>
+                                <th>유입경로</th>
+                                <th>방문 페이지</th>
+                                <th>작업</th>
+                            </tr>
+                        </thead>
+                        <tbody id="visitorsTableBody">
+                            <!-- Dynamic content -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="table-footer">
+                    <div class="showing-info">
+                        <span id="visitorShowingInfo">0개 IP 주소</span>
+                    </div>
                 </div>
             </div>
 

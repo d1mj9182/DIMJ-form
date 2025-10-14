@@ -193,6 +193,7 @@ function navigateToPage(pageName) {
     const titles = {
         'dashboard': '대시보드',
         'applications': '신청 관리',
+        'visitors': '방문자 추적',
         'content': '콘텐츠 관리',
         'banners': '배너 관리',
         'security': '보안 설정'
@@ -210,6 +211,8 @@ function navigateToPage(pageName) {
     } else if (pageName === 'dashboard') {
         updateStats();
         loadRecentApplications();
+    } else if (pageName === 'visitors') {
+        loadVisitors();
     } else if (pageName === 'banners') {
         // 배너 페이지 로드 시 기존 업로드된 이미지 표시
         setTimeout(loadBannersToAdmin, 100);
@@ -2286,5 +2289,239 @@ async function deleteSelectedApplications() {
 
     if (failCount > 0) {
         showToast('error', '일부 실패', `${failCount}개 항목 삭제에 실패했습니다.`);
+    }
+}
+
+// ========== 방문자 IP 추적 기능 ==========
+
+// 방문자 목록 로드
+async function loadVisitors() {
+    showLoading();
+
+    const periodFilter = document.getElementById('visitorPeriodFilter');
+    const sortFilter = document.getElementById('visitorSortFilter');
+    const suspiciousFilter = document.getElementById('visitorSuspiciousFilter');
+
+    const period = periodFilter ? periodFilter.value : 'today';
+    const sort = sortFilter ? sortFilter.value : 'count';
+    const suspicious = suspiciousFilter ? suspiciousFilter.checked : false;
+
+    try {
+        // API 호출
+        let url = `https://dimj-form-proxy.vercel.app/api/track-visitor?list=true&period=${period}&sort=${sort}`;
+        if (suspicious) {
+            url += '&suspicious=true';
+        }
+
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const result = await response.json();
+
+        if (result.success && result.data) {
+            renderVisitorsTable(result.data);
+            updateVisitorStats(result);
+        } else {
+            throw new Error(result.error || '방문자 데이터 로드 실패');
+        }
+
+        hideLoading();
+    } catch (error) {
+        hideLoading();
+        console.error('방문자 로드 실패:', error);
+        showToast('error', '로드 실패', '방문자 데이터를 불러오는데 실패했습니다.');
+    }
+}
+
+// 방문자 통계 업데이트
+async function updateVisitorStats(data) {
+    // 오늘 방문자 수
+    try {
+        const todayResponse = await fetch('https://dimj-form-proxy.vercel.app/api/track-visitor?list=true&period=today', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const todayData = await todayResponse.json();
+        const todayCount = document.getElementById('visitorTodayCount');
+        if (todayCount && todayData.success) {
+            todayCount.textContent = todayData.data ? todayData.data.length : 0;
+        }
+    } catch (error) {
+        console.error('오늘 방문자 수 로드 실패:', error);
+    }
+
+    // 최근 7일 방문자 수
+    try {
+        const weekResponse = await fetch('https://dimj-form-proxy.vercel.app/api/track-visitor?list=true&period=week', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const weekData = await weekResponse.json();
+        const weekCount = document.getElementById('visitorWeekCount');
+        if (weekCount && weekData.success) {
+            weekCount.textContent = weekData.data ? weekData.data.length : 0;
+        }
+    } catch (error) {
+        console.error('주간 방문자 수 로드 실패:', error);
+    }
+
+    // 부정클릭 의심 방문자 수
+    try {
+        const suspiciousResponse = await fetch('https://dimj-form-proxy.vercel.app/api/track-visitor?list=true&suspicious=true', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const suspiciousData = await suspiciousResponse.json();
+        const suspiciousCount = document.getElementById('visitorSuspiciousCount');
+        if (suspiciousCount && suspiciousData.success) {
+            suspiciousCount.textContent = suspiciousData.data ? suspiciousData.data.length : 0;
+        }
+    } catch (error) {
+        console.error('의심 방문자 수 로드 실패:', error);
+    }
+}
+
+// 방문자 테이블 렌더링
+function renderVisitorsTable(visitors) {
+    const tbody = document.getElementById('visitorsTableBody');
+    const showingInfo = document.getElementById('visitorShowingInfo');
+
+    if (!tbody) return;
+
+    if (!visitors || visitors.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="8" style="text-align: center; color: #64748b; padding: 2rem;">
+                    방문자 데이터가 없습니다.
+                </td>
+            </tr>
+        `;
+        if (showingInfo) showingInfo.textContent = '0개 IP 주소';
+        return;
+    }
+
+    tbody.innerHTML = visitors.map((visitor, index) => {
+        const isSuspicious = visitor.visit_count >= 5;
+        const suspiciousClass = isSuspicious ? 'style="background-color: #fff3cd;"' : '';
+
+        return `
+            <tr ${suspiciousClass}>
+                <td><strong>${index + 1}</strong></td>
+                <td>
+                    <span style="font-family: monospace; font-weight: 600;">
+                        ${visitor.ip_address}
+                    </span>
+                    ${isSuspicious ? '<span style="color: #dc2626; margin-left: 8px;">⚠️</span>' : ''}
+                </td>
+                <td>
+                    <span style="font-weight: 600; color: ${isSuspicious ? '#dc2626' : '#059669'};">
+                        ${visitor.visit_count}회
+                    </span>
+                </td>
+                <td>${formatDateTime(visitor.first_visit)}</td>
+                <td>${formatDateTime(visitor.last_visit)}</td>
+                <td>
+                    <span style="font-size: 0.875rem; color: #64748b;">
+                        ${visitor.referrer === 'direct' ? '직접 방문' : visitor.referrer}
+                    </span>
+                </td>
+                <td>
+                    <div style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.875rem;">
+                        ${visitor.page_urls ? visitor.page_urls.join(', ') : '-'}
+                    </div>
+                </td>
+                <td>
+                    <button class="btn-icon" onclick="copyToClipboard('${visitor.ip_address}')" title="IP 복사">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <button class="btn-icon danger" onclick="blockVisitorIP('${visitor.ip_address}')" title="IP 차단">
+                        <i class="fas fa-ban"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+
+    if (showingInfo) {
+        showingInfo.textContent = `${visitors.length}개 IP 주소`;
+    }
+}
+
+// 날짜/시간 포맷팅
+function formatDateTime(dateString) {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    return date.toLocaleString('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+// IP 주소 복사
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        showToast('success', 'IP 복사', `${text}가 클립보드에 복사되었습니다.`);
+    }).catch(err => {
+        console.error('복사 실패:', err);
+        showToast('error', '복사 실패', 'IP 주소 복사에 실패했습니다.');
+    });
+}
+
+// 방문자 IP 차단
+function blockVisitorIP(ip) {
+    if (!confirm(`IP 주소 ${ip}를 차단하시겠습니까?\n차단된 IP는 보안 설정 페이지에서 관리할 수 있습니다.`)) {
+        return;
+    }
+
+    if (adminState.blockedIPs.includes(ip)) {
+        showToast('warning', '이미 차단됨', '이미 차단된 IP입니다.');
+        return;
+    }
+
+    adminState.blockedIPs.push(ip);
+    localStorage.setItem('blockedIPs', JSON.stringify(adminState.blockedIPs));
+
+    showToast('success', 'IP 차단', `${ip}가 차단되었습니다.`);
+    loadVisitors(); // 목록 새로고침
+}
+
+// 방문자 검색 필터링
+function filterVisitors() {
+    const searchInput = document.getElementById('visitorSearchInput');
+    if (!searchInput) return;
+
+    const searchTerm = searchInput.value.toLowerCase();
+    const rows = document.querySelectorAll('#visitorsTableBody tr');
+
+    let visibleCount = 0;
+    rows.forEach(row => {
+        const ipCell = row.querySelector('td:nth-child(2)');
+        if (ipCell) {
+            const ip = ipCell.textContent.toLowerCase();
+            if (ip.includes(searchTerm)) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        }
+    });
+
+    const showingInfo = document.getElementById('visitorShowingInfo');
+    if (showingInfo) {
+        showingInfo.textContent = `${visibleCount}개 IP 주소`;
     }
 }
