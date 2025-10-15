@@ -7,40 +7,40 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 // 한국 시간(KST) 처리 유틸리티
 function getKSTDate(date = null) {
+    // 한국 시간대로 변환
     const targetDate = date ? new Date(date) : new Date();
-    // UTC 시간에 9시간 추가 (KST = UTC+9)
-    const kstDate = new Date(targetDate.getTime() + (9 * 60 * 60 * 1000));
-    return kstDate;
+    return new Date(targetDate.toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
 }
 
 function formatKSTDateTime(date = null) {
     const kstDate = getKSTDate(date);
-    const year = kstDate.getUTCFullYear();
-    const month = String(kstDate.getUTCMonth() + 1).padStart(2, '0');
-    const day = String(kstDate.getUTCDate()).padStart(2, '0');
-    const hours = String(kstDate.getUTCHours()).padStart(2, '0');
-    const minutes = String(kstDate.getUTCMinutes()).padStart(2, '0');
-    const seconds = String(kstDate.getUTCSeconds()).padStart(2, '0');
+    const year = kstDate.getFullYear();
+    const month = String(kstDate.getMonth() + 1).padStart(2, '0');
+    const day = String(kstDate.getDate()).padStart(2, '0');
+    const hours = String(kstDate.getHours()).padStart(2, '0');
+    const minutes = String(kstDate.getMinutes()).padStart(2, '0');
+    const seconds = String(kstDate.getSeconds()).padStart(2, '0');
 
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
 function getKSTISOString(date = null) {
-    const kstDate = getKSTDate(date);
-    return kstDate.toISOString();
+    // 현재 한국 시간을 ISO 형식으로 (타임존 정보 포함)
+    const now = date ? new Date(date) : new Date();
+    return now.toISOString();
 }
 
 function getKSTDateOnly(date = null) {
     const kstDate = getKSTDate(date);
-    const year = kstDate.getUTCFullYear();
-    const month = String(kstDate.getUTCMonth() + 1).padStart(2, '0');
-    const day = String(kstDate.getUTCDate()).padStart(2, '0');
+    const year = kstDate.getFullYear();
+    const month = String(kstDate.getMonth() + 1).padStart(2, '0');
+    const day = String(kstDate.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
 }
 
 function getKSTDateString(date = null) {
     const kstDate = getKSTDate(date);
-    return kstDate.toUTCString();
+    return kstDate.toDateString();
 }
 
 // 즉시 localStorage에서 배너와 상세페이지 로드 (동기)

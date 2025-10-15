@@ -28,40 +28,39 @@ let adminState = {
 // Utility Functions
 // 한국 시간(KST) 처리 유틸리티
 function getKSTDate(date = null) {
+    // 한국 시간대로 변환
     const targetDate = date ? new Date(date) : new Date();
-    // UTC 시간에 9시간 추가 (KST = UTC+9)
-    const kstDate = new Date(targetDate.getTime() + (9 * 60 * 60 * 1000));
-    return kstDate;
+    return new Date(targetDate.toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
 }
 
 function formatKSTDateTime(date = null) {
     const kstDate = getKSTDate(date);
-    const year = kstDate.getUTCFullYear();
-    const month = String(kstDate.getUTCMonth() + 1).padStart(2, '0');
-    const day = String(kstDate.getUTCDate()).padStart(2, '0');
-    const hours = String(kstDate.getUTCHours()).padStart(2, '0');
-    const minutes = String(kstDate.getUTCMinutes()).padStart(2, '0');
-    const seconds = String(kstDate.getUTCSeconds()).padStart(2, '0');
+    const year = kstDate.getFullYear();
+    const month = String(kstDate.getMonth() + 1).padStart(2, '0');
+    const day = String(kstDate.getDate()).padStart(2, '0');
+    const hours = String(kstDate.getHours()).padStart(2, '0');
+    const minutes = String(kstDate.getMinutes()).padStart(2, '0');
+    const seconds = String(kstDate.getSeconds()).padStart(2, '0');
 
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
 function formatKSTForDisplay(date = null) {
     const kstDate = getKSTDate(date);
-    const year = kstDate.getUTCFullYear();
-    const month = String(kstDate.getUTCMonth() + 1).padStart(2, '0');
-    const day = String(kstDate.getUTCDate()).padStart(2, '0');
-    const hours = String(kstDate.getUTCHours()).padStart(2, '0');
-    const minutes = String(kstDate.getUTCMinutes()).padStart(2, '0');
+    const year = kstDate.getFullYear();
+    const month = String(kstDate.getMonth() + 1).padStart(2, '0');
+    const day = String(kstDate.getDate()).padStart(2, '0');
+    const hours = String(kstDate.getHours()).padStart(2, '0');
+    const minutes = String(kstDate.getMinutes()).padStart(2, '0');
 
     return `${year}. ${month}. ${day} ${hours}:${minutes}`;
 }
 
 function getKSTDateOnly(date = null) {
     const kstDate = getKSTDate(date);
-    const year = kstDate.getUTCFullYear();
-    const month = String(kstDate.getUTCMonth() + 1).padStart(2, '0');
-    const day = String(kstDate.getUTCDate()).padStart(2, '0');
+    const year = kstDate.getFullYear();
+    const month = String(kstDate.getMonth() + 1).padStart(2, '0');
+    const day = String(kstDate.getDate()).padStart(2, '0');
 
     return `${year}-${month}-${day}`;
 }
@@ -410,7 +409,7 @@ function recordLoginAttempt(ipAddress, isSuccess) {
     const loginRecord = {
         timestamp: formatKSTDateTime(),
         date: getKSTDateOnly(),
-        time: `${String(kstDate.getUTCHours()).padStart(2, '0')}:${String(kstDate.getUTCMinutes()).padStart(2, '0')}:${String(kstDate.getUTCSeconds()).padStart(2, '0')}`,
+        time: `${String(kstDate.getHours()).padStart(2, '0')}:${String(kstDate.getMinutes()).padStart(2, '0')}:${String(kstDate.getSeconds()).padStart(2, '0')}`,
         ip: ipAddress,
         status: isSuccess ? '성공' : '실패',
         browser: navigator.userAgent.split(' ').pop().split('/')[0] || 'Unknown'
@@ -992,11 +991,11 @@ function formatDate(timestamp) {
 
 function formatDateForInput(timestamp) {
     const kstDate = getKSTDate(timestamp);
-    const year = kstDate.getUTCFullYear();
-    const month = String(kstDate.getUTCMonth() + 1).padStart(2, '0');
-    const day = String(kstDate.getUTCDate()).padStart(2, '0');
-    const hours = String(kstDate.getUTCHours()).padStart(2, '0');
-    const minutes = String(kstDate.getUTCMinutes()).padStart(2, '0');
+    const year = kstDate.getFullYear();
+    const month = String(kstDate.getMonth() + 1).padStart(2, '0');
+    const day = String(kstDate.getDate()).padStart(2, '0');
+    const hours = String(kstDate.getHours()).padStart(2, '0');
+    const minutes = String(kstDate.getMinutes()).padStart(2, '0');
     return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
