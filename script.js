@@ -624,7 +624,7 @@ document.addEventListener('DOMContentLoaded', function() {
     addInteractionTracking();
     cleanOldSubmitCounts();
     checkDailyLimit();
-    loadMainPageContent();
+    // loadMainPageContent(); // DOMContentLoaded에서 호출됨
     loadBannerContent();
     loadMainBannersContent();
     loadDetailImagesContent();
@@ -3015,18 +3015,20 @@ async function loadMainPageContent() {
                 });
 
                 const result = await response.json();
-                console.log(`로드 결과: ${setting.key}`, result);
+                console.log(`=== 로드: ${setting.key} , result.data:`, result.data);
 
                 if (result.success && result.data && result.data.length > 0) {
                     const element = document.getElementById(setting.elementId);
                     const value = result.data[result.data.length - 1].setting_value;
-                    console.log(`적용: ${setting.elementId} = ${value}`, element ? '요소 찾음' : '요소 없음');
+                    console.log(`=== Element ID: ${setting.elementId}, 찾음: ${element !== null}, Value: ${value}`);
                     if (element && value) {
                         element.textContent = value;
-                        console.log(`✅ ${setting.elementId} 업데이트 완료: ${value}`);
+                        console.log(`✅ ${setting.elementId} 텍스트 업데이트 완료: "${value}"`);
+                    } else {
+                        console.log(`❌ 업데이트 실패 - element: ${element}, value: ${value}`);
                     }
                 } else {
-                    console.log(`${setting.key} 데이터 없음 - 기본값 유지`);
+                    console.log(`❌ ${setting.key} 데이터 없음 또는 실패 - result:`, result);
                 }
             } catch (error) {
                 console.error(`${setting.key} 로드 실패:`, error);
