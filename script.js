@@ -5,6 +5,44 @@ window.currentStep = currentStep;
 // API Configuration
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXd6dnlyb2RwZG1mZ2xzcXF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIzMjUzMzEsImV4cCI6MjA0NzkwMTMzMX0.MkFZj8gNdkZT7xE9ysD1fkzN3bfOh5CtpOEtQGUCqY4';
 
+// 한국 시간(KST) 처리 유틸리티
+function getKSTDate(date = null) {
+    const targetDate = date ? new Date(date) : new Date();
+    // UTC 시간에 9시간 추가 (KST = UTC+9)
+    const kstDate = new Date(targetDate.getTime() + (9 * 60 * 60 * 1000));
+    return kstDate;
+}
+
+function formatKSTDateTime(date = null) {
+    const kstDate = getKSTDate(date);
+    const year = kstDate.getUTCFullYear();
+    const month = String(kstDate.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(kstDate.getUTCDate()).padStart(2, '0');
+    const hours = String(kstDate.getUTCHours()).padStart(2, '0');
+    const minutes = String(kstDate.getUTCMinutes()).padStart(2, '0');
+    const seconds = String(kstDate.getUTCSeconds()).padStart(2, '0');
+
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
+function getKSTISOString(date = null) {
+    const kstDate = getKSTDate(date);
+    return kstDate.toISOString();
+}
+
+function getKSTDateOnly(date = null) {
+    const kstDate = getKSTDate(date);
+    const year = kstDate.getUTCFullYear();
+    const month = String(kstDate.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(kstDate.getUTCDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+function getKSTDateString(date = null) {
+    const kstDate = getKSTDate(date);
+    return kstDate.toUTCString();
+}
+
 // 즉시 localStorage에서 배너와 상세페이지 로드 (동기)
 function loadImagesFromLocalStorageSync() {
     // Step 1 Main Banner
@@ -1159,13 +1197,13 @@ function updateStatistics(data) {
         totalGift: 0
     };
 
-    const today = new Date().toDateString();
+    const today = getKSTDateOnly();
 
     // 실제 데이터만 집계
     if (Array.isArray(data) && data.length > 0) {
         data.forEach(item => {
-            // 오늘 날짜 체크
-            if (item.created_at && new Date(item.created_at).toDateString() === today) {
+            // 오늘 날짜 체크 (KST 기준)
+            if (item.created_at && getKSTDateOnly(item.created_at) === today) {
                 stats.today++;
             }
 
@@ -1470,7 +1508,7 @@ async function submitToSupabase(data) {
 
         // 🔥 영문 필드명으로 변경 - Supabase 한글 컬럼 문제 해결
         const baseFields = {
-            created_at: new Date().toISOString(),
+            created_at: getKSTISOString(),
             name: data.name,
             phone: data.phone,
             carrier: selectedProvider || '',
@@ -1492,7 +1530,7 @@ async function submitToSupabase(data) {
         // 로컬 스토리지에 백업 저장
         const localData = {
             ...supabaseData,
-            timestamp: new Date().toISOString()
+            timestamp: getKSTISOString()
         };
         localStorage.setItem(`application_${applicationId}`, JSON.stringify(localData));
 
@@ -1985,9 +2023,9 @@ function showDetailPageBannerPlaceholder() {
     if (placeholder) placeholder.style.display = 'flex';
 }
 
-// Track visitor function
+// Track visitor function (KST 기준)
 function trackVisitor() {
-    const today = new Date().toISOString().split('T')[0];
+    const today = getKSTDateOnly();
     const visitors = JSON.parse(localStorage.getItem('dailyVisitors') || '{}');
     
     // Check if this is a new visit for today
@@ -2196,14 +2234,14 @@ function generateBrowserFingerprint() {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         screen: `${screen.width}x${screen.height}`,
         canvas: canvas.toDataURL(),
-        timestamp: new Date().toDateString() // Include date for daily reset
+        timestamp: getKSTDateString() // Include date for daily reset (KST)
     }));
     
     return fingerprint.substring(0, 20); // Use first 20 chars as identifier
 }
 
 function getTodayKey() {
-    return new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+    return getKSTDateOnly(); // YYYY-MM-DD format (KST)
 }
 
 function getStorageKey(identifier) {

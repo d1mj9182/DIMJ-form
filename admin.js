@@ -26,6 +26,46 @@ let adminState = {
 };
 
 // Utility Functions
+// 한국 시간(KST) 처리 유틸리티
+function getKSTDate(date = null) {
+    const targetDate = date ? new Date(date) : new Date();
+    // UTC 시간에 9시간 추가 (KST = UTC+9)
+    const kstDate = new Date(targetDate.getTime() + (9 * 60 * 60 * 1000));
+    return kstDate;
+}
+
+function formatKSTDateTime(date = null) {
+    const kstDate = getKSTDate(date);
+    const year = kstDate.getUTCFullYear();
+    const month = String(kstDate.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(kstDate.getUTCDate()).padStart(2, '0');
+    const hours = String(kstDate.getUTCHours()).padStart(2, '0');
+    const minutes = String(kstDate.getUTCMinutes()).padStart(2, '0');
+    const seconds = String(kstDate.getUTCSeconds()).padStart(2, '0');
+
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
+function formatKSTForDisplay(date = null) {
+    const kstDate = getKSTDate(date);
+    const year = kstDate.getUTCFullYear();
+    const month = String(kstDate.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(kstDate.getUTCDate()).padStart(2, '0');
+    const hours = String(kstDate.getUTCHours()).padStart(2, '0');
+    const minutes = String(kstDate.getUTCMinutes()).padStart(2, '0');
+
+    return `${year}. ${month}. ${day} ${hours}:${minutes}`;
+}
+
+function getKSTDateOnly(date = null) {
+    const kstDate = getKSTDate(date);
+    const year = kstDate.getUTCFullYear();
+    const month = String(kstDate.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(kstDate.getUTCDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+}
+
 function showLoading() {
     const overlay = document.getElementById('loadingOverlay');
     if (overlay) overlay.style.display = 'flex';
@@ -153,9 +193,9 @@ function setupEventListeners() {
         });
     }
 
-    // Set today's date as default
+    // Set today's date as default (KST 기준)
     if (dateFilter) {
-        dateFilter.value = new Date().toISOString().split('T')[0];
+        dateFilter.value = getKSTDateOnly();
     }
 }
 
@@ -366,11 +406,11 @@ async function getUserIP() {
 
 // Record login attempt
 function recordLoginAttempt(ipAddress, isSuccess) {
-    const now = new Date();
+    const kstDate = getKSTDate();
     const loginRecord = {
-        timestamp: now.toISOString(),
-        date: now.toLocaleDateString('ko-KR'),
-        time: now.toLocaleTimeString('ko-KR'),
+        timestamp: formatKSTDateTime(),
+        date: getKSTDateOnly(),
+        time: `${String(kstDate.getUTCHours()).padStart(2, '0')}:${String(kstDate.getUTCMinutes()).padStart(2, '0')}:${String(kstDate.getUTCSeconds()).padStart(2, '0')}`,
         ip: ipAddress,
         status: isSuccess ? '성공' : '실패',
         browser: navigator.userAgent.split(' ').pop().split('/')[0] || 'Unknown'
@@ -727,7 +767,7 @@ async function loadApplications() {
         // 전체 상태일 때는 날짜 필터 무시
         if (dateValue && statusValue !== '') {
             filteredApps = filteredApps.filter(app => {
-                const appDate = new Date(app.timestamp).toISOString().split('T')[0];
+                const appDate = getKSTDateOnly(app.timestamp);
                 return appDate === dateValue;
             });
         } else if (dateValue && statusValue === '') {
@@ -919,7 +959,7 @@ function renderApplicationsTable(applications, startIndex = 0) {
             <td>
                 <button onclick="openDateModal('${app.id}', '${formatDateForInput(app.timestamp)}')"
                         style="padding: 4px 8px; font-size: 0.875rem; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
-                    ${new Date(app.timestamp).toLocaleString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                    ${formatKSTForDisplay(app.timestamp)}
                 </button>
             </td>
             <td>${app.ip ? app.ip.substring(0, 15) : '-'}</td>
@@ -947,22 +987,16 @@ function renderApplicationsTable(applications, startIndex = 0) {
 }
 
 function formatDate(timestamp) {
-    return new Date(timestamp).toLocaleString('ko-KR', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
+    return formatKSTForDisplay(timestamp);
 }
 
 function formatDateForInput(timestamp) {
-    const date = new Date(timestamp);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const kstDate = getKSTDate(timestamp);
+    const year = kstDate.getUTCFullYear();
+    const month = String(kstDate.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(kstDate.getUTCDate()).padStart(2, '0');
+    const hours = String(kstDate.getUTCHours()).padStart(2, '0');
+    const minutes = String(kstDate.getUTCMinutes()).padStart(2, '0');
     return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
@@ -970,9 +1004,9 @@ function formatDateForInput(timestamp) {
 async function updateStats() {
     if (!adminState.isLoggedIn) return;
 
-    const today = new Date().toISOString().split('T')[0];
+    const today = getKSTDateOnly();
     const todayApplications = adminState.applications.filter(app => {
-        const appDate = new Date(app.timestamp).toISOString().split('T')[0];
+        const appDate = getKSTDateOnly(app.timestamp);
         return appDate === today;
     }).length;
 
@@ -1356,7 +1390,7 @@ function exportToExcel() {
     const url = URL.createObjectURL(blob);
 
     link.setAttribute('href', url);
-    link.setAttribute('download', `신청목록_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute('download', `신청목록_${getKSTDateOnly()}.csv`);
     link.style.visibility = 'hidden';
 
     document.body.appendChild(link);
@@ -1831,10 +1865,10 @@ function loadRecentApplications() {
     `).join('');
 }
 
-// Get time ago text
+// Get time ago text (KST 기준)
 function getTimeAgo(timestamp) {
-    const now = new Date();
-    const past = new Date(timestamp);
+    const now = getKSTDate();
+    const past = getKSTDate(timestamp);
     const diffMs = now - past;
     const diffMins = Math.floor(diffMs / 60000);
     const diffHours = Math.floor(diffMs / 3600000);
@@ -2423,17 +2457,10 @@ function renderVisitorsTable(visitors) {
     }
 }
 
-// 날짜/시간 포맷팅
+// 날짜/시간 포맷팅 (KST 기준)
 function formatDateTime(dateString) {
     if (!dateString) return '-';
-    const date = new Date(dateString);
-    return date.toLocaleString('ko-KR', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
+    return formatKSTForDisplay(dateString);
 }
 
 // IP 주소 복사
