@@ -3015,20 +3015,20 @@ async function loadMainPageContent() {
                 });
 
                 const result = await response.json();
-                console.log(`=== 로드: ${setting.key} , result.data:`, result.data);
+                console.log('로드 완료:', setting.key, 'result.data:', result.data);
 
                 if (result.success && result.data && result.data.length > 0) {
                     const element = document.getElementById(setting.elementId);
                     const value = result.data[result.data.length - 1].setting_value;
-                    console.log(`=== Element ID: ${setting.elementId}, 찾음: ${element !== null}, Value: ${value}`);
+                    console.log('Element 체크:', setting.elementId, '찾음:', element !== null, 'Value:', value);
                     if (element && value) {
                         element.textContent = value;
-                        console.log(`✅ ${setting.elementId} 텍스트 업데이트 완료: "${value}"`);
+                        console.log('✅ 업데이트 완료:', setting.elementId, '=', value);
                     } else {
-                        console.log(`❌ 업데이트 실패 - element: ${element}, value: ${value}`);
+                        console.log('❌ 업데이트 실패 - element:', element, 'value:', value);
                     }
                 } else {
-                    console.log(`❌ ${setting.key} 데이터 없음 또는 실패 - result:`, result);
+                    console.log('❌ 데이터 없음:', setting.key, 'result:', result);
                 }
             } catch (error) {
                 console.error(`${setting.key} 로드 실패:`, error);
