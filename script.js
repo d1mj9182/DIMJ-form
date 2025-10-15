@@ -2949,15 +2949,9 @@ async function loadHeroContent() {
     }
 }
 
-// 메인페이지 콘텐츠 로드 (즉시 실행)
-(async function loadMainPageContent() {
+// 메인페이지 콘텐츠 로드
+async function loadMainPageContent() {
     console.log('=== 메인페이지 콘텐츠 로드 시작 ===');
-
-    // DOM이 준비될 때까지 대기
-    if (document.readyState === 'loading') {
-        await new Promise(resolve => document.addEventListener('DOMContentLoaded', resolve));
-    }
-
     try {
         const settings = [
             { key: 'main_hero_title', elementId: 'mainHeroTitle' },
@@ -2985,10 +2979,9 @@ async function loadHeroContent() {
                     console.log(`적용: ${setting.elementId} = ${value}`, element ? '요소 찾음' : '요소 없음');
                     if (element && value) {
                         element.textContent = value;
-                        console.log(`✅ ${setting.elementId} 업데이트 완료: ${value}`);
                     }
                 } else {
-                    console.log(`${setting.key} 데이터 없음 - 기본 텍스트 유지`);
+                    console.log(`${setting.key} 데이터 없음`);
                 }
             } catch (error) {
                 console.error(`${setting.key} 로드 실패:`, error);
@@ -2998,7 +2991,7 @@ async function loadHeroContent() {
     } catch (error) {
         console.error('메인페이지 콘텐츠 로드 실패:', error);
     }
-})();
+}
 
 // Enter 키로 패스워드 확인
 document.addEventListener('DOMContentLoaded', function() {
@@ -3013,6 +3006,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 모바일에서 부정클릭방지 버튼 텍스트 변경
     updateFraudButtonTextForMobile();
+
+    // 메인페이지 콘텐츠 로드
+    loadMainPageContent();
 
     // 히어로 섹션 콘텐츠 로드
     loadHeroContent();
