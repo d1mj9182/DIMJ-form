@@ -129,6 +129,8 @@ document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
     loadBlockedIPs();
     loadLoginHistory();
+    // 어드민페이지 로드 시 Supabase에서 기존 콘텐츠 가져오기
+    loadContentToAdmin();
 });
 
 // Event listeners
@@ -1779,6 +1781,58 @@ function switchContentTab(tabName) {
 }
 
 // Save content
+// 어드민페이지 로드 시 기존 콘텐츠를 Supabase에서 가져와서 input 필드에 채우기
+async function loadContentToAdmin() {
+    console.log('=== 어드민 콘텐츠 로드 시작 ===');
+
+    const settings = [
+        // 메인 페이지 콘텐츠
+        { id: 'mainHeroTitle', key: 'main_hero_title' },
+        { id: 'mainHeroSubtitle', key: 'main_hero_subtitle' },
+        { id: 'mainHeroNote', key: 'main_hero_note' },
+        { id: 'warningTitle', key: 'warning_title' },
+        { id: 'warningContent', key: 'warning_content' },
+        { id: 'cashRewardAmount', key: 'cash_reward_amount' },
+        { id: 'totalLossAmount', key: 'total_loss_amount' },
+
+        // 히어로 섹션
+        { id: 'heroTitle', key: 'hero_title' },
+        { id: 'heroSubtitle', key: 'hero_subtitle' },
+
+        // 부정클릭 경고
+        { id: 'fraudWarningMessage', key: 'fraud_warning_message' }
+    ];
+
+    for (const setting of settings) {
+        try {
+            const response = await fetch(`${PROXY_URL}?table=admin_settings&key=${setting.key}`, {
+                method: 'GET',
+                headers: {
+                    'x-api-key': SUPABASE_ANON_KEY,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const result = await response.json();
+            console.log(`로드: ${setting.key}`, result);
+
+            if (result.success && result.data && result.data.length > 0) {
+                const element = document.getElementById(setting.id);
+                const value = result.data[result.data.length - 1].setting_value;
+
+                if (element && value) {
+                    element.value = value;
+                    console.log(`✅ ${setting.id} 로드 완료: ${value}`);
+                }
+            }
+        } catch (error) {
+            console.error(`${setting.key} 로드 실패:`, error);
+        }
+    }
+
+    console.log('=== 어드민 콘텐츠 로드 완료 ===');
+}
+
 async function saveContent() {
     console.log('=== saveContent 함수 시작 ===');
     showLoading();
