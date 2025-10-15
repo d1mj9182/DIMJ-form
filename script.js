@@ -2961,9 +2961,13 @@ async function loadHeroContent() {
         if (titleResult.success && titleResult.data && titleResult.data.length > 0) {
             const heroTitle = document.getElementById('heroTitle');
             const title = titleResult.data[titleResult.data.length - 1].setting_value;
-            if (heroTitle && title) {
-                heroTitle.textContent = title;
+            if (heroTitle) {
+                heroTitle.textContent = title || '';
+                heroTitle.style.display = title ? '' : 'none';
             }
+        } else {
+            const heroTitle = document.getElementById('heroTitle');
+            if (heroTitle) heroTitle.style.display = 'none';
         }
 
         // 히어로 부제목 로드
@@ -2978,9 +2982,13 @@ async function loadHeroContent() {
         if (subtitleResult.success && subtitleResult.data && subtitleResult.data.length > 0) {
             const heroSubtitle = document.getElementById('heroSubtitle');
             const subtitle = subtitleResult.data[subtitleResult.data.length - 1].setting_value;
-            if (heroSubtitle && subtitle) {
-                heroSubtitle.innerHTML = subtitle;
+            if (heroSubtitle) {
+                heroSubtitle.innerHTML = subtitle || '';
+                heroSubtitle.style.display = subtitle ? '' : 'none';
             }
+        } else {
+            const heroSubtitle = document.getElementById('heroSubtitle');
+            if (heroSubtitle) heroSubtitle.style.display = 'none';
         }
     } catch (error) {
         console.error('히어로 콘텐츠 로드 실패:', error);
@@ -3015,11 +3023,17 @@ async function loadMainPageContent() {
                     const element = document.getElementById(setting.elementId);
                     const value = result.data[result.data.length - 1].setting_value;
                     console.log(`적용: ${setting.elementId} = ${value}`, element ? '요소 찾음' : '요소 없음');
-                    if (element && value) {
-                        element.textContent = value;
+                    if (element) {
+                        element.textContent = value || '';
+                        element.style.display = value ? '' : 'none'; // 값이 없으면 숨김
                     }
                 } else {
                     console.log(`${setting.key} 데이터 없음`);
+                    // 데이터가 없을 경우 요소 숨김
+                    const element = document.getElementById(setting.elementId);
+                    if (element) {
+                        element.style.display = 'none';
+                    }
                 }
             } catch (error) {
                 console.error(`${setting.key} 로드 실패:`, error);
