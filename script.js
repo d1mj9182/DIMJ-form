@@ -3015,11 +3015,19 @@ async function loadMainPageContent() {
                 });
 
                 const result = await response.json();
-                console.log('로드 완료:', setting.key, 'result.data:', result.data);
+                console.log('로드 완료:', setting.key, 'result:', result);
 
+                // 프록시 API 응답 구조 호환 처리
+                let data = null;
                 if (result.success && result.data && result.data.length > 0) {
+                    data = result.data; // 표준 구조: { success: true, data: [...] }
+                } else if (Array.isArray(result) && result.length > 0) {
+                    data = result; // 직접 배열: [{...}]
+                }
+
+                if (data && data.length > 0) {
                     const element = document.getElementById(setting.elementId);
-                    const value = result.data[result.data.length - 1].setting_value;
+                    const value = data[data.length - 1].setting_value;
                     console.log('Element 체크:', setting.elementId, '찾음:', element !== null, 'Value:', value);
                     if (element && value) {
                         element.textContent = value;
