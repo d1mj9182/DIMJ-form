@@ -2527,8 +2527,17 @@ async function showFraudWarning() {
         });
 
         const result = await response.json();
+
+        // 프록시 API 응답 구조 호환 처리
+        let data = null;
         if (result.success && result.data && result.data.length > 0) {
-            const message = result.data[result.data.length - 1].setting_value;
+            data = result.data;
+        } else if (Array.isArray(result) && result.length > 0) {
+            data = result;
+        }
+
+        if (data && data.length > 0) {
+            const message = data[data.length - 1].setting_value;
             if (message) {
                 warningText.textContent = message;
             }
@@ -2958,9 +2967,18 @@ async function loadHeroContent() {
             }
         });
         const titleResult = await titleResponse.json();
+
+        // 프록시 API 응답 구조 호환 처리
+        let titleData = null;
         if (titleResult.success && titleResult.data && titleResult.data.length > 0) {
+            titleData = titleResult.data;
+        } else if (Array.isArray(titleResult) && titleResult.length > 0) {
+            titleData = titleResult;
+        }
+
+        if (titleData && titleData.length > 0) {
             const heroTitle = document.getElementById('heroTitle');
-            const title = titleResult.data[titleResult.data.length - 1].setting_value;
+            const title = titleData[titleData.length - 1].setting_value;
             if (heroTitle && title) {
                 heroTitle.textContent = title;
                 console.log('✅ heroTitle 업데이트 완료:', title);
@@ -2978,9 +2996,18 @@ async function loadHeroContent() {
             }
         });
         const subtitleResult = await subtitleResponse.json();
+
+        // 프록시 API 응답 구조 호환 처리
+        let subtitleData = null;
         if (subtitleResult.success && subtitleResult.data && subtitleResult.data.length > 0) {
+            subtitleData = subtitleResult.data;
+        } else if (Array.isArray(subtitleResult) && subtitleResult.length > 0) {
+            subtitleData = subtitleResult;
+        }
+
+        if (subtitleData && subtitleData.length > 0) {
             const heroSubtitle = document.getElementById('heroSubtitle');
-            const subtitle = subtitleResult.data[subtitleResult.data.length - 1].setting_value;
+            const subtitle = subtitleData[subtitleData.length - 1].setting_value;
             if (heroSubtitle && subtitle) {
                 heroSubtitle.innerHTML = subtitle;
                 console.log('✅ heroSubtitle 업데이트 완료:', subtitle);
