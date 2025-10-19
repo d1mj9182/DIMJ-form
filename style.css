@@ -705,6 +705,18 @@ body {
     white-space: pre-line; /* 줄바꿈 유지 */
 }
 
+/* 수파베이스 데이터 로딩 중 깜빡임 방지 */
+#mainHeroTitle, #mainHeroSubtitle, #mainHeroNote,
+#heroTitle, #heroSubtitle {
+    opacity: 0;
+    transition: opacity 0.3s ease-in;
+}
+
+#mainHeroTitle.loaded, #mainHeroSubtitle.loaded, #mainHeroNote.loaded,
+#heroTitle.loaded, #heroSubtitle.loaded {
+    opacity: 1;
+}
+
 .benefits-list {
     margin-bottom: 2rem;
 }

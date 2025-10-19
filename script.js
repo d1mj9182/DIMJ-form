@@ -2981,9 +2981,15 @@ async function loadHeroContent() {
             const title = titleData[titleData.length - 1].setting_value;
             if (heroTitle && title) {
                 heroTitle.textContent = title;
+                heroTitle.classList.add('loaded'); // 로딩 완료 표시
                 console.log('✅ heroTitle 업데이트 완료:', title);
             }
         } else {
+            // 데이터가 없어도 하드코딩 값 표시
+            const heroTitle = document.getElementById('heroTitle');
+            if (heroTitle) {
+                heroTitle.classList.add('loaded');
+            }
             console.log('hero_title 데이터 없음 - 기본값 유지');
         }
 
@@ -3010,9 +3016,15 @@ async function loadHeroContent() {
             const subtitle = subtitleData[subtitleData.length - 1].setting_value;
             if (heroSubtitle && subtitle) {
                 heroSubtitle.textContent = subtitle; // textContent로 변경 (CSS white-space: pre-line 적용)
+                heroSubtitle.classList.add('loaded'); // 로딩 완료 표시
                 console.log('✅ heroSubtitle 업데이트 완료:', subtitle);
             }
         } else {
+            // 데이터가 없어도 하드코딩 값 표시
+            const heroSubtitle = document.getElementById('heroSubtitle');
+            if (heroSubtitle) {
+                heroSubtitle.classList.add('loaded');
+            }
             console.log('hero_subtitle 데이터 없음 - 기본값 유지');
         }
     } catch (error) {
@@ -3058,11 +3070,17 @@ async function loadMainPageContent() {
                     console.log('Element 체크:', setting.elementId, '찾음:', element !== null, 'Value:', value);
                     if (element && value) {
                         element.textContent = value;
+                        element.classList.add('loaded'); // 로딩 완료 표시
                         console.log('✅ 업데이트 완료:', setting.elementId, '=', value);
                     } else {
                         console.log('❌ 업데이트 실패 - element:', element, 'value:', value);
                     }
                 } else {
+                    // 데이터가 없어도 하드코딩 값 표시
+                    const element = document.getElementById(setting.elementId);
+                    if (element) {
+                        element.classList.add('loaded');
+                    }
                     console.log('❌ 데이터 없음:', setting.key, 'result:', result);
                 }
             } catch (error) {
