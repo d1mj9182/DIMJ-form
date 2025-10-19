@@ -4510,7 +4510,7 @@ button.telecom-btn.selected:nth-child(6):hover {
 @media (min-width: 1024px) {
     .stats-grid {
         display: grid !important;
-        grid-template-columns: repeat(6, 1fr) !important;
+        grid-template-columns: repeat(5, 1fr) !important;
         gap: 20px !important;
         padding: 20px !important;
         max-width: 1400px;
@@ -4519,7 +4519,7 @@ button.telecom-btn.selected:nth-child(6):hover {
 
     .stat-card {
         min-height: 100px !important;
-        max-width: 160px !important;
+        max-width: 200px !important;
         padding: 12px 14px !important;
         border-radius: 8px !important;
     }
@@ -4566,10 +4566,17 @@ button.telecom-btn.selected:nth-child(6):hover {
         margin-right: 6px !important;
     }
 
-    /* 하단 전체 너비 카드 (사은품 지급) */
+    /* 설치 완료와 사은품 지급 카드를 두 번째 줄에 나란히 배치 */
+    .stat-card.stat-yellow {
+        grid-column: 1 / 2 !important;
+        max-width: 200px !important;
+    }
+
     .stat-card.stat-wide {
-        grid-column: 1 / -1 !important;
-        max-width: none !important;
+        grid-column: 2 / 3 !important;
+        max-width: 200px !important;
+        padding: 12px 14px !important;
+        text-align: left !important;
     }
 
     /* 현황판 컨테이너 */
