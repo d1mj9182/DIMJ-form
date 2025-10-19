@@ -701,6 +701,10 @@ body {
     margin-bottom: 0.5rem;
 }
 
+.warning-box p {
+    white-space: pre-line; /* 줄바꿈 유지 */
+}
+
 .benefits-list {
     margin-bottom: 2rem;
 }

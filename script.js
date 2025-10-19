@@ -3009,7 +3009,7 @@ async function loadHeroContent() {
             const heroSubtitle = document.getElementById('heroSubtitle');
             const subtitle = subtitleData[subtitleData.length - 1].setting_value;
             if (heroSubtitle && subtitle) {
-                heroSubtitle.innerHTML = subtitle;
+                heroSubtitle.textContent = subtitle; // textContent로 변경 (CSS white-space: pre-line 적용)
                 console.log('✅ heroSubtitle 업데이트 완료:', subtitle);
             }
         } else {
