@@ -4568,12 +4568,12 @@ button.telecom-btn.selected:nth-child(6):hover {
 
     /* 설치 완료와 사은품 지급 카드를 두 번째 줄에 나란히 배치 */
     .stat-card.stat-yellow {
-        grid-column: 1 / 4 !important;
+        grid-column: 1 / 3 !important;
         max-width: none !important;
     }
 
     .stat-card.stat-wide {
-        grid-column: 4 / 6 !important;
+        grid-column: 3 / 6 !important;
         max-width: none !important;
         padding: 12px 14px !important;
         text-align: left !important;
