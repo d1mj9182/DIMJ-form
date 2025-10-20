@@ -2993,8 +2993,8 @@ async function loadHeroContent() {
             console.log('hero_title 데이터 없음 - 기본값 유지');
         }
 
-        // 히어로 부제목 로드
-        const subtitleResponse = await fetch('https://dimj-form-proxy.vercel.app/api/supabase?table=admin_settings&key=hero_subtitle', {
+        // 히어로 부제목 로드 (경고 박스 내용)
+        const subtitleResponse = await fetch('https://dimj-form-proxy.vercel.app/api/supabase?table=admin_settings&key=warning_content', {
             method: 'GET',
             headers: {
                 'x-api-key': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXd6dnlyb2RwZG1mZ2xzcXF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIzMjUzMzEsImV4cCI6MjA0NzkwMTMzMX0.MkFZj8gNdkZT7xE9ysD1fkzN3bfOh5CtpOEtQGUCqY4',
@@ -3025,7 +3025,7 @@ async function loadHeroContent() {
             if (heroSubtitle) {
                 heroSubtitle.classList.add('loaded');
             }
-            console.log('hero_subtitle 데이터 없음 - 기본값 유지');
+            console.log('warning_content 데이터 없음 - 기본값 유지');
         }
     } catch (error) {
         console.error('히어로 콘텐츠 로드 실패:', error);
