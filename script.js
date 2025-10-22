@@ -1459,9 +1459,18 @@ async function handleFormSubmit(e) {
     const phoneInput = document.getElementById('phone');
     const preferenceSelect = document.getElementById('preference');
 
+    console.log('🔍 nameInput 찾기:', nameInput);
+    console.log('🔍 phoneInput 찾기:', phoneInput);
+    console.log('🔍 preferenceSelect 찾기:', preferenceSelect);
+
     if (nameInput) formData.name = nameInput.value.trim();
     if (phoneInput) formData.phone = phoneInput.value.trim();
-    if (preferenceSelect) formData.preference = preferenceSelect.value;
+    if (preferenceSelect) {
+        formData.preference = preferenceSelect.value;
+        console.log('✅ preferenceSelect.value:', preferenceSelect.value);
+    } else {
+        console.error('❌ preferenceSelect를 찾을 수 없음!');
+    }
 
     console.log('📋 수집된 formData:', formData);
     console.log('🕐 선택된 상담희망시간:', formData.preference);
