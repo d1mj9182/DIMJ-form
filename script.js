@@ -1448,26 +1448,44 @@ function validateForm() {
     }
 }
 
-function handleFormSubmit(e) {
+async function handleFormSubmit(e) {
+    console.log('🚀 폼 제출 시작!');
     e.preventDefault();
-    
+
+    showLoadingState();
+
     // Get form data
     const nameInput = document.getElementById('name');
     const phoneInput = document.getElementById('phone');
     const preferenceSelect = document.getElementById('preference');
-    
+
     if (nameInput) formData.name = nameInput.value.trim();
     if (phoneInput) formData.phone = phoneInput.value.trim();
     if (preferenceSelect) formData.preference = preferenceSelect.value;
-    
-    // Submit to Supabase (simulation)
-    submitToSupabase(formData);
-    
+
+    console.log('📋 수집된 formData:', formData);
+    console.log('🕐 선택된 상담희망시간:', formData.preference);
+
+    // ✅ 상태 필드 추가 - 모든 신청은 '상담대기' 상태로 시작
+    formData.status = '상담대기';
+
     // Move to completion step
     nextStep();
-    
-    // Display submitted information
     displaySubmittedInfo();
+
+    try {
+        // Submit to Supabase (백그라운드)
+        await submitToSupabase(formData);
+        console.log('✅ Supabase 전송 완료!');
+
+        hideLoadingState();
+        resetAntiSpam();
+        recordSuccessfulSubmit();
+    } catch (error) {
+        console.error('❌ Form submission error:', error);
+        hideLoadingState();
+        resetAntiSpam();
+    }
 }
 
 // Supabase 설정은 프록시 서버를 통해 처리
@@ -1750,62 +1768,6 @@ function hideLoadingState() {
     }
 }
 
-// Enhanced form submission with loading state and anti-fraud protection
-async function handleFormSubmit(e) {
-    console.log('🚀🚀🚀 폼 제출 시작! EVENT:', e);
-    console.log('🚀🚀🚀 이벤트 타입:', e.type);
-    console.log('🚀🚀🚀 이벤트 타겟:', e.target);
-    e.preventDefault();
-
-    // 🔥 임시 우회: 모든 검증 비활성화 (디버깅용)
-    console.log('⚠️ 모든 검증 임시 우회 - 디버깅 모드');
-
-    // Check daily limit first (비활성화)
-    console.log('일일 제한 체크: 우회됨');
-
-    // Anti-fraud checks (비활성화)
-    console.log('중복 제출 방지: 우회됨');
-
-    // Form integrity (비활성화)
-    console.log('폼 무결성 검증: 우회됨');
-    
-    showLoadingState();
-    
-    // Get form data
-    const nameInput = document.getElementById('name');
-    const phoneInput = document.getElementById('phone');
-    const preferenceSelect = document.getElementById('preference');
-    
-    if (nameInput) formData.name = nameInput.value.trim();
-    if (phoneInput) formData.phone = phoneInput.value.trim();
-    if (preferenceSelect) formData.preference = preferenceSelect.value;
-
-    // ✅ 상태 필드 추가 - 모든 신청은 '상담대기' 상태로 시작
-    formData.status = '상담대기';
-
-    // 🔥 즉시 다음 페이지로 이동 (에러와 관계없이)
-    console.log('🚀 즉시 다음 페이지로 이동!');
-    nextStep();
-    displaySubmittedInfo();
-
-    try {
-        // Submit to Supabase (백그라운드)
-        console.log('🔥🔥🔥 submitToSupabase 호출 직전!', formData);
-        await submitToSupabase(formData);
-        console.log('🔥🔥🔥 submitToSupabase 호출 완료!');
-
-        // 백그라운드 처리
-        hideLoadingState();
-        resetAntiSpam();
-        recordSuccessfulSubmit();
-
-    } catch (error) {
-        console.error('Form submission error (백그라운드):', error);
-        hideLoadingState();
-        resetAntiSpam();
-        // 에러가 있어도 페이지 이동은 이미 완료됨
-    }
-}
 
 // Add entrance animations
 function addEntranceAnimations() {
