@@ -957,6 +957,7 @@ function renderApplicationsTable(applications, startIndex = 0) {
             <td>${displayApp.phone}</td>
             <td>${app.service}</td>
             <td>${app.provider || '-'}</td>
+            <td>${app.preference || '-'}</td>
             <td>
                 <button onclick="openDateModal('${app.id}', '${formatDateForInput(app.timestamp)}')"
                         style="padding: 4px 8px; font-size: 0.875rem; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">

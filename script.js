@@ -1514,7 +1514,7 @@ async function submitToSupabase(data) {
             carrier: selectedProvider || '',
             main_service: selectedServices.main || '',
             other_service: selectedServices.additional || '',
-            preferred_time: data.preference || '빠른 시간에 연락드립니다',
+            preferred_time: data.preference && data.preference !== '' ? data.preference : '빠른 시간에 연락드립니다',
             privacy_agreed: true,
             status: data.status || '상담대기',
             gift_amount: 0, // 기본 사은품 0원 (관리자가 수동 지정)
