@@ -737,6 +737,7 @@ function setupEventListeners() {
                 // 폼 데이터 수집
                 const nameInput = document.getElementById('name');
                 const phoneInput = document.getElementById('phone');
+                const preferenceSelect = document.getElementById('preference');
                 const privacyAgree = document.getElementById('privacyAgree');
 
                 // 🔥 개인정보 체크박스 강제 체크
@@ -753,6 +754,12 @@ function setupEventListeners() {
                     formData.phone = phoneInput.value.trim();
                     formData.service = '인터넷+IPTV';
                     formData.provider = 'SK';
+
+                    // 🔥 상담희망시간 수집
+                    if (preferenceSelect) {
+                        formData.preference = preferenceSelect.value;
+                        console.log('✅ 상담희망시간 수집:', preferenceSelect.value);
+                    }
 
                     // 즉시 다음 페이지로
                     nextStep();
