@@ -1064,7 +1064,11 @@ async function loadRealtimeData() {
             return dateB - dateA; // 최신 접수건이 위로
         });
 
-        updateConsultationList(applications);
+        // Step 2가 아닐 때만 updateConsultationList 호출 (자동 슬라이드와 충돌 방지)
+        if (window.currentStep !== 2) {
+            updateConsultationList(applications);
+        }
+
         updateStatistics(applications);
 
         // Step 2에서만 자동 슬라이드 데이터 저장
