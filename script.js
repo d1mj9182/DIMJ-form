@@ -118,10 +118,10 @@ async function loadBannersFromAdmin() {
         console.log('🔍 Step1 응답 상태:', response.status);
         const result = await response.json();
         console.log('🔍 Step1 결과:', result);
-        console.log('🔍 배열?', Array.isArray(result), '길이:', result?.length);
+        console.log('🔍 result.data 배열?', Array.isArray(result.data), '길이:', result.data?.length);
 
-        if (Array.isArray(result) && result.length > 0) {
-            const step1BannerData = result[0].setting_value;
+        if (result.success && Array.isArray(result.data) && result.data.length > 0) {
+            const step1BannerData = result.data[0].setting_value;
             console.log('🔍 Step1 데이터 있음, 길이:', step1BannerData?.length);
             if (step1BannerImg) {
                 step1BannerImg.src = step1BannerData;
@@ -152,10 +152,10 @@ async function loadBannersFromAdmin() {
         console.log('🔍 Step2 응답 상태:', response.status);
         const result = await response.json();
         console.log('🔍 Step2 결과:', result);
-        console.log('🔍 배열?', Array.isArray(result), '길이:', result?.length);
+        console.log('🔍 result.data 배열?', Array.isArray(result.data), '길이:', result.data?.length);
 
-        if (Array.isArray(result) && result.length > 0) {
-            const step2BannerData = result[0].setting_value;
+        if (result.success && Array.isArray(result.data) && result.data.length > 0) {
+            const step2BannerData = result.data[0].setting_value;
             console.log('🔍 Step2 데이터 있음, 길이:', step2BannerData?.length);
             if (step2BannerImg) {
                 step2BannerImg.src = step2BannerData;
@@ -188,10 +188,10 @@ async function loadBannersFromAdmin() {
             })
             .then(result => {
                 console.log(`🔍 상세이미지 ${i} 결과:`, result);
-                console.log(`🔍 배열?`, Array.isArray(result), '길이:', result?.length);
+                console.log(`🔍 result.data 배열?`, Array.isArray(result.data), '길이:', result.data?.length);
 
-                if (Array.isArray(result) && result.length > 0) {
-                    const detailImageData = result[0].setting_value;
+                if (result.success && Array.isArray(result.data) && result.data.length > 0) {
+                    const detailImageData = result.data[0].setting_value;
                     console.log(`🔍 상세이미지 ${i} 데이터 있음, 길이:`, detailImageData?.length);
                     const detailImgContainer = document.getElementById(`detailImage${i}Container`);
 
