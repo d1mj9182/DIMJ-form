@@ -1087,6 +1087,12 @@ function updateConsultationList(data) {
     const currentData = data.slice(startIndex, endIndex);
 
     const htmlContent = currentData.map(item => {
+        // 48시간 경과 여부 확인
+        const createdDate = new Date(item.created_at);
+        const now = new Date();
+        const hoursDiff = (now - createdDate) / (1000 * 60 * 60); // 시간 차이
+        const isOlderThan48Hours = hoursDiff > 48;
+
         const maskedName = item.name ?
             (item.name.length === 1 ? item.name[0] + '*' :
              item.name.length === 2 ? item.name[0] + '*' :
@@ -1098,6 +1104,12 @@ function updateConsultationList(data) {
             if (parts.length === 3) {
                 maskedPhone = `${parts[0]}-${parts[1].substring(0,1)}***-${parts[2].substring(0,2)}**`;
             }
+        }
+
+        // 48시간 지났으면 상담희망시간 마스킹
+        let displayPreferredTime = item.preferred_time || '빠른 시간에 연락드립니다';
+        if (isOlderThan48Hours) {
+            displayPreferredTime = '***';
         }
 
         const serviceInfo = [item.carrier, item.main_service, item.other_service].filter(Boolean).join(' · ');
@@ -1113,7 +1125,6 @@ function updateConsultationList(data) {
         const statusColor = statusColors[item.status] || '#17a2b8';
 
         // 실제 날짜 계산
-        const createdDate = new Date(item.created_at);
         const year = createdDate.getFullYear();
         const month = String(createdDate.getMonth() + 1).padStart(2, '0');
         const day = String(createdDate.getDate()).padStart(2, '0');
@@ -1167,7 +1178,7 @@ function updateConsultationList(data) {
                 </div>
 
                 <div style="color: #ffc107; font-size: 13px; margin-top: 4px;">
-                    🕐 ${item.preferred_time || '빠른 시간에 연락드립니다'}
+                    🕐 ${displayPreferredTime}
                 </div>
 
                 ${item.gift_amount ?
