@@ -2779,14 +2779,13 @@ button.telecom-btn.selected:nth-child(6):hover {
     position: fixed;
     bottom: 16.5rem;
     right: 2rem;
-    width: 120px;
+    width: 50px;
     height: 50px;
     background: linear-gradient(135deg, #00c853, #00a047);
     border: none;
-    border-radius: 25px;
+    border-radius: 50%;
     color: white;
-    font-size: 0.95rem;
-    font-weight: 700;
+    font-size: 1.5rem;
     cursor: pointer;
     box-shadow: 0 4px 12px rgba(0, 200, 83, 0.4);
     transition: all 0.3s ease;
@@ -2796,7 +2795,6 @@ button.telecom-btn.selected:nth-child(6):hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
     text-decoration: none;
 }
 
@@ -2816,21 +2814,13 @@ button.telecom-btn.selected:nth-child(6):hover {
     box-shadow: 0 2px 8px rgba(0, 200, 83, 0.4);
 }
 
-.phone-badge-button i {
-    font-size: 1.1rem;
-}
-
 @media (max-width: 768px) {
     .phone-badge-button {
         bottom: 13rem;
         right: 1rem;
-        width: 110px;
+        width: 45px;
         height: 45px;
-        font-size: 0.85rem;
-    }
-
-    .phone-badge-button i {
-        font-size: 1rem;
+        font-size: 1.3rem;
     }
 }
 
