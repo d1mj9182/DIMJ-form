@@ -460,21 +460,21 @@ function checkURLHash() {
 // Go to specific step function
 function goToStep(stepNumber, isPreview = false) {
     console.log('goToStep called:', stepNumber, isPreview ? '(preview)' : '');
-    
+
     // Validate step number
     if (stepNumber < 1 || stepNumber > 3) {
         console.error('Invalid step number:', stepNumber);
         return;
     }
-    
+
     // Update current step
     currentStep = stepNumber;
     window.currentStep = currentStep;
-    
+
     // Hide all steps
     const allSteps = document.querySelectorAll('.step-content');
     allSteps.forEach(step => step.classList.remove('active'));
-    
+
     // Show target step
     const targetStep = document.getElementById(`step${stepNumber}`);
     if (targetStep) {
@@ -484,14 +484,14 @@ function goToStep(stepNumber, isPreview = false) {
         console.error('Could not find step element:', `step${stepNumber}`);
         return;
     }
-    
+
     // Update progress bar
     const progressBar = document.getElementById('progressBar');
     if (progressBar) {
         const percentage = (stepNumber / 3) * 100;
         progressBar.style.width = `${percentage}%`;
     }
-    
+
     // Update step indicator
     const steps = document.querySelectorAll('.step');
     steps.forEach((step, index) => {
@@ -501,7 +501,39 @@ function goToStep(stepNumber, isPreview = false) {
             step.classList.remove('active');
         }
     });
-    
+
+    // Step 2 진입 시 실시간 상담 현황 초기화
+    if (stepNumber === 2) {
+        window.isFirstCycleAfterStep2 = true;
+        window.autoSlideCurrentPage = 1;
+
+        if (window.autoSlideData && window.autoSlideData.length > 0) {
+            const totalPages = Math.ceil(window.autoSlideData.length / 7);
+
+            if (window.autoSlideInterval) {
+                clearInterval(window.autoSlideInterval);
+            }
+
+            displayAutoSlidePage(window.autoSlideData, 1);
+
+            if (totalPages > 1) {
+                window.autoSlideInterval = setTimeout(() => {
+                    window.autoSlideCurrentPage = 2;
+                    displayAutoSlidePage(window.autoSlideData, 2);
+                    window.isFirstCycleAfterStep2 = false;
+
+                    window.autoSlideInterval = setInterval(() => {
+                        window.autoSlideCurrentPage++;
+                        if (window.autoSlideCurrentPage > totalPages) {
+                            window.autoSlideCurrentPage = 1;
+                        }
+                        displayAutoSlidePage(window.autoSlideData, window.autoSlideCurrentPage);
+                    }, 3000);
+                }, 12000);
+            }
+        }
+    }
+
     // Special handling for step 3 (completion page)
     if (stepNumber === 3 && isPreview) {
         const submittedInfoEl = document.getElementById('submittedInfo');
@@ -523,7 +555,7 @@ function goToStep(stepNumber, isPreview = false) {
             `;
         }
     }
-    
+
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
