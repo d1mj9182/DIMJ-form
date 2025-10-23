@@ -1173,24 +1173,32 @@ function updateConsultationList(data) {
                     </span>
                 </div>
 
-                <div style="color: #8fb6c4; font-size: 13px;">
-                    ${maskedPhone}
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div style="color: #8fb6c4; font-size: 13px;">
+                        ${maskedPhone}
+                    </div>
+                    ${item.gift_amount ?
+                        `<div style="text-align: right;">
+                            <div style="color: #8fb6c4; font-size: 12px; margin-bottom: 2px;">
+                                당일지급
+                            </div>
+                            <span class="gift-amount" style="color: #ffc107; font-weight: bold; font-size: 16px;">
+                                ${item.gift_amount}만원
+                            </span>
+                        </div>` : ''
+                    }
                 </div>
 
-                <div style="color: #ffc107; font-size: 13px; margin-top: 2px;">
-                    🕐 ${displayPreferredTime}
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2px;">
+                    <div style="color: #ffc107; font-size: 13px;">
+                        🕐 ${displayPreferredTime}
+                    </div>
+                    ${item.gift_type === '현금' ?
+                        `<div style="color: #4caf50; font-size: 12px;">
+                            ${item.gift_type}
+                        </div>` : ''
+                    }
                 </div>
-
-                ${item.gift_amount ?
-                    `<div style="text-align: right; margin-top: 8px;">
-                        <div style="color: #8fb6c4; font-size: 12px; margin-bottom: 2px;">
-                            당일지급
-                        </div>
-                        <span class="gift-amount" style="color: #ffc107; font-weight: bold; font-size: 16px;">
-                            ${item.gift_amount}만원
-                        </span>
-                    </div>` : ''
-                }
             </div>
         `;
     }).join('');
