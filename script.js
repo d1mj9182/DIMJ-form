@@ -504,34 +504,15 @@ function goToStep(stepNumber, isPreview = false) {
 
     // Step 2 진입 시 실시간 상담 현황 초기화
     if (stepNumber === 2) {
-        window.isFirstCycleAfterStep2 = true;
-        window.autoSlideCurrentPage = 1;
+        currentPage = 1;
+        window.currentPage = 1;
+        window.isFirstStep2Entry = true;
 
-        if (window.autoSlideData && window.autoSlideData.length > 0) {
-            const totalPages = Math.ceil(window.autoSlideData.length / 7);
-
-            if (window.autoSlideInterval) {
-                clearInterval(window.autoSlideInterval);
-            }
-
-            displayAutoSlidePage(window.autoSlideData, 1);
-
-            if (totalPages > 1) {
-                window.autoSlideInterval = setTimeout(() => {
-                    window.autoSlideCurrentPage = 2;
-                    displayAutoSlidePage(window.autoSlideData, 2);
-                    window.isFirstCycleAfterStep2 = false;
-
-                    window.autoSlideInterval = setInterval(() => {
-                        window.autoSlideCurrentPage++;
-                        if (window.autoSlideCurrentPage > totalPages) {
-                            window.autoSlideCurrentPage = 1;
-                        }
-                        displayAutoSlidePage(window.autoSlideData, window.autoSlideCurrentPage);
-                    }, 3000);
-                }, 12000);
-            }
-        }
+        loadRealtimeData().then(() => {
+            setTimeout(() => {
+                startStep2AutoSlide();
+            }, 100);
+        });
     }
 
     // Special handling for step 3 (completion page)
@@ -1086,12 +1067,180 @@ async function loadRealtimeData() {
         updateConsultationList(applications);
         updateStatistics(applications);
 
+        // Step 2에서만 자동 슬라이드 데이터 저장
+        if (window.currentStep === 2) {
+            window.step2ConsultationData = applications;
+        }
+
     } catch (error) {
         console.error('❌ 실시간 데이터 로딩 실패:', error);
         // 에러 시에도 빈 배열로 처리하여 일관성 유지
         updateConsultationList([]);
         updateStatistics([]);
     }
+}
+
+// Step 2 진입 시 자동 슬라이드 시작 함수
+function startStep2AutoSlide() {
+    if (!window.step2ConsultationData || window.step2ConsultationData.length === 0) return;
+
+    const data = window.step2ConsultationData;
+    const totalPages = Math.ceil(data.length / 7);
+
+    // 기존 인터벌 제거
+    if (window.step2SlideInterval) {
+        clearInterval(window.step2SlideInterval);
+        clearTimeout(window.step2SlideTimeout);
+    }
+
+    // 페이지 1부터 시작
+    let step2CurrentPage = 1;
+    displayConsultationPage(data, step2CurrentPage);
+
+    // 페이지가 2개 이상일 때만 자동 슬라이드
+    if (totalPages > 1) {
+        // 첫 전환은 12초 후
+        window.step2SlideTimeout = setTimeout(() => {
+            step2CurrentPage = 2;
+            displayConsultationPage(data, step2CurrentPage);
+
+            // 이후부터는 3초마다 전환
+            window.step2SlideInterval = setInterval(() => {
+                step2CurrentPage++;
+                if (step2CurrentPage > totalPages) {
+                    step2CurrentPage = 1;
+                }
+                displayConsultationPage(data, step2CurrentPage);
+            }, 3000);
+        }, 12000);
+    }
+}
+
+// 특정 페이지의 상담 리스트 표시
+function displayConsultationPage(data, page) {
+    const container = document.getElementById('consultationList');
+    if (!container) return;
+
+    const startIndex = (page - 1) * 7;
+    const endIndex = startIndex + 7;
+    const pageData = data.slice(startIndex, endIndex);
+
+    // 기존 updateConsultationList의 HTML 생성 로직 재사용
+    const htmlContent = pageData.map(item => {
+        const createdDate = new Date(item.created_at);
+        const now = new Date();
+        const hoursDiff = (now - createdDate) / (1000 * 60 * 60);
+        const isOlderThan48Hours = hoursDiff > 48;
+
+        const maskedName = item.name ?
+            (item.name.length === 1 ? item.name[0] + '*' :
+             item.name.length === 2 ? item.name[0] + '*' :
+             item.name[0] + '*'.repeat(item.name.length - 2) + item.name[item.name.length-1]) : '-';
+
+        let maskedPhone = '-';
+        if (item.phone) {
+            const parts = item.phone.split('-');
+            if (parts.length === 3) {
+                maskedPhone = `${parts[0]}-${parts[1].substring(0,1)}***-${parts[2].substring(0,2)}**`;
+            }
+        }
+
+        let displayPreferredTime = item.preferred_time || '빠른 시간에 연락드립니다';
+        if (isOlderThan48Hours) {
+            displayPreferredTime = '***';
+        }
+
+        const serviceInfo = [item.carrier, item.main_service, item.other_service].filter(Boolean).join(' · ');
+
+        const statusColors = {
+            '상담대기': '#17a2b8',
+            '상담중': '#dc3545',
+            '상담완료': '#007bff',
+            '설치예약': '#6f42c1',
+            '설치완료': '#fd7e14'
+        };
+
+        const statusColor = statusColors[item.status] || '#17a2b8';
+
+        const year = createdDate.getFullYear();
+        const month = String(createdDate.getMonth() + 1).padStart(2, '0');
+        const day = String(createdDate.getDate()).padStart(2, '0');
+        const displayDate = `${year}/${month}/${day}`;
+
+        return `
+            <div style="
+                background: rgba(30, 40, 50, 0.9);
+                border: 1px solid ${statusColor};
+                border-radius: 6px;
+                padding: 10px 14px;
+                margin-bottom: 8px;
+                line-height: 1.3;
+            ">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <div>
+                        <span class="customer-name" style="color: #fff; font-weight: bold; font-size: 16px;">
+                            ${maskedName} 고객님
+                        </span>
+                        <span class="apply-date" style="color: #8fb6c4; margin-left: 8px; font-size: 13px;">
+                            ${displayDate}
+                        </span>
+                    </div>
+                    <div style="
+                        color: ${statusColor};
+                        padding: 4px 10px;
+                        border: 1px solid ${statusColor};
+                        border-radius: 6px;
+                        font-weight: bold;
+                        font-size: 13px;
+                    ">
+                        ${item.status || '상담대기'}
+                    </div>
+                </div>
+
+                <div style="display: flex; align-items: center; margin-bottom: 2px;">
+                    <span style="
+                        color: ${statusColor};
+                        font-size: 14px;
+                        display: inline-flex;
+                        align-items: center;
+                        margin-right: 6px;
+                    ">●</span>
+                    <span class="service-info" style="color: #e0e6ed; font-size: 14px;">
+                        ${serviceInfo}
+                    </span>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div style="color: #8fb6c4; font-size: 13px;">
+                        ${maskedPhone}
+                    </div>
+                    ${item.gift_amount ?
+                        `<div style="text-align: right;">
+                            <div style="color: #8fb6c4; font-size: 12px; margin-bottom: 2px;">
+                                당일지급
+                            </div>
+                            <span class="gift-amount" style="color: #ffc107; font-weight: bold; font-size: 16px;">
+                                ${item.gift_amount}만원
+                            </span>
+                        </div>` : ''
+                    }
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2px;">
+                    <div style="color: #ffc107; font-size: 13px;">
+                        🕐 ${displayPreferredTime}
+                    </div>
+                    ${item.gift_type === '현금' ?
+                        `<div style="color: #4caf50; font-size: 12px;">
+                            ${item.gift_type}
+                        </div>` : ''
+                    }
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    container.innerHTML = htmlContent;
 }
 
 function updateConsultationList(data) {
