@@ -2847,13 +2847,13 @@ function displayRollingPage() {
     }
 }
 
-// 최초 1회 즉시 실행
-startAutoRolling();
+// 🚫 비활성화: Step 2에서 startStep2AutoSlide()가 대신 처리
+// startAutoRolling();
 
-// 8초마다 자동 롤링
-window.dataInterval = setInterval(() => {
-    displayRollingPage();
-}, 8000);
+// 🚫 비활성화: 8초 자동 롤링 제거 (10초 슬라이드로 통합)
+// window.dataInterval = setInterval(() => {
+//     displayRollingPage();
+// }, 8000);
 
 // 페이지네이션 변수
 let currentPage = 1;
