@@ -1158,7 +1158,7 @@ body {
 
 /* Consultation List */
 .consultation-list {
-    margin-top: 2.5rem;
+    margin-top: 3rem;
     margin-bottom: 0;
     display: flex;
     flex-direction: column;
@@ -1172,6 +1172,13 @@ body {
     padding-right: 0;
     padding-bottom: 0;
     align-items: stretch;
+}
+
+/* 모바일에서만 실시간 상담 현황 위로 올리기 */
+@media (max-width: 768px) {
+    .status-board {
+        margin-top: -1rem !important;
+    }
 }
 
 .consultation-list::-webkit-scrollbar {
