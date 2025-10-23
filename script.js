@@ -1135,11 +1135,11 @@ function updateConsultationList(data) {
                 background: rgba(30, 40, 50, 0.9);
                 border: 1px solid ${statusColor};
                 border-radius: 6px;
-                padding: 12px 16px;
+                padding: 10px 14px;
                 margin-bottom: 8px;
-                line-height: 1.4;
+                line-height: 1.3;
             ">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                     <div>
                         <span class="customer-name" style="color: #fff; font-weight: bold; font-size: 16px;">
                             ${maskedName} 고객님
@@ -1160,7 +1160,7 @@ function updateConsultationList(data) {
                     </div>
                 </div>
 
-                <div style="display: flex; align-items: center; margin-bottom: 4px;">
+                <div style="display: flex; align-items: center; margin-bottom: 2px;">
                     <span style="
                         color: ${statusColor};
                         font-size: 14px;
@@ -1177,7 +1177,7 @@ function updateConsultationList(data) {
                     ${maskedPhone}
                 </div>
 
-                <div style="color: #ffc107; font-size: 13px; margin-top: 4px;">
+                <div style="color: #ffc107; font-size: 13px; margin-top: 2px;">
                     🕐 ${displayPreferredTime}
                 </div>
 
