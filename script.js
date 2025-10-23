@@ -111,13 +111,18 @@ async function loadBannersFromAdmin() {
 
     // DB에서 최신 데이터 가져오기
     try {
+        console.log('🔍 Step1 배너 요청 시작');
         const response = await fetch(`${PROXY_URL}?table=admin_settings&key=main_banner_step1`, {
             headers: { 'x-api-key': SUPABASE_ANON_KEY }
         });
+        console.log('🔍 Step1 응답 상태:', response.status);
         const result = await response.json();
+        console.log('🔍 Step1 결과:', result);
+        console.log('🔍 배열?', Array.isArray(result), '길이:', result?.length);
 
         if (Array.isArray(result) && result.length > 0) {
             const step1BannerData = result[0].setting_value;
+            console.log('🔍 Step1 데이터 있음, 길이:', step1BannerData?.length);
             if (step1BannerImg) {
                 step1BannerImg.src = step1BannerData;
                 step1BannerImg.style.display = 'block';
@@ -127,9 +132,11 @@ async function loadBannersFromAdmin() {
             }
             localStorage.setItem('mainBannerImage_step1', step1BannerData);
             console.log('✅ Step1 배너 DB에서 업데이트');
+        } else {
+            console.error('❌ Step1 배너: 배열이 아니거나 데이터 없음');
         }
     } catch (error) {
-        console.error('Step1 배너 DB 로드 에러:', error);
+        console.error('❌ Step1 배너 DB 로드 에러:', error);
     }
 
     // Load Step 2 Main Banner
@@ -138,13 +145,18 @@ async function loadBannersFromAdmin() {
 
     // DB에서 최신 데이터 가져오기
     try {
+        console.log('🔍 Step2 배너 요청 시작');
         const response = await fetch(`${PROXY_URL}?table=admin_settings&key=main_banner_step2`, {
             headers: { 'x-api-key': SUPABASE_ANON_KEY }
         });
+        console.log('🔍 Step2 응답 상태:', response.status);
         const result = await response.json();
+        console.log('🔍 Step2 결과:', result);
+        console.log('🔍 배열?', Array.isArray(result), '길이:', result?.length);
 
         if (Array.isArray(result) && result.length > 0) {
             const step2BannerData = result[0].setting_value;
+            console.log('🔍 Step2 데이터 있음, 길이:', step2BannerData?.length);
             if (step2BannerImg) {
                 step2BannerImg.src = step2BannerData;
                 step2BannerImg.style.display = 'block';
@@ -154,23 +166,33 @@ async function loadBannersFromAdmin() {
             }
             localStorage.setItem('mainBannerImage_step2', step2BannerData);
             console.log('✅ Step2 배너 DB에서 업데이트');
+        } else {
+            console.error('❌ Step2 배너: 배열이 아니거나 데이터 없음');
         }
     } catch (error) {
-        console.error('Step2 배너 DB 로드 에러:', error);
+        console.error('❌ Step2 배너 DB 로드 에러:', error);
     }
 
     // Load Detail Page Images (1-5) - DB에서 업데이트 (병렬 처리)
     const detailPlaceholder = document.getElementById('detailImagesPlaceholder');
     const dbPromises = [];
     for (let i = 1; i <= 5; i++) {
+        console.log(`🔍 상세이미지 ${i} 요청 시작`);
         dbPromises.push(
             fetch(`${PROXY_URL}?table=admin_settings&key=detail_image_${i}`, {
                 headers: { 'x-api-key': SUPABASE_ANON_KEY }
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log(`🔍 상세이미지 ${i} 응답 상태:`, response.status);
+                return response.json();
+            })
             .then(result => {
+                console.log(`🔍 상세이미지 ${i} 결과:`, result);
+                console.log(`🔍 배열?`, Array.isArray(result), '길이:', result?.length);
+
                 if (Array.isArray(result) && result.length > 0) {
                     const detailImageData = result[0].setting_value;
+                    console.log(`🔍 상세이미지 ${i} 데이터 있음, 길이:`, detailImageData?.length);
                     const detailImgContainer = document.getElementById(`detailImage${i}Container`);
 
                     if (detailImgContainer) {
@@ -180,6 +202,8 @@ async function loadBannersFromAdmin() {
                     }
                     localStorage.setItem(`detailImage${i}`, detailImageData);
                     console.log(`✅ 상세이미지 ${i} DB에서 업데이트`);
+                } else {
+                    console.error(`❌ 상세이미지 ${i}: 배열이 아니거나 데이터 없음`);
                 }
             })
             .catch(error => {
