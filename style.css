@@ -2774,6 +2774,66 @@ button.telecom-btn.selected:nth-child(6):hover {
     }
 }
 
+/* Phone Button (전화 버튼) */
+.phone-badge-button {
+    position: fixed;
+    bottom: 16.5rem;
+    right: 2rem;
+    width: 120px;
+    height: 50px;
+    background: linear-gradient(135deg, #00c853, #00a047);
+    border: none;
+    border-radius: 25px;
+    color: white;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 200, 83, 0.4);
+    transition: all 0.3s ease;
+    transform: translateY(100px);
+    opacity: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.phone-badge-button.visible {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.phone-badge-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 200, 83, 0.6);
+    background: linear-gradient(135deg, #00e676, #00c853);
+}
+
+.phone-badge-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(0, 200, 83, 0.4);
+}
+
+.phone-badge-button i {
+    font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+    .phone-badge-button {
+        bottom: 13rem;
+        right: 1rem;
+        width: 110px;
+        height: 45px;
+        font-size: 0.85rem;
+    }
+
+    .phone-badge-button i {
+        font-size: 1rem;
+    }
+}
+
 /* Kakao Button (카카오톡 버튼) */
 .kakao-button {
     position: fixed;
