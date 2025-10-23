@@ -1099,20 +1099,14 @@ function startStep2AutoSlide() {
 
     // 페이지가 2개 이상일 때만 자동 슬라이드
     if (totalPages > 1) {
-        // 첫 전환은 12초 후
-        window.step2SlideTimeout = setTimeout(() => {
-            step2CurrentPage = 2;
+        // 10초마다 자동 전환
+        window.step2SlideInterval = setInterval(() => {
+            step2CurrentPage++;
+            if (step2CurrentPage > totalPages) {
+                step2CurrentPage = 1;
+            }
             displayConsultationPage(data, step2CurrentPage);
-
-            // 이후부터는 3초마다 전환
-            window.step2SlideInterval = setInterval(() => {
-                step2CurrentPage++;
-                if (step2CurrentPage > totalPages) {
-                    step2CurrentPage = 1;
-                }
-                displayConsultationPage(data, step2CurrentPage);
-            }, 3000);
-        }, 12000);
+        }, 10000);
     }
 }
 
