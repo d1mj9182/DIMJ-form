@@ -1166,6 +1166,10 @@ function updateConsultationList(data) {
                     ${maskedPhone}
                 </div>
 
+                <div style="color: #ffc107; font-size: 13px; margin-top: 4px;">
+                    🕐 ${item.preferred_time || '빠른 시간에 연락드립니다'}
+                </div>
+
                 ${item.gift_amount ?
                     `<div style="text-align: right; margin-top: 8px;">
                         <div style="color: #8fb6c4; font-size: 12px; margin-bottom: 2px;">
