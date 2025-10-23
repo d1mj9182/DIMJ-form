@@ -2950,8 +2950,8 @@ async function verifySettingsPassword() {
 
         const result = await response.json();
 
-        if (Array.isArray(result) && result.length > 0) {
-            const storedHash = result[result.length - 1].setting_value;
+        if (result.success && Array.isArray(result.data) && result.data.length > 0) {
+            const storedHash = result.data[result.data.length - 1].setting_value;
 
             if (hashedInput === storedHash) {
                 // 패스워드 일치 - 어드민페이지로 이동
