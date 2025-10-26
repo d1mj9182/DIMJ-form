@@ -219,7 +219,8 @@
       "Read(//c//**)",
       "Bash(git remote get-url:*)",
       "Bash(git rev-parse:*)",
-      "Read(//c/Users/pc/Desktop/DIMJ-form-frontend/**)"
+      "Read(//c/Users/pc/Desktop/DIMJ-form-frontend/**)",
+      "Bash(120만원 현금사은품 당일지급\"\n  - <meta name=\"description\">: \"당일민족\" 키워드 3회 포함\n  - <meta name=\"keywords\">: \"당일민족, 인터넷, TV, 가전렌탈...\" 추가\n  - <meta name=\"author\">: \"당일민족\" 추가\n  - Open Graph 메타 태그 추가:\n    - og:title: \"당일민족 - 인터넷·TV·가전렌탈 성지\"\n    - og:description: \"당일민족에서 120만원 현금사은품...\"\n    - og:type: \"website\"\n\n- 네이버/구글 검색 결과 개선\n  - 브랜드명 \"당일민족\" 우선 노출\n  - \"www.d1mj.com\" 대신 브랜드명으로 검색 가능\n  - 소셜 미디어 공유 시 올바른 제목/설명 표시\n\n- index.html: script.js 캐시 버전 업데이트 (v=20251054)\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
     ],
     "deny": [],
     "ask": []
