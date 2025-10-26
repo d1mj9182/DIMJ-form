@@ -2849,6 +2849,14 @@ button.telecom-btn.selected:nth-child(6):hover {
     color: white;
 }
 
+.sidebar-button.apply-btn span {
+    font-size: 0.7rem;
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+    word-break: keep-all;
+}
+
 .sidebar-button.apply-btn:hover {
     background: linear-gradient(135deg, #ff3742, #b33653);
 }
@@ -2895,6 +2903,10 @@ button.telecom-btn.selected:nth-child(6):hover {
 
     .sidebar-button i {
         font-size: 1.1rem;
+    }
+
+    .sidebar-button.apply-btn span {
+        font-size: 0.65rem;
     }
 
     .sidebar-toggle {
