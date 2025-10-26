@@ -2890,6 +2890,12 @@ button.telecom-btn.selected:nth-child(6):hover {
 }
 
 @media (max-width: 768px) {
+    .sidebar-container {
+        top: auto;
+        bottom: 6rem;
+        transform: translateY(0);
+    }
+
     .sidebar-panel {
         border-radius: 8px 0 0 8px;
         padding: 0.6rem;
