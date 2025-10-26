@@ -2049,54 +2049,13 @@ function scrollToTop() {
     });
 }
 
-// 우측 버튼 토글 상태 (기본: 펼쳐진 상태)
-let sideButtonsVisible = true;
-
-// Toggle side buttons (신청접수, 카카오톡, 전화)
-function toggleSideButtons() {
-    const applyButton = document.getElementById('applyButton');
-    const phoneButton = document.getElementById('phoneButton');
-    const kakaoButton = document.getElementById('kakaoButton');
-    const toggleBtn = document.getElementById('toggleButtonsBtn');
-
-    sideButtonsVisible = !sideButtonsVisible;
-
-    if (sideButtonsVisible) {
-        // 버튼들 보이기
-        if (applyButton) applyButton.classList.add('visible');
-        if (phoneButton) phoneButton.classList.add('visible');
-        if (kakaoButton) kakaoButton.classList.add('visible');
-
-        // 토글 버튼 아이콘 변경 (X 표시)
-        if (toggleBtn) {
-            toggleBtn.classList.remove('collapsed');
-            toggleBtn.innerHTML = '<i class="fas fa-times"></i>';
-        }
-    } else {
-        // 버튼들 숨기기
-        if (applyButton) applyButton.classList.remove('visible');
-        if (phoneButton) phoneButton.classList.remove('visible');
-        if (kakaoButton) kakaoButton.classList.remove('visible');
-
-        // 토글 버튼 아이콘 변경 (+ 표시)
-        if (toggleBtn) {
-            toggleBtn.classList.add('collapsed');
-            toggleBtn.innerHTML = '<i class="fas fa-plus"></i>';
-        }
+// 우측 사이드바 토글
+function toggleSidebar() {
+    const sidebarContainer = document.getElementById('sidebarContainer');
+    if (sidebarContainer) {
+        sidebarContainer.classList.toggle('collapsed');
     }
 }
-
-// 페이지 로드 시 버튼들 바로 표시
-window.addEventListener('DOMContentLoaded', function() {
-    const applyButton = document.getElementById('applyButton');
-    const phoneButton = document.getElementById('phoneButton');
-    const kakaoButton = document.getElementById('kakaoButton');
-
-    // 초기 로드 시 모든 버튼 visible 상태로 설정
-    if (applyButton) applyButton.classList.add('visible');
-    if (phoneButton) phoneButton.classList.add('visible');
-    if (kakaoButton) kakaoButton.classList.add('visible');
-});
 
 // Show/Hide Top Button based on scroll position
 function handleTopButtonVisibility() {
