@@ -2928,6 +2928,52 @@ button.telecom-btn.selected:nth-child(6):hover {
     }
 }
 
+/* Toggle Buttons Button (우측 버튼 토글) */
+.toggle-buttons-btn {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    transition: all 0.3s ease;
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.toggle-buttons-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+    background: linear-gradient(135deg, #818cf8, #6366f1);
+}
+
+.toggle-buttons-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+}
+
+.toggle-buttons-btn.collapsed i {
+    transform: rotate(45deg);
+}
+
+@media (max-width: 768px) {
+    .toggle-buttons-btn {
+        bottom: 1.5rem;
+        right: 1rem;
+        width: 45px;
+        height: 45px;
+        font-size: 1.1rem;
+    }
+}
+
 /* Back Button */
 .back-button-container {
     margin-bottom: 1.5rem;
