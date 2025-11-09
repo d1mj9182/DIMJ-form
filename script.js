@@ -573,6 +573,7 @@ let antiSpam = {
 
 let realTimeData = {
     todayApplications: 0,
+    todayVisitors: 0, // 오늘 방문자 수
     cashReward: 0,
     installationsCompleted: 0,
     onlineConsultants: 0,
@@ -999,8 +1000,33 @@ async function updateStatistics_DEPRECATED() {
     if (cashRewardEl) cashRewardEl.textContent = realTimeData.cashReward || 0;
 }
 
+// 오늘 방문자 수 가져오기
+async function fetchTodayVisitors() {
+    try {
+        const response = await fetch('https://dimj-form-proxy.vercel.app/api/track-visitor', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            if (data.count !== undefined) {
+                realTimeData.todayVisitors = data.count;
+                console.log('✅ 오늘 방문자 수:', realTimeData.todayVisitors);
+            }
+        }
+    } catch (error) {
+        console.error('방문자 수 로드 실패:', error);
+    }
+}
+
 // 실시간 데이터 로딩 함수
 async function loadRealtimeData() {
+    // 방문자 수 먼저 가져오기
+    await fetchTodayVisitors();
+
     try {
         const response = await fetch('https://dimj-form-proxy.vercel.app/api/supabase?table=consultations', {
             headers: {
@@ -1492,7 +1518,7 @@ function updateStatistics(data) {
     const onlineConsultantsStep1 = document.getElementById('onlineConsultantsStep1'); // 설치완료
     const cashRewardStep1 = document.getElementById('cashRewardStep1');
 
-    if (todayApplicationsStep1) todayApplicationsStep1.textContent = stats.today;
+    if (todayApplicationsStep1) todayApplicationsStep1.textContent = realTimeData.todayVisitors || 0;
     if (waitingConsultationStep1) waitingConsultationStep1.textContent = stats.waiting;
     if (consultingNowStep1) consultingNowStep1.textContent = stats.consulting;
     if (completedConsultationsStep1) completedConsultationsStep1.textContent = stats.completed;
@@ -1587,7 +1613,7 @@ function updateDashboardStats() {
     const cashRewardEl = document.getElementById('cashReward');
 
     // 실제 Supabase 데이터 표시
-    if (todayApplicationsEl) todayApplicationsEl.textContent = realTimeData.todayApplications || 0;
+    if (todayApplicationsEl) todayApplicationsEl.textContent = realTimeData.todayVisitors || 0;
     if (completedConsultationsEl) completedConsultationsEl.textContent = realTimeData.completedConsultations || 0;
     if (onlineConsultantsEl) onlineConsultantsEl.textContent = realTimeData.installationsCompleted || 0; // 설치완료
     if (waitingConsultationEl) waitingConsultationEl.textContent = realTimeData.waitingConsultation || 0;
